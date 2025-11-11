@@ -60,7 +60,6 @@ class OppsOutput(BaseModel):
     """
 
     claim_id: str = ""
-    ioce_output: Optional[IoceOutput] = None
     blood_deductible: Optional[float] = None
     final_cbsa: Optional[str] = None
     final_wage_index: Optional[float] = None
