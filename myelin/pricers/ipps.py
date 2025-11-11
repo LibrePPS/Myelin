@@ -349,7 +349,6 @@ class IppsOutput(BaseModel):
     """
 
     claim_id: str = ""
-    ms_drg_output: Optional[MsdrgOutput] = None
     return_code: Optional[ReturnCode] = None
     calculation_version: Optional[str] = None
     average_length_of_stay: Optional[float] = None
@@ -895,6 +894,4 @@ class IppsClient:
         ipps_output = IppsOutput()
         ipps_output.claim_id = claim.claimid
         ipps_output.from_java(pricing_response)
-        if drg_output is not None:
-            ipps_output.ms_drg_output = drg_output
         return ipps_output

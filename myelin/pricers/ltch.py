@@ -25,7 +25,6 @@ from myelin.pricers.url_loader import UrlLoader
 class LtchOutput(BaseModel):
     claim_id: str = ""
     calculation_version: Optional[str] = None
-    ms_drg_output: Optional[MsdrgOutput] = None
     return_code: Optional[ReturnCode] = None
     total_payment: Optional[float] = None
     final_cbsa: Optional[str] = None
@@ -349,6 +348,4 @@ class LtchClient:
         ltch_output = LtchOutput()
         ltch_output.claim_id = claim.claimid
         ltch_output.from_java(pricing_response)
-        if drg_output is not None:
-            ltch_output.ms_drg_output = drg_output
         return ltch_output

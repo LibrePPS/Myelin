@@ -292,7 +292,7 @@ class IPSFDatabase:
                     continue
                 rec: Dict[str, Any] = {}
                 for name, meta in DATATYPES.items():
-                    pos = meta["position"]
+                    pos = int(meta["position"])
                     val = row[pos] if pos < len(row) else None
                     if val == "":
                         val = None

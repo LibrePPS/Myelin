@@ -330,6 +330,4 @@ class OppsClient:
         opps_output = OppsOutput()
         opps_output.claim_id = claim.claimid
         opps_output.from_java(pricing_response)
-        if ioce_output is not None:
-            opps_output.ioce_output = ioce_output
         return opps_output
