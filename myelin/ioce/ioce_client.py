@@ -161,10 +161,8 @@ class IoceClient:
                     java_line.addHcpcsModifierInput(str(modifier))
 
         # Set units (9-digit string)
-        if line_item.units > 0:
+        if line_item.units:
             java_line.setUnitsInput(f"{int(line_item.units):09d}")
-        else:
-            java_line.setUnitsInput("000000001")  # Default to 1
 
         # Set charge (10-digit string with 2 decimal places)
         if line_item.charges > 0:
