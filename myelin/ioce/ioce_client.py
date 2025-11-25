@@ -371,7 +371,7 @@ class IoceClient:
         return oce_claim
 
     @handle_java_exceptions
-    def process(self, claim, include_descriptions: bool = True):
+    def process(self, claim, include_descriptions: bool = True, **kwargs) -> IoceOutput:
         """Process a claim through IOCE and return IoceOutput"""
         try:
             # Create Java OceClaim from Python claim

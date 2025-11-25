@@ -248,7 +248,7 @@ class Myelin:
             if self.ioce_client is None:
                 results.error = "IOCE client not initialized"
                 return results
-            results.ioce = self.ioce_client.process(claim)
+            results.ioce = self.ioce_client.process(claim,include_descriptions=True, **kwargs)
         # Groupers
         if Modules.MSDRG in unique_modules:
             if self.drg_client is None:
