@@ -139,3 +139,7 @@ example_data/claims_output.txt
 
 # Data
 data/
+
+# Stubs
+/myelin/jpype-stubs/
+/myelin/gov/

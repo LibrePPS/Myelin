@@ -36,6 +36,7 @@ dev = [
     "pytest-cov>=6.2.1",
     "ruff>=0.12.8",
     "pre-commit>=4.3.0",
+    "stubgenj>=0.2.12",
 ]
 
 [build-system]
