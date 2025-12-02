@@ -140,6 +140,7 @@ example_data/claims_output.txt
 # Data
 data/
 
-# Stubs
+# Generated Stubs
 /myelin/jpype-stubs/
+/myelin/java/
 /myelin/gov/
