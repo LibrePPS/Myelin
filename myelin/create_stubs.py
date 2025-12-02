@@ -1,7 +1,7 @@
 import pathlib
 import sys
-import jpype # pyright: ignore[reportMissingTypeStubs]
-import stubgenj # pyright: ignore[reportMissingTypeStubs]
+import jpype  # pyright: ignore[reportMissingTypeStubs]
+import stubgenj  # pyright: ignore[reportMissingTypeStubs]
 
 jars = list(pathlib.Path("../jars").glob("**/*.jar"))
 
@@ -14,10 +14,10 @@ classpath = [str(jar) for jar in jars]
 print("Starting JVM with classpath...")
 
 # Start JVM with all jars in the classpath for stub generation
-jpype.startJVM(classpath=classpath, convertStrings=True) # pyright: ignore[reportUnknownMemberType]
+jpype.startJVM(classpath=classpath, convertStrings=True)  # pyright: ignore[reportUnknownMemberType]
 
 # Enable Java imports in Python
-import jpype.imports  #noqa # pyright: ignore[reportMissingTypeStubs, reportUnusedImport]
+import jpype.imports  # noqa # pyright: ignore[reportMissingTypeStubs, reportUnusedImport]
 
 # Stubs for java.util without this all java.util methods will be marked as partially unknown
 import java.util  # noqa
@@ -27,6 +27,6 @@ import gov  # noqa
 
 print(f"Generating stubs for {len(jars)} jar file(s) ...")
 
-stubgenj.generateJavaStubs([gov, java.util], useStubsSuffix=False) # pyright: ignore[reportArgumentType]
+stubgenj.generateJavaStubs([gov, java.util], useStubsSuffix=False)  # pyright: ignore[reportArgumentType]
 
-print("Stub generation completed successfully!")
+print("Stub generation completed.")
