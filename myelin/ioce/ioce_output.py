@@ -1,8 +1,17 @@
 from datetime import datetime
 
-import jpype
 from pydantic import BaseModel, Field
 from typing_extensions import override
+
+# Provides stubs during TYPE_CHECKING and protocol classes at runtime
+from myelin.ioce.ioce_types import (
+    OceClaim,
+    OceLineItem,
+    OceDiagnosisCode,
+    OceHcpcsModifier,
+    OceValueCode,
+    OceProcessingInformation,
+)
 
 
 class ReturnCode(BaseModel):
@@ -66,7 +75,9 @@ class IoceProcessingInformation(BaseModel):
     debug_flag: str = ""
     comment_data: str = ""
 
-    def from_java(self, java_obj: jpype.JObject | None) -> "IoceProcessingInformation":
+    def from_java(
+        self, java_obj: OceProcessingInformation | None
+    ) -> "IoceProcessingInformation":
         if not java_obj:
             return self
 
@@ -104,7 +115,7 @@ class IoceOutputDiagnosisCode(BaseModel):
     present_on_admission: str = ""
     edit_list: list[IoceOutputEdit] = Field(default_factory=list)
 
-    def from_java(self, java_obj: jpype.JObject | None) -> "IoceOutputDiagnosisCode":
+    def from_java(self, java_obj: OceDiagnosisCode | None) -> "IoceOutputDiagnosisCode":
         if not java_obj:
             return self
 
@@ -129,7 +140,7 @@ class IoceOutputHcpcsModifier(BaseModel):
     hcpcs_modifier: str = ""
     edit_list: list[IoceOutputEdit] = Field(default_factory=list)
 
-    def from_java(self, java_obj: jpype.JObject | None) -> "IoceOutputHcpcsModifier":
+    def from_java(self, java_obj: OceHcpcsModifier | None) -> "IoceOutputHcpcsModifier":
         if not java_obj:
             return self
 
@@ -150,7 +161,7 @@ class IoceOutputValueCode(BaseModel):
     code: str = ""
     value: str = ""
 
-    def from_java(self, java_obj: jpype.JObject | None) -> "IoceOutputValueCode":
+    def from_java(self, java_obj: OceValueCode | None) -> "IoceOutputValueCode":
         if not java_obj:
             return self
 
@@ -198,7 +209,7 @@ class IoceOutputLineItem(BaseModel):
     revenue_edit_list: list[IoceOutputEdit] = Field(default_factory=list)
     service_date_edit_list: list[IoceOutputEdit] = Field(default_factory=list)
 
-    def from_java(self, java_obj: jpype.JObject | None) -> "IoceOutputLineItem":
+    def from_java(self, java_obj: OceLineItem | None) -> "IoceOutputLineItem":
         if not java_obj:
             return self
 
@@ -391,7 +402,7 @@ class IoceOutput(BaseModel):
 
     line_item_list: list[IoceOutputLineItem] = Field(default_factory=list)
 
-    def from_java(self, java_claim: jpype.JObject | None) -> "IoceOutput":
+    def from_java(self, java_claim: OceClaim | None) -> "IoceOutput":
         """Extract all output data from the processed Java OceClaim object"""
         if not java_claim:
             return self
@@ -401,7 +412,7 @@ class IoceOutput(BaseModel):
                 hasattr(java_claim, "getProcessingInformation")
                 and java_claim.getProcessingInformation()
             ):
-                self.processing_information.from_java(
+                _ = self.processing_information.from_java(
                     java_claim.getProcessingInformation()
                 )
 
@@ -536,7 +547,7 @@ class IoceOutput(BaseModel):
                 hasattr(java_claim, "getPrincipalDiagnosisCode")
                 and java_claim.getPrincipalDiagnosisCode()
             ):
-                self.principal_diagnosis_code.from_java(
+                _ = self.principal_diagnosis_code.from_java(
                     java_claim.getPrincipalDiagnosisCode()
                 )
 

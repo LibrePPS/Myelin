@@ -1,18 +1,29 @@
 from datetime import datetime
-
-import jpype
+import jpype  # pyright: ignore[reportMissingTypeStubs]
 
 from myelin.helpers.utils import handle_java_exceptions
 from myelin.input.claim import (
     Claim,
     DiagnosisCode,
-    IoceOverride,
     LineItem,
     PoaType,
     ValueCode,
 )
-from myelin.ioce.ioce_output import IoceOutput
+from myelin.ioce.ioce_output import IoceOutput, IoceOutputEdit
 from myelin.plugins import apply_client_methods, run_client_load_classes
+
+# Provides stubs during TYPE_CHECKING and protocol classes at runtime
+from myelin.ioce.ioce_types import (
+    OceClaim,
+    OceLineItem,
+    OceDiagnosisCode,
+    OceHcpcsModifier,
+    OceValueCode,
+    OceProcessingInformation,
+    OceClaimFactory,
+    IoceComponent,
+    IoceClaim,
+)
 
 
 class IoceClient:
@@ -36,29 +47,36 @@ class IoceClient:
     def load_classes(self) -> None:
         """Load all required Java classes and components"""
         try:
-            self.ioce_component_class = jpype.JClass("gov.cms.oce.IoceComponent")
-            self.ioce_claim_class = jpype.JClass("gov.cms.oce.IoceClaim")
-            self.oce_claim_factory_class = jpype.JClass(
+            self.ioce_component_class: type[IoceComponent] = jpype.JClass(
+                "gov.cms.oce.IoceComponent"
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.ioce_claim_class: type[IoceClaim] = jpype.JClass(
+                "gov.cms.oce.IoceClaim"
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_claim_factory_class: type[OceClaimFactory] = jpype.JClass(
                 "gov.cms.oce.model.external.OceClaimFactory"
-            )
-            self.oce_claim_class = jpype.JClass("gov.cms.oce.model.external.OceClaim")
-            self.oce_line_item_class = jpype.JClass(
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_claim_class: type[OceClaim] = jpype.JClass(
+                "gov.cms.oce.model.external.OceClaim"
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_line_item_class: type[OceLineItem] = jpype.JClass(
                 "gov.cms.oce.model.external.OceLineItem"
-            )
-            self.oce_diagnosis_code_class = jpype.JClass(
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_diagnosis_code_class: type[OceDiagnosisCode] = jpype.JClass(
                 "gov.cms.oce.model.external.OceDiagnosisCode"
-            )
-            self.oce_hcpcs_modifier_class = jpype.JClass(
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_hcpcs_modifier_class: type[OceHcpcsModifier] = jpype.JClass(
                 "gov.cms.oce.model.external.OceHcpcsModifier"
-            )
-            self.oce_value_code_class = jpype.JClass(
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_value_code_class: type[OceValueCode] = jpype.JClass(
                 "gov.cms.oce.model.external.OceValueCode"
-            )
-            self.oce_processing_info_class = jpype.JClass(
-                "gov.cms.oce.model.external.OceProcessingInformation"
-            )
-            self.factory = self.oce_claim_factory_class.getInstance()
-            self.ioce_component = self.ioce_component_class()
+            )  # pyright: ignore[reportAttributeAccessIssue]
+            self.oce_processing_info_class: type[OceProcessingInformation] = (
+                jpype.JClass("gov.cms.oce.model.external.OceProcessingInformation")
+            )  # pyright: ignore[reportAttributeAccessIssue]
+
+            self.factory: OceClaimFactory = self.oce_claim_factory_class.getInstance()
+            self.ioce_component: IoceComponent = self.ioce_component_class()
 
         except Exception as e:
             raise RuntimeError(f"Failed to initialize Ioce Java classes: {e}")
@@ -78,10 +96,8 @@ class IoceClient:
                 if len(date_input) == 8 and date_input.isdigit():
                     return date_input
                 raise ValueError(f"Invalid date format: {date_input}")
-        elif isinstance(date_input, datetime):
-            return date_input.strftime("%Y%m%d")
         else:
-            raise ValueError(f"Unsupported date type: {type(date_input)}")
+            return date_input.strftime("%Y%m%d")
 
     def format_age(self, age: int | None) -> str:
         """Format age as 3-digit string"""
@@ -103,7 +119,7 @@ class IoceClient:
 
     def create_diagnosis_code(
         self, dx_code: DiagnosisCode | None
-    ) -> jpype.JObject | None:
+    ) -> OceDiagnosisCode | None:
         """Create Java OceDiagnosisCode from Python DiagnosisCode"""
         if not dx_code or not dx_code.code:
             return None
@@ -121,25 +137,22 @@ class IoceClient:
 
         return self.factory.createDiagnosisCode(clean_code, poa_str)
 
-    def create_hcpcs_modifier(self, modifier_str: str | None) -> jpype.JObject | None:
+    def create_hcpcs_modifier(
+        self, modifier_str: str | None
+    ) -> OceHcpcsModifier | None:
         """Create Java OceHcpcsModifier from string"""
         if modifier_str is None or modifier_str == "":
             return None
         return self.factory.createHcpcsModifier(str(modifier_str))
 
-    def create_value_code(self, value_code: ValueCode) -> jpype.JObject | None:
+    def create_value_code(self, value_code: ValueCode) -> OceValueCode:
         """Create Java OceValueCode from Python ValueCode"""
-        if value_code is None:
-            return None
-
         # Format amount as 9-character string with leading zeros
         amount_str = f"{int(value_code.amount * 100):09d}"  # Convert to cents
         return self.factory.createValueCode(value_code.code, amount_str)
 
-    def create_line_item(self, line_item: LineItem | None) -> jpype.JObject | None:
+    def create_line_item(self, line_item: LineItem) -> OceLineItem:
         """Create Java OceLineItem from Python LineItem"""
-        if not line_item:
-            return None
 
         java_line = self.factory.createLineItem()
 
@@ -172,67 +185,43 @@ class IoceClient:
 
         if line_item.override is not None:
             override_set = False
-            if line_item.override.apc is not None and line_item.override.apc != "":
+            if line_item.override.apc != "":
                 java_line.setContractorApc(line_item.override.apc)
                 override_set = True
-            if (
-                line_item.override.status_indicator is not None
-                and line_item.override.status_indicator != ""
-            ):
+            if line_item.override.status_indicator != "":
                 java_line.setContractorStatusIndicator(
                     line_item.override.status_indicator
                 )
                 override_set = True
-            if (
-                line_item.override.payment_indicator is not None
-                and line_item.override.payment_indicator != ""
-            ):
+            if line_item.override.payment_indicator != "":
                 java_line.setContractorPaymentIndicator(
                     line_item.override.payment_indicator
                 )
                 override_set = True
-            if (
-                line_item.override.discounting_formula is not None
-                and line_item.override.discounting_formula != ""
-            ):
+            if line_item.override.discounting_formula != "":
                 java_line.setContractorDiscountingFormula(
                     line_item.override.discounting_formula
                 )
                 override_set = True
-            if (
-                line_item.override.rejection_denial_flag is not None
-                and line_item.override.rejection_denial_flag != ""
-            ):
+            if line_item.override.rejection_denial_flag != "":
                 java_line.setContractorRejectionDenialFlag(
                     line_item.override.rejection_denial_flag
                 )
                 override_set = True
-            if (
-                line_item.override.packaging_flag is not None
-                and line_item.override.packaging_flag != ""
-            ):
+            if line_item.override.packaging_flag != "":
                 java_line.setContractorPackagingFlag(line_item.override.packaging_flag)
                 override_set = True
-            if (
-                line_item.override.payment_adjustment_flag_01 is not None
-                and line_item.override.payment_adjustment_flag_01 != ""
-            ):
+            if line_item.override.payment_adjustment_flag_01 != "":
                 java_line.setContractorPaymentAdjustmentFlag01(
                     line_item.override.payment_adjustment_flag_01
                 )
                 override_set = True
-            if (
-                line_item.override.payment_method_flag is not None
-                and line_item.override.payment_method_flag != ""
-            ):
+            if line_item.override.payment_method_flag != "":
                 java_line.setContractorPaymentMethodFlag(
                     line_item.override.payment_method_flag
                 )
                 override_set = True
-            if (
-                line_item.override.payment_adjustment_flag_02 is not None
-                and line_item.override.payment_adjustment_flag_02 != ""
-            ):
+            if line_item.override.payment_adjustment_flag_02 != "":
                 java_line.setContractorPaymentAdjustmentFlag02(
                     line_item.override.payment_adjustment_flag_02
                 )
@@ -244,17 +233,14 @@ class IoceClient:
             "invalid" edit value of "-1" to edit bypass list.
             """
 
-            if (
-                line_item.override.edit_bypass_list is not None
-                and len(line_item.override.edit_bypass_list) > 0
-            ):
+            if len(line_item.override.edit_bypass_list) > 0:
                 for bypass in line_item.override.edit_bypass_list:
                     java_line.addContractorEditBypass(bypass)
             elif override_set:
                 java_line.addContractorEditBypass("-1")
         return java_line
 
-    def create_oce_claim(self, claim: Claim) -> jpype.JObject:
+    def create_oce_claim(self, claim: Claim) -> OceClaim:
         """Create Java OceClaim from Python Claim"""
         oce_claim = self.factory.createClaim()
 
@@ -357,9 +343,7 @@ class IoceClient:
         return oce_claim
 
     @handle_java_exceptions
-    def process(
-        self, claim: Claim, include_descriptions: bool = True, **kwargs: object
-    ) -> IoceOutput:
+    def process(self, claim: Claim, include_descriptions: bool = True) -> IoceOutput:
         """Process a claim through IOCE and return IoceOutput"""
         try:
             oce_claim = self.create_oce_claim(claim)
@@ -371,7 +355,7 @@ class IoceClient:
             processed_model = ioce_claim.getModel()
 
             Ioce_output = IoceOutput()
-            Ioce_output.from_java(processed_model)
+            _ = Ioce_output.from_java(processed_model)
 
             if include_descriptions:
                 Ioce_output = self.append_descriptions(Ioce_output)
@@ -420,7 +404,7 @@ class IoceClient:
             )
 
             # Enrich edit descriptions
-            edit_list = getattr(result, edit_list_attr, [])
+            edit_list: list[IoceOutputEdit] = getattr(result, edit_list_attr, [])
             for edit in edit_list:
                 edit_desc = self.ioce_component.getEditDescription(
                     str(int(edit.edit)), internal_version
@@ -438,7 +422,7 @@ class IoceClient:
             internal_version = result.processing_information.internal_version
 
             # Get return code description
-            if result.processing_information.return_code.code is not None:
+            if result.processing_information.return_code.code:
                 return_code_desc = self.ioce_component.getLatestErrorDescription(
                     str(result.processing_information.return_code.code)
                 )
