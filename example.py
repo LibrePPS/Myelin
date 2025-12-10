@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 
-from myelin import Myelin
+from myelin import Myelin, MyelinOutput
 from myelin.helpers.claim_examples import (
     claim_example,
     json_claim_example,
@@ -311,6 +311,10 @@ def run_pricers(myelin: Myelin):
         fqhc_claim.billing_provider.address.zip = "06040"
         ioce_output = myelin.ioce_client.process(fqhc_claim)
         fqhc_output = myelin.fqhc_client.process(fqhc_claim, ioce_output)
+        res = MyelinOutput()
+        res.ioce = ioce_output
+        res.fqhc = fqhc_output  
+        res.to_excel("./fqhc_pricer_output.xlsx")
         print(fqhc_output.model_dump_json(indent=2))
 
 
@@ -319,6 +323,7 @@ def run_myelin_process(myelin: Myelin):
     claim.modules = [Modules.MCE, Modules.MSDRG, Modules.IPPS, Modules.PSYCH]
     claim.claimid = "MYELIN_CLAIM_001"
     results = myelin.process(claim)
+    results.to_excel("./myelin_process_output.xlsx")
     print(results.model_dump_json(indent=2, exclude_none=True))
 
 

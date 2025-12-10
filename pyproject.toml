@@ -27,7 +27,12 @@ dependencies = [
     "pluggy>=1.5.0",
     "sqlalchemy>=2.0.43",
     "pytest>=8.4.2",
+    "openpyxl>=3.1.5",
 ]
+
+[project.optional-dependencies]
+excel = ["openpyxl>=3.1.0"]
+all = ["openpyxl>=3.1.0"]
 
 [dependency-groups]
 dev = [

@@ -8,6 +8,9 @@ from .utils import (
 )
 from .zipCL_loader import Zip9Data, load_records
 
+# Excel exporter is imported lazily to avoid circular imports
+# Use: from myelin.helpers.excel_exporter import export_to_excel
+
 __all__ = [
     "CMSDownloader",
     "ReturnCode",
