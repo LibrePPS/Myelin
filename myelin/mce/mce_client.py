@@ -57,16 +57,21 @@ class MceClient:
         return (thru_date - from_date).days + 1 if thru_date >= from_date else 1
 
     def create_input(self, claim: Claim) -> jpype.JObject | None:
-        if (claim.patient_status is None 
-            or not claim.patient_status.isnumeric()):
-            raise ValueError("Invalid Patient Discharge Status given for MCE processing.")
-        
+        if claim.patient_status is None or not claim.patient_status.isnumeric():
+            raise ValueError(
+                "Invalid Patient Discharge Status given for MCE processing."
+            )
+
         mce_record = self.mce_record.builder()
         mce_record.withIcdVersion(self.icd_vers.ICD_10)
         if str(claim.patient_status).isnumeric():
             mce_record.withDischargeStatus(self.java_int(int(claim.patient_status)))
         if claim.patient is not None:
-            mce_record.withAgeYears(self.java_int(claim.patient.age) if claim.patient.age is not None else self.java_int(0))
+            mce_record.withAgeYears(
+                self.java_int(claim.patient.age)
+                if claim.patient.age is not None
+                else self.java_int(0)
+            )
             if str(claim.patient.sex).upper().startswith("M"):
                 mce_record.withSex(self.java_int(1))
             else:

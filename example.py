@@ -314,7 +314,7 @@ def run_pricers(myelin: Myelin):
         fqhc_output = myelin.fqhc_client.process(fqhc_claim, ioce_output)
         res = MyelinOutput()
         res.ioce = ioce_output
-        res.fqhc = fqhc_output  
+        res.fqhc = fqhc_output
         res.to_excel("./fqhc_pricer_output.xlsx", fqhc_claim)
         print(fqhc_output.model_dump_json(indent=2))
 

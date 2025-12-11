@@ -3,10 +3,10 @@ import os
 from contextlib import ExitStack
 from threading import RLock
 from types import TracebackType
-from typing import Literal
+from typing import Literal, Annotated
 
 import jpype
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 
 from myelin.converter import ICDConverter
 from myelin.database.manager import DatabaseManager
@@ -44,6 +44,7 @@ PRICERS: dict[str, str] = {
 
 
 class MyelinOutput(BaseModel):
+    model_config = ConfigDict(json_schema_mode_override='validation')
     error: str | None = None
     # Editors
     ioce: IoceOutput | None = None
@@ -106,6 +107,11 @@ class MyelinOutput(BaseModel):
 
         return export_to_excel_bytes(self, claim=claim)
 
+class MyelinIO(BaseModel):
+    """Container for claim input/output pairs - used for batch results and exports."""
+    
+    input: Annotated[Claim | None, Field(default=None, json_schema_extra={"readOnly": False})]
+    output: Annotated[MyelinOutput | None, Field(default=None, json_schema_extra={"readOnly": True})]
 
 class Myelin:
     # Class-level locks and tracking for thread safety

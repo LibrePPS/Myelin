@@ -125,7 +125,7 @@ class IoceOutputDiagnosisCode(BaseModel):
             if java_obj.getPresentOnAdmission()
             else ""
         )
-    
+
         self.edit_list = []
         if hasattr(java_obj, "getEditList") and java_obj.getEditList():
             for edit in java_obj.getEditList():

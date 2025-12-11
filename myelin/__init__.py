@@ -27,7 +27,7 @@ from .converter import (
 )
 
 # High-level orchestrator
-from .core import Myelin, MyelinOutput
+from .core import Myelin, MyelinOutput, MyelinIO
 from .helpers.cms_downloader import CMSDownloader
 from .helpers.utils import ReturnCode
 
@@ -162,4 +162,5 @@ __all__ = [
     "Myelin",
     "MyelinOutput",
     "ReturnCode",
+    "MyelinIO",
 ]

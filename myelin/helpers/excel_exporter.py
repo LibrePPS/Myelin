@@ -28,12 +28,10 @@ try:
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side  # type: ignore[import-not-found]
     from openpyxl.utils import get_column_letter  # type: ignore[import-not-found]
     from openpyxl.worksheet.worksheet import Worksheet  # type: ignore[import-not-found]
+
     OPENPYXL_AVAILABLE = True
 except ImportError:
     OPENPYXL_AVAILABLE = False
-
-
-
 
 
 def _ensure_openpyxl() -> None:
@@ -101,12 +99,12 @@ def _is_edit_list(field_name: str, field_value: list) -> bool:
 def _concatenate_edit_list(items: list) -> str:
     """
     Concatenate edit list items into a newline-delimited string.
-    
+
     Handles IoceOutputEdit objects which have 'edit' and 'description' fields.
     """
     if not items:
         return ""
-    
+
     parts = []
     for item in items:
         if hasattr(item, "edit") and hasattr(item, "description"):
@@ -126,14 +124,14 @@ def _concatenate_edit_list(items: list) -> str:
         else:
             # Fallback: just convert to string
             parts.append(str(item))
-    
+
     return "\n".join(parts) if parts else ""
 
 
 def _is_simple_string_list(field_name: str, field_value: list) -> bool:
     """
     Check if a field is a simple list of strings that should be joined.
-    
+
     This handles fields like 'modifiers', 'cond_codes', 'demo_codes', etc.
     """
     if not field_value:
@@ -147,11 +145,11 @@ def _is_simple_string_list(field_name: str, field_value: list) -> bool:
 def _concatenate_string_list(items: list[str], delimiter: str = "; ") -> str:
     """
     Concatenate a list of strings into a single delimited string.
-    
+
     Args:
         items: List of strings to join
         delimiter: Delimiter to use between items (default: "; ")
-    
+
     Returns:
         Joined string
     """
@@ -264,21 +262,25 @@ def _auto_adjust_column_widths(ws: "Worksheet") -> None:
             adjusted_width = min(max_length + 2, 50)
             ws.column_dimensions[column_letter].width = adjusted_width
 
-def format_cell(key:str, value: Any, cell: "openpyxl.cell.cell.Cell") -> None:
+
+def format_cell(key: str, value: Any, cell: "openpyxl.cell.cell.Cell") -> None:
     if isinstance(value, float):
         if "ratio" in key.lower() or "percent" in key.lower():
             # Percentage format
             cell.number_format = "0.00%"
-        elif "payment" in key.lower() or "amount" in key.lower() or "cost" in key.lower():
+        elif (
+            "payment" in key.lower() or "amount" in key.lower() or "cost" in key.lower()
+        ):
             # Currency format
             cell.number_format = '"$"#,##0.00'
         else:
-            #We format to 4 decimal places but do not round the value itself
+            # We format to 4 decimal places but do not round the value itself
             # This allows users to keep full precesion but see a cleaner format
             cell.number_format = "#,##0.0000"
     elif isinstance(value, str):
         if "\n" in value or len(value) > 50:
             cell.alignment = WRAP_ALIGNMENT
+
 
 def _write_model_to_sheet(
     ws: "Worksheet",
@@ -427,10 +429,19 @@ def _create_summary_sheet(
 
         claim_info = [
             ("Claim ID", claim.claimid),
-            ("From Date", claim.from_date.strftime("%Y-%m-%d") if claim.from_date else ""),
-            ("Thru Date", claim.thru_date.strftime("%Y-%m-%d") if claim.thru_date else ""),
+            (
+                "From Date",
+                claim.from_date.strftime("%Y-%m-%d") if claim.from_date else "",
+            ),
+            (
+                "Thru Date",
+                claim.thru_date.strftime("%Y-%m-%d") if claim.thru_date else "",
+            ),
             ("Bill Type", claim.bill_type),
-            ("Total Charges", f"${claim.total_charges:,.2f}" if claim.total_charges else ""),
+            (
+                "Total Charges",
+                f"${claim.total_charges:,.2f}" if claim.total_charges else "",
+            ),
             ("LOS", str(claim.los) if claim.los else ""),
             ("Principal Dx", claim.principal_dx.code if claim.principal_dx else ""),
             ("Line Count", str(len(claim.lines)) if claim.lines else "0"),
@@ -598,9 +609,7 @@ def _get_fqhc_summary(output: Any) -> str:
         line_count = len(output.line_payment_data)
         parts.append(f"Lines: {line_count}")
         # Sum up line-level payments
-        line_payments = sum(
-            line.payment or 0 for line in output.line_payment_data
-        )
+        line_payments = sum(line.payment or 0 for line in output.line_payment_data)
         if line_payments > 0:
             parts.append(f"Line Payments: ${line_payments:,.2f}")
     if hasattr(output, "coinsurance_amount") and output.coinsurance_amount:

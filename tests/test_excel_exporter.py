@@ -20,24 +20,28 @@ from myelin.helpers.excel_exporter import (
 
 class SampleNestedModel(BaseModel):
     """Test nested model."""
+
     value: str = "test"
     count: int = 42
 
 
 class SampleListItemModel(BaseModel):
     """Test list item model."""
+
     name: str = ""
     amount: float = 0.0
 
 
 class SampleEditItem(BaseModel):
     """Test edit item model (mimics IoceOutputEdit)."""
+
     edit: str = ""
     description: str = ""
 
 
 class SampleModel(BaseModel):
     """Test model with various field types."""
+
     simple_field: str = "hello"
     number_field: int = 100
     float_field: float = 99.99
@@ -90,7 +94,7 @@ class TestFlattenModel:
     def test_simple_fields(self):
         model = SampleModel()
         flat = _flatten_model(model)
-        
+
         assert flat["simple_field"] == "hello"
         assert flat["number_field"] == 100
         assert flat["float_field"] == 99.99
@@ -100,17 +104,19 @@ class TestFlattenModel:
     def test_nested_model(self):
         model = SampleModel()
         flat = _flatten_model(model)
-        
+
         assert flat["nested_value"] == "test"
         assert flat["nested_count"] == 42
 
     def test_list_field_count(self):
-        model = SampleModel(items=[
-            SampleListItemModel(name="item1", amount=10.0),
-            SampleListItemModel(name="item2", amount=20.0),
-        ])
+        model = SampleModel(
+            items=[
+                SampleListItemModel(name="item1", amount=10.0),
+                SampleListItemModel(name="item2", amount=20.0),
+            ]
+        )
         flat = _flatten_model(model)
-        
+
         assert flat["items_count"] == 2
 
 
@@ -120,16 +126,18 @@ class TestExtractListItems:
     def test_empty_list(self):
         model = SampleModel()
         lists = _extract_list_items(model)
-        
+
         # Empty list should not be extracted
         assert "items" not in lists
 
     def test_populated_list(self):
-        model = SampleModel(items=[
-            SampleListItemModel(name="item1", amount=10.0),
-        ])
+        model = SampleModel(
+            items=[
+                SampleListItemModel(name="item1", amount=10.0),
+            ]
+        )
         lists = _extract_list_items(model)
-        
+
         assert "items" in lists
         assert len(lists["items"]) == 1
 
@@ -148,7 +156,7 @@ class TestEditListHandling:
         """Test detection of edit lists by item attributes."""
         items = [SampleEditItem(edit="E001")]
         assert _is_edit_list("some_field", items) is True
-        
+
         # Non-edit items should not be detected
         items = [SampleListItemModel(name="test")]
         assert _is_edit_list("some_field", items) is False
@@ -178,19 +186,20 @@ class TestEditListHandling:
 
     def test_flatten_model_with_edit_list(self):
         """Test that edit lists are concatenated in flattened output."""
+
         class ModelWithEditList(BaseModel):
             name: str = "test"
             edit_list: list[SampleEditItem] = Field(default_factory=list)
-        
+
         model = ModelWithEditList(
             name="test",
             edit_list=[
                 SampleEditItem(edit="E001", description="Error 1"),
                 SampleEditItem(edit="E002", description="Error 2"),
-            ]
+            ],
         )
         flat = _flatten_model(model)
-        
+
         # Edit list should be concatenated, not counted
         assert "edit_list" in flat
         assert flat["edit_list"] == "E001: Error 1\nE002: Error 2"
@@ -198,17 +207,18 @@ class TestEditListHandling:
 
     def test_extract_list_items_excludes_edit_lists(self):
         """Test that edit lists are not extracted as separate tables."""
+
         class ModelWithEditList(BaseModel):
             name: str = "test"
             edit_list: list[SampleEditItem] = Field(default_factory=list)
             items: list[SampleListItemModel] = Field(default_factory=list)
-        
+
         model = ModelWithEditList(
             edit_list=[SampleEditItem(edit="E001")],
             items=[SampleListItemModel(name="item1")],
         )
         lists = _extract_list_items(model)
-        
+
         # Edit list should be excluded, regular list should be included
         assert "edit_list" not in lists
         assert "items" in lists
@@ -253,16 +263,17 @@ class TestStringListHandling:
 
     def test_flatten_model_with_modifiers(self):
         """Test that modifier lists are concatenated in flattened output."""
+
         class LineItemModel(BaseModel):
             hcpcs: str = ""
             modifiers: list[str] = Field(default_factory=list)
-        
+
         model = LineItemModel(
             hcpcs="99213",
             modifiers=["25", "59"],
         )
         flat = _flatten_model(model)
-        
+
         # Modifiers should be concatenated, not counted
         assert "modifiers" in flat
         assert flat["modifiers"] == "25; 59"
@@ -270,28 +281,30 @@ class TestStringListHandling:
 
     def test_flatten_model_with_cond_codes(self):
         """Test that condition codes are concatenated."""
+
         class ClaimModel(BaseModel):
             cond_codes: list[str] = Field(default_factory=list)
-        
+
         model = ClaimModel(cond_codes=["C1", "C2", "C3"])
         flat = _flatten_model(model)
-        
+
         assert "cond_codes" in flat
         assert flat["cond_codes"] == "C1; C2; C3"
 
     def test_extract_list_items_excludes_string_lists(self):
         """Test that string lists are not extracted as separate tables."""
+
         class ModelWithStringList(BaseModel):
             name: str = "test"
             modifiers: list[str] = Field(default_factory=list)
             items: list[SampleListItemModel] = Field(default_factory=list)
-        
+
         model = ModelWithStringList(
             modifiers=["25", "59"],
             items=[SampleListItemModel(name="item1")],
         )
         lists = _extract_list_items(model)
-        
+
         # String list should be excluded, BaseModel list should be included
         assert "modifiers" not in lists
         assert "items" in lists
@@ -305,7 +318,7 @@ class TestExcelExporter:
         """Create a sample MyelinOutput for testing."""
         from myelin.core import MyelinOutput
         from myelin.msdrg.msdrg_output import MsdrgOutput
-        
+
         return MyelinOutput(
             msdrg=MsdrgOutput(
                 claim_id="test-claim-001",
@@ -319,35 +332,35 @@ class TestExcelExporter:
 
     @pytest.mark.skipif(
         not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
-        reason="openpyxl required for this test"
+        reason="openpyxl required for this test",
     )
     def test_export_to_bytes(self, sample_output):
         """Test exporting to bytes."""
         try:
             from myelin.helpers.excel_exporter import ExcelExporter
-            
+
             exporter = ExcelExporter(sample_output)
             excel_bytes = exporter.export_to_bytes()
-            
+
             assert isinstance(excel_bytes, bytes)
             assert len(excel_bytes) > 0
             # Check for Excel file signature (ZIP format)
-            assert excel_bytes[:4] == b'PK\x03\x04'
+            assert excel_bytes[:4] == b"PK\x03\x04"
         except ImportError:
             pytest.skip("openpyxl not installed")
 
     @pytest.mark.skipif(
         not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
-        reason="openpyxl required for this test"
+        reason="openpyxl required for this test",
     )
     def test_export_to_file(self, sample_output, tmp_path):
         """Test exporting to a file."""
         try:
             from myelin.helpers.excel_exporter import export_to_excel
-            
+
             filepath = tmp_path / "test_output.xlsx"
             export_to_excel(sample_output, filepath)
-            
+
             assert filepath.exists()
             assert filepath.stat().st_size > 0
         except ImportError:
@@ -355,14 +368,14 @@ class TestExcelExporter:
 
     @pytest.mark.skipif(
         not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
-        reason="openpyxl required for this test"
+        reason="openpyxl required for this test",
     )
     def test_myelin_output_to_excel_method(self, sample_output, tmp_path):
         """Test the to_excel method on MyelinOutput."""
         try:
             filepath = tmp_path / "test_method.xlsx"
             sample_output.to_excel(str(filepath))
-            
+
             assert filepath.exists()
         except ImportError:
             pytest.skip("openpyxl not installed")
@@ -372,7 +385,7 @@ class TestExcelExporter:
         """Create a sample Claim for testing."""
         from datetime import datetime
         from myelin.input.claim import Claim, DiagnosisCode, LineItem
-        
+
         return Claim(
             claimid="TEST-CLAIM-001",
             from_date=datetime(2024, 1, 1),
@@ -397,24 +410,24 @@ class TestExcelExporter:
 
     @pytest.mark.skipif(
         not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
-        reason="openpyxl required for this test"
+        reason="openpyxl required for this test",
     )
     def test_export_with_claim_input(self, sample_output, sample_claim, tmp_path):
         """Test exporting with claim input included."""
         try:
             import openpyxl
             from myelin.helpers.excel_exporter import export_to_excel
-            
+
             filepath = tmp_path / "test_with_claim.xlsx"
             export_to_excel(sample_output, filepath, claim=sample_claim)
-            
+
             assert filepath.exists()
-            
+
             # Verify the workbook has a Claim Input sheet
             wb = openpyxl.load_workbook(filepath)
             assert "Claim Input" in wb.sheetnames
             assert "Summary" in wb.sheetnames
-            
+
             # Check summary sheet has claim info
             summary_ws = wb["Summary"]
             # Look for claim ID in the summary
@@ -424,22 +437,22 @@ class TestExcelExporter:
                     found_claim_id = True
                     break
             assert found_claim_id, "Claim ID not found in summary sheet"
-            
+
         except ImportError:
             pytest.skip("openpyxl not installed")
 
     @pytest.mark.skipif(
         not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
-        reason="openpyxl required for this test"
+        reason="openpyxl required for this test",
     )
     def test_export_with_claim_to_bytes(self, sample_output, sample_claim):
         """Test exporting with claim input to bytes."""
         try:
             from myelin.helpers.excel_exporter import ExcelExporter
-            
+
             exporter = ExcelExporter(sample_output, claim=sample_claim)
             excel_bytes = exporter.export_to_bytes()
-            
+
             assert isinstance(excel_bytes, bytes)
             assert len(excel_bytes) > 0
         except ImportError:
@@ -447,14 +460,14 @@ class TestExcelExporter:
 
     @pytest.mark.skipif(
         not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
-        reason="openpyxl required for this test"
+        reason="openpyxl required for this test",
     )
     def test_to_excel_method_with_claim(self, sample_output, sample_claim, tmp_path):
         """Test the to_excel method with claim parameter."""
         try:
             filepath = tmp_path / "test_method_with_claim.xlsx"
             sample_output.to_excel(str(filepath), claim=sample_claim)
-            
+
             assert filepath.exists()
         except ImportError:
             pytest.skip("openpyxl not installed")
@@ -462,17 +475,17 @@ class TestExcelExporter:
     def test_import_error_without_openpyxl(self):
         """Test that proper error is raised when openpyxl is not available."""
         from myelin.helpers import excel_exporter
-        
+
         # Save original state
         original_available = excel_exporter.OPENPYXL_AVAILABLE
-        
+
         try:
             # Simulate openpyxl not being available
             excel_exporter.OPENPYXL_AVAILABLE = False
-            
+
             with pytest.raises(ImportError) as exc_info:
                 excel_exporter._ensure_openpyxl()
-            
+
             assert "openpyxl" in str(exc_info.value)
             assert "pip install" in str(exc_info.value)
         finally:
