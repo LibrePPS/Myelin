@@ -385,6 +385,8 @@ class IoceClient:
         """
         disposition_value: str | None = getattr(result, disposition_attr, None)
         if disposition_value:
+            if disposition_value in ("", "0"):
+                return
             disp_desc = self.ioce_component.getClaimDispositionDescription(
                 disposition_type_id, internal_version
             )
