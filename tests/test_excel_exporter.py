@@ -11,6 +11,8 @@ from myelin.helpers.excel_exporter import (
     _format_value,
     _humanize_key,
     _extract_list_items,
+    _is_edit_list,
+    _concatenate_edit_list,
 )
 
 
@@ -24,6 +26,12 @@ class SampleListItemModel(BaseModel):
     """Test list item model."""
     name: str = ""
     amount: float = 0.0
+
+
+class SampleEditItem(BaseModel):
+    """Test edit item model (mimics IoceOutputEdit)."""
+    edit: str = ""
+    description: str = ""
 
 
 class SampleModel(BaseModel):
@@ -122,6 +130,86 @@ class TestExtractListItems:
         
         assert "items" in lists
         assert len(lists["items"]) == 1
+
+
+class TestEditListHandling:
+    """Tests for edit list concatenation functionality."""
+
+    def test_is_edit_list_by_name(self):
+        """Test detection of edit lists by field name."""
+        items = [SampleEditItem(edit="E001")]
+        assert _is_edit_list("edit_list", items) is True
+        assert _is_edit_list("hcpcs_edit_list", items) is True
+        assert _is_edit_list("claim_rejection_edit_list", items) is True
+
+    def test_is_edit_list_by_attribute(self):
+        """Test detection of edit lists by item attributes."""
+        items = [SampleEditItem(edit="E001")]
+        assert _is_edit_list("some_field", items) is True
+        
+        # Non-edit items should not be detected
+        items = [SampleListItemModel(name="test")]
+        assert _is_edit_list("some_field", items) is False
+
+    def test_concatenate_edit_list_with_descriptions(self):
+        """Test concatenation with both edit code and description."""
+        items = [
+            SampleEditItem(edit="E001", description="Invalid code"),
+            SampleEditItem(edit="E002", description="Missing modifier"),
+        ]
+        result = _concatenate_edit_list(items)
+        assert result == "E001: Invalid code\nE002: Missing modifier"
+
+    def test_concatenate_edit_list_without_descriptions(self):
+        """Test concatenation with only edit codes."""
+        items = [
+            SampleEditItem(edit="E001", description=""),
+            SampleEditItem(edit="E002", description=""),
+        ]
+        result = _concatenate_edit_list(items)
+        assert result == "E001\nE002"
+
+    def test_concatenate_empty_list(self):
+        """Test concatenation of empty list."""
+        result = _concatenate_edit_list([])
+        assert result == ""
+
+    def test_flatten_model_with_edit_list(self):
+        """Test that edit lists are concatenated in flattened output."""
+        class ModelWithEditList(BaseModel):
+            name: str = "test"
+            edit_list: list[SampleEditItem] = Field(default_factory=list)
+        
+        model = ModelWithEditList(
+            name="test",
+            edit_list=[
+                SampleEditItem(edit="E001", description="Error 1"),
+                SampleEditItem(edit="E002", description="Error 2"),
+            ]
+        )
+        flat = _flatten_model(model)
+        
+        # Edit list should be concatenated, not counted
+        assert "edit_list" in flat
+        assert flat["edit_list"] == "E001: Error 1\nE002: Error 2"
+        assert "edit_list_count" not in flat
+
+    def test_extract_list_items_excludes_edit_lists(self):
+        """Test that edit lists are not extracted as separate tables."""
+        class ModelWithEditList(BaseModel):
+            name: str = "test"
+            edit_list: list[SampleEditItem] = Field(default_factory=list)
+            items: list[SampleListItemModel] = Field(default_factory=list)
+        
+        model = ModelWithEditList(
+            edit_list=[SampleEditItem(edit="E001")],
+            items=[SampleListItemModel(name="item1")],
+        )
+        lists = _extract_list_items(model)
+        
+        # Edit list should be excluded, regular list should be included
+        assert "edit_list" not in lists
+        assert "items" in lists
 
 
 class TestExcelExporter:

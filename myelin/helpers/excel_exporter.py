@@ -86,8 +86,51 @@ def _format_value(value: Any) -> Any:
     return value
 
 
+def _is_edit_list(field_name: str, field_value: list) -> bool:
+    """Check if a field is an edit list that should be concatenated."""
+    # Check if the field name suggests it's an edit list
+    if "edit_list" in field_name.lower():
+        return True
+    # Also check if items have 'edit' attribute (IoceOutputEdit pattern)
+    if field_value and hasattr(field_value[0], "edit"):
+        return True
+    return False
+
+
+def _concatenate_edit_list(items: list) -> str:
+    """
+    Concatenate edit list items into a newline-delimited string.
+    
+    Handles IoceOutputEdit objects which have 'edit' and 'description' fields.
+    """
+    if not items:
+        return ""
+    
+    parts = []
+    for item in items:
+        if hasattr(item, "edit") and hasattr(item, "description"):
+            # IoceOutputEdit format
+            edit_str = str(item.edit) if item.edit else ""
+            desc_str = str(item.description) if item.description else ""
+            if edit_str and desc_str:
+                parts.append(f"{edit_str}: {desc_str}")
+            elif edit_str:
+                parts.append(edit_str)
+            elif desc_str:
+                parts.append(desc_str)
+        elif hasattr(item, "edit"):
+            edit_str = str(item.edit) if item.edit else ""
+            if edit_str:
+                parts.append(edit_str)
+        else:
+            # Fallback: just convert to string
+            parts.append(str(item))
+    
+    return "\n".join(parts) if parts else ""
+
+
 def _flatten_model(
-    model: BaseModel, prefix: str = "", max_depth: int = 3
+    model: BaseModel, prefix: str = "", max_depth: int = 4
 ) -> dict[str, Any]:
     """
     Flatten a Pydantic model into a dictionary with prefixed keys.
@@ -115,8 +158,12 @@ def _flatten_model(
             nested = _flatten_model(field_value, f"{key}_", max_depth - 1)
             result.update(nested)
         elif isinstance(field_value, list):
-            # Lists will be handled separately, just note the count
-            result[f"{key}_count"] = len(field_value)
+            # Check if this is an edit list that should be concatenated
+            if field_value and _is_edit_list(field_name, field_value):
+                result[key] = _concatenate_edit_list(field_value)
+            else:
+                # Other lists will be handled separately, just note the count
+                result[f"{key}_count"] = len(field_value)
         elif isinstance(field_value, dict):
             # Flatten dict with prefixed keys
             for dict_key, dict_value in field_value.items():
@@ -138,6 +185,9 @@ def _extract_list_items(model: BaseModel) -> dict[str, list[BaseModel]]:
 
     for field_name, field_value in model:
         if isinstance(field_value, list) and field_value:
+            # Skip edit lists - they're handled inline via concatenation
+            if _is_edit_list(field_name, field_value):
+                continue
             # Check if items are BaseModels
             if isinstance(field_value[0], BaseModel):
                 lists[field_name] = field_value
@@ -461,8 +511,8 @@ def _get_opps_summary(output: Any) -> str:
     if not output:
         return ""
     parts = []
-    if hasattr(output, "total_payment") and output.total_payment:
-        parts.append(f"Total Payment: ${output.total_payment:,.2f}")
+    if hasattr(output, "payment") and output.payment:
+        parts.append(f"Total Payment: ${output.payment:,.2f}")
     if hasattr(output, "line_outputs") and output.line_outputs:
         parts.append(f"Lines: {len(output.line_outputs)}")
     return ", ".join(parts) if parts else "Processed"
