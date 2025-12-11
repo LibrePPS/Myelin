@@ -302,6 +302,7 @@ def run_pricers(myelin: Myelin):
                 service_date=datetime(2025, 7, 1),
                 units=1,
                 charges=350.00,
+                modifiers=["25"],
             )
         )
         fqhc_claim.from_date = datetime(2025, 7, 1)
@@ -314,7 +315,7 @@ def run_pricers(myelin: Myelin):
         res = MyelinOutput()
         res.ioce = ioce_output
         res.fqhc = fqhc_output  
-        res.to_excel("./fqhc_pricer_output.xlsx")
+        res.to_excel("./fqhc_pricer_output.xlsx", fqhc_claim)
         print(fqhc_output.model_dump_json(indent=2))
 
 

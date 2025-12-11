@@ -21,6 +21,7 @@ from pydantic import BaseModel
 
 if TYPE_CHECKING:
     from myelin.core import MyelinOutput
+    from myelin.input.claim import Claim
 
 try:
     import openpyxl  # type: ignore[import-not-found]
@@ -129,6 +130,38 @@ def _concatenate_edit_list(items: list) -> str:
     return "\n".join(parts) if parts else ""
 
 
+def _is_simple_string_list(field_name: str, field_value: list) -> bool:
+    """
+    Check if a field is a simple list of strings that should be joined.
+    
+    This handles fields like 'modifiers', 'cond_codes', 'demo_codes', etc.
+    """
+    if not field_value:
+        return False
+    # Check if all items are strings (or string-like primitives)
+    if all(isinstance(item, str) for item in field_value):
+        return True
+    return False
+
+
+def _concatenate_string_list(items: list[str], delimiter: str = "; ") -> str:
+    """
+    Concatenate a list of strings into a single delimited string.
+    
+    Args:
+        items: List of strings to join
+        delimiter: Delimiter to use between items (default: "; ")
+    
+    Returns:
+        Joined string
+    """
+    if not items:
+        return ""
+    # Filter out empty strings and join
+    non_empty = [str(item) for item in items if item]
+    return delimiter.join(non_empty) if non_empty else ""
+
+
 def _flatten_model(
     model: BaseModel, prefix: str = "", max_depth: int = 4
 ) -> dict[str, Any]:
@@ -161,6 +194,9 @@ def _flatten_model(
             # Check if this is an edit list that should be concatenated
             if field_value and _is_edit_list(field_name, field_value):
                 result[key] = _concatenate_edit_list(field_value)
+            # Check if this is a simple string list (like modifiers, cond_codes)
+            elif field_value and _is_simple_string_list(field_name, field_value):
+                result[key] = _concatenate_string_list(field_value)
             else:
                 # Other lists will be handled separately, just note the count
                 result[f"{key}_count"] = len(field_value)
@@ -187,6 +223,9 @@ def _extract_list_items(model: BaseModel) -> dict[str, list[BaseModel]]:
         if isinstance(field_value, list) and field_value:
             # Skip edit lists - they're handled inline via concatenation
             if _is_edit_list(field_name, field_value):
+                continue
+            # Skip simple string lists - they're handled inline via concatenation
+            if _is_simple_string_list(field_name, field_value):
                 continue
             # Check if items are BaseModels
             if isinstance(field_value[0], BaseModel):
@@ -363,7 +402,11 @@ def _humanize_key(key: str) -> str:
     return key.replace("_", " ").title()
 
 
-def _create_summary_sheet(wb: "openpyxl.Workbook", output: "MyelinOutput") -> None:
+def _create_summary_sheet(
+    wb: "openpyxl.Workbook",
+    output: "MyelinOutput",
+    claim: "Claim | None" = None,
+) -> None:
     """Create a summary sheet with key information from all modules."""
     _init_styles()
     ws = wb.active
@@ -375,6 +418,32 @@ def _create_summary_sheet(wb: "openpyxl.Workbook", output: "MyelinOutput") -> No
     ws.cell(row=current_row, column=1, value="Myelin Output Summary")
     ws.cell(row=current_row, column=1).font = Font(bold=True, size=16)
     current_row += 2
+
+    # Claim summary if provided
+    if claim is not None:
+        ws.cell(row=current_row, column=1, value="Claim Information")
+        ws.cell(row=current_row, column=1).font = Font(bold=True, size=12)
+        current_row += 1
+
+        claim_info = [
+            ("Claim ID", claim.claimid),
+            ("From Date", claim.from_date.strftime("%Y-%m-%d") if claim.from_date else ""),
+            ("Thru Date", claim.thru_date.strftime("%Y-%m-%d") if claim.thru_date else ""),
+            ("Bill Type", claim.bill_type),
+            ("Total Charges", f"${claim.total_charges:,.2f}" if claim.total_charges else ""),
+            ("LOS", str(claim.los) if claim.los else ""),
+            ("Principal Dx", claim.principal_dx.code if claim.principal_dx else ""),
+            ("Line Count", str(len(claim.lines)) if claim.lines else "0"),
+        ]
+
+        for label, value in claim_info:
+            ws.cell(row=current_row, column=1, value=label)
+            ws.cell(row=current_row, column=2, value=value)
+            ws.cell(row=current_row, column=1).border = THIN_BORDER
+            ws.cell(row=current_row, column=2).border = THIN_BORDER
+            current_row += 1
+
+        current_row += 1  # Add spacing
 
     # Error status
     if output.error:
@@ -560,15 +629,21 @@ class ExcelExporter:
     structures into well-formatted Excel workbooks with multiple sheets.
     """
 
-    def __init__(self, output: "MyelinOutput"):
+    def __init__(
+        self,
+        output: "MyelinOutput",
+        claim: "Claim | None" = None,
+    ):
         """
         Initialize the exporter with a MyelinOutput instance.
 
         Args:
             output: The MyelinOutput to export
+            claim: Optional input Claim to include in the export
         """
         _ensure_openpyxl()
         self.output = output
+        self.claim = claim
 
     def export(self, filepath: str | Path) -> None:
         """
@@ -598,7 +673,13 @@ class ExcelExporter:
         wb = openpyxl.Workbook()
 
         # Create summary sheet first
-        _create_summary_sheet(wb, self.output)
+        _create_summary_sheet(wb, self.output, self.claim)
+
+        # Add claim input sheet if claim is provided
+        if self.claim is not None:
+            ws = wb.create_sheet(title="Claim Input")
+            _write_model_to_sheet(ws, self.claim, "Input Claim")
+            _auto_adjust_column_widths(ws)
 
         # Add sheets for each module that has data
         modules = [
@@ -628,24 +709,32 @@ class ExcelExporter:
         return wb
 
 
-def export_to_excel(output: "MyelinOutput", filepath: str | Path) -> None:
+def export_to_excel(
+    output: "MyelinOutput",
+    filepath: str | Path,
+    claim: "Claim | None" = None,
+) -> None:
     """
     Convenience function to export MyelinOutput to Excel.
 
     Args:
         output: The MyelinOutput to export
         filepath: Path where the Excel file should be saved
+        claim: Optional input Claim to include in the export
 
     Example:
         >>> from myelin.helpers.excel_exporter import export_to_excel
         >>> result = myelin.process(claim)
-        >>> export_to_excel(result, "output.xlsx")
+        >>> export_to_excel(result, "output.xlsx", claim=claim)
     """
-    exporter = ExcelExporter(output)
+    exporter = ExcelExporter(output, claim=claim)
     exporter.export(filepath)
 
 
-def export_to_excel_bytes(output: "MyelinOutput") -> bytes:
+def export_to_excel_bytes(
+    output: "MyelinOutput",
+    claim: "Claim | None" = None,
+) -> bytes:
     """
     Convenience function to export MyelinOutput to Excel bytes.
 
@@ -653,6 +742,7 @@ def export_to_excel_bytes(output: "MyelinOutput") -> bytes:
 
     Args:
         output: The MyelinOutput to export
+        claim: Optional input Claim to include in the export
 
     Returns:
         Excel file content as bytes
@@ -660,8 +750,8 @@ def export_to_excel_bytes(output: "MyelinOutput") -> bytes:
     Example:
         >>> from myelin.helpers.excel_exporter import export_to_excel_bytes
         >>> result = myelin.process(claim)
-        >>> excel_bytes = export_to_excel_bytes(result)
+        >>> excel_bytes = export_to_excel_bytes(result, claim=claim)
         >>> # Send excel_bytes as HTTP response
     """
-    exporter = ExcelExporter(output)
+    exporter = ExcelExporter(output, claim=claim)
     return exporter.export_to_bytes()

@@ -64,29 +64,33 @@ class MyelinOutput(BaseModel):
     esrd: EsrdOutput | None = None
     fqhc: FqhcOutput | None = None
 
-    def to_excel(self, filepath: str) -> None:
+    def to_excel(self, filepath: str, claim: "Claim | None" = None) -> None:
         """
         Export this output to an Excel file.
 
         Args:
             filepath: Path where the Excel file should be saved
+            claim: Optional input Claim to include in the export
 
         Raises:
             ImportError: If openpyxl is not installed
 
         Example:
             >>> result = myelin.process(claim)
-            >>> result.to_excel("output.xlsx")
+            >>> result.to_excel("output.xlsx", claim=claim)
         """
         from myelin.helpers.excel_exporter import export_to_excel
 
-        export_to_excel(self, filepath)
+        export_to_excel(self, filepath, claim=claim)
 
-    def to_excel_bytes(self) -> bytes:
+    def to_excel_bytes(self, claim: "Claim | None" = None) -> bytes:
         """
         Export this output to Excel format as bytes.
 
         Useful for web applications that need to return the file as a response.
+
+        Args:
+            claim: Optional input Claim to include in the export
 
         Returns:
             Excel file content as bytes
@@ -96,11 +100,11 @@ class MyelinOutput(BaseModel):
 
         Example:
             >>> result = myelin.process(claim)
-            >>> excel_bytes = result.to_excel_bytes()
+            >>> excel_bytes = result.to_excel_bytes(claim=claim)
         """
         from myelin.helpers.excel_exporter import export_to_excel_bytes
 
-        return export_to_excel_bytes(self)
+        return export_to_excel_bytes(self, claim=claim)
 
 
 class Myelin:

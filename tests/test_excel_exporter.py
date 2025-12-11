@@ -13,6 +13,8 @@ from myelin.helpers.excel_exporter import (
     _extract_list_items,
     _is_edit_list,
     _concatenate_edit_list,
+    _is_simple_string_list,
+    _concatenate_string_list,
 )
 
 
@@ -212,6 +214,89 @@ class TestEditListHandling:
         assert "items" in lists
 
 
+class TestStringListHandling:
+    """Tests for simple string list concatenation (like modifiers)."""
+
+    def test_is_simple_string_list_true(self):
+        """Test detection of simple string lists."""
+        assert _is_simple_string_list("modifiers", ["25", "59"]) is True
+        assert _is_simple_string_list("cond_codes", ["C1", "C2"]) is True
+        assert _is_simple_string_list("demo_codes", ["D1"]) is True
+
+    def test_is_simple_string_list_false_for_empty(self):
+        """Test empty lists are not detected."""
+        assert _is_simple_string_list("modifiers", []) is False
+
+    def test_is_simple_string_list_false_for_non_strings(self):
+        """Test non-string lists are not detected."""
+        assert _is_simple_string_list("items", [1, 2, 3]) is False
+        assert _is_simple_string_list("objects", [SampleListItemModel()]) is False
+
+    def test_concatenate_string_list(self):
+        """Test concatenation of string lists."""
+        result = _concatenate_string_list(["25", "59", "76"])
+        assert result == "25; 59; 76"
+
+    def test_concatenate_string_list_with_custom_delimiter(self):
+        """Test concatenation with custom delimiter."""
+        result = _concatenate_string_list(["A", "B", "C"], delimiter=", ")
+        assert result == "A, B, C"
+
+    def test_concatenate_string_list_empty(self):
+        """Test concatenation of empty list."""
+        assert _concatenate_string_list([]) == ""
+
+    def test_concatenate_string_list_filters_empty_strings(self):
+        """Test that empty strings are filtered out."""
+        result = _concatenate_string_list(["25", "", "59", ""])
+        assert result == "25; 59"
+
+    def test_flatten_model_with_modifiers(self):
+        """Test that modifier lists are concatenated in flattened output."""
+        class LineItemModel(BaseModel):
+            hcpcs: str = ""
+            modifiers: list[str] = Field(default_factory=list)
+        
+        model = LineItemModel(
+            hcpcs="99213",
+            modifiers=["25", "59"],
+        )
+        flat = _flatten_model(model)
+        
+        # Modifiers should be concatenated, not counted
+        assert "modifiers" in flat
+        assert flat["modifiers"] == "25; 59"
+        assert "modifiers_count" not in flat
+
+    def test_flatten_model_with_cond_codes(self):
+        """Test that condition codes are concatenated."""
+        class ClaimModel(BaseModel):
+            cond_codes: list[str] = Field(default_factory=list)
+        
+        model = ClaimModel(cond_codes=["C1", "C2", "C3"])
+        flat = _flatten_model(model)
+        
+        assert "cond_codes" in flat
+        assert flat["cond_codes"] == "C1; C2; C3"
+
+    def test_extract_list_items_excludes_string_lists(self):
+        """Test that string lists are not extracted as separate tables."""
+        class ModelWithStringList(BaseModel):
+            name: str = "test"
+            modifiers: list[str] = Field(default_factory=list)
+            items: list[SampleListItemModel] = Field(default_factory=list)
+        
+        model = ModelWithStringList(
+            modifiers=["25", "59"],
+            items=[SampleListItemModel(name="item1")],
+        )
+        lists = _extract_list_items(model)
+        
+        # String list should be excluded, BaseModel list should be included
+        assert "modifiers" not in lists
+        assert "items" in lists
+
+
 class TestExcelExporter:
     """Integration tests for ExcelExporter."""
 
@@ -277,6 +362,98 @@ class TestExcelExporter:
         try:
             filepath = tmp_path / "test_method.xlsx"
             sample_output.to_excel(str(filepath))
+            
+            assert filepath.exists()
+        except ImportError:
+            pytest.skip("openpyxl not installed")
+
+    @pytest.fixture
+    def sample_claim(self):
+        """Create a sample Claim for testing."""
+        from datetime import datetime
+        from myelin.input.claim import Claim, DiagnosisCode, LineItem
+        
+        return Claim(
+            claimid="TEST-CLAIM-001",
+            from_date=datetime(2024, 1, 1),
+            thru_date=datetime(2024, 1, 5),
+            bill_type="111",
+            total_charges=5000.00,
+            los=4,
+            principal_dx=DiagnosisCode(code="M17.11"),
+            lines=[
+                LineItem(
+                    revenue_code="0360",
+                    hcpcs="27447",
+                    charges=4500.00,
+                ),
+                LineItem(
+                    revenue_code="0250",
+                    hcpcs="",
+                    charges=500.00,
+                ),
+            ],
+        )
+
+    @pytest.mark.skipif(
+        not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
+        reason="openpyxl required for this test"
+    )
+    def test_export_with_claim_input(self, sample_output, sample_claim, tmp_path):
+        """Test exporting with claim input included."""
+        try:
+            import openpyxl
+            from myelin.helpers.excel_exporter import export_to_excel
+            
+            filepath = tmp_path / "test_with_claim.xlsx"
+            export_to_excel(sample_output, filepath, claim=sample_claim)
+            
+            assert filepath.exists()
+            
+            # Verify the workbook has a Claim Input sheet
+            wb = openpyxl.load_workbook(filepath)
+            assert "Claim Input" in wb.sheetnames
+            assert "Summary" in wb.sheetnames
+            
+            # Check summary sheet has claim info
+            summary_ws = wb["Summary"]
+            # Look for claim ID in the summary
+            found_claim_id = False
+            for row in summary_ws.iter_rows(values_only=True):
+                if row and "TEST-CLAIM-001" in str(row):
+                    found_claim_id = True
+                    break
+            assert found_claim_id, "Claim ID not found in summary sheet"
+            
+        except ImportError:
+            pytest.skip("openpyxl not installed")
+
+    @pytest.mark.skipif(
+        not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
+        reason="openpyxl required for this test"
+    )
+    def test_export_with_claim_to_bytes(self, sample_output, sample_claim):
+        """Test exporting with claim input to bytes."""
+        try:
+            from myelin.helpers.excel_exporter import ExcelExporter
+            
+            exporter = ExcelExporter(sample_output, claim=sample_claim)
+            excel_bytes = exporter.export_to_bytes()
+            
+            assert isinstance(excel_bytes, bytes)
+            assert len(excel_bytes) > 0
+        except ImportError:
+            pytest.skip("openpyxl not installed")
+
+    @pytest.mark.skipif(
+        not pytest.importorskip("openpyxl", reason="openpyxl not installed"),
+        reason="openpyxl required for this test"
+    )
+    def test_to_excel_method_with_claim(self, sample_output, sample_claim, tmp_path):
+        """Test the to_excel method with claim parameter."""
+        try:
+            filepath = tmp_path / "test_method_with_claim.xlsx"
+            sample_output.to_excel(str(filepath), claim=sample_claim)
             
             assert filepath.exists()
         except ImportError:
