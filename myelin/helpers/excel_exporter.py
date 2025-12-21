@@ -495,7 +495,8 @@ def _create_summary_sheet(
     for name, module_output, summary_func in modules:
         status = "✓ Processed" if module_output else "— Not Run"
         if name == "IPSF" or name == "OPSF":
-            status = "✓ Used for Pricing" 
+            if module_output:
+                status = "✓ Used for Pricing" 
         key_info = summary_func(module_output) if module_output else ""
 
         ws.cell(row=current_row, column=1, value=name)
