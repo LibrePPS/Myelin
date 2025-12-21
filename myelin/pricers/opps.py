@@ -226,7 +226,7 @@ class OppsClient:
 
     def create_input_claim(
         self, claim: Claim, ioce_output: IoceOutput | None = None, **kwargs: object
-    ) -> jpype.JObject:
+    ) -> tuple[jpype.JObject, OPSFProvider]:
         opps_claim_object = self.opps_claim_data_class()
 
         opps_claim_object.setTypeOfBill(claim.bill_type)
@@ -291,7 +291,7 @@ class OppsClient:
     @handle_java_exceptions
     def process(
         self, claim: Claim, ioce_output: IoceOutput | None = None, **kwargs: object
-    ) -> OppsOutput:
+    ) -> tuple[OppsOutput, OPSFProvider]:
         """
         Process the python claim object through the CMS OPPS Java Pricer.
         """
@@ -305,29 +305,8 @@ class OppsClient:
         pricing_request.setClaimData(opps_claim_object)
         provider_data = self.outpatient_prov_data_class()
 
-        if claim.billing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(str(claim.thru_date).replace("-", ""))
-            opsf_provider = OPSFProvider()
-
-            opsf_provider.from_sqlite(
-                self.db, claim.billing_provider, date_int, **kwargs
-            )
-        elif claim.servicing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(str(claim.thru_date).replace("-", ""))
-            opsf_provider = OPSFProvider()
-            opsf_provider.from_sqlite(
-                self.db, claim.servicing_provider, date_int, **kwargs
-            )
-        else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for IPPS pricing."
-            )
+        opsf_provider = OPSFProvider()
+        opsf_provider.from_claim(claim, self.db, **kwargs)
         opsf_provider.set_java_values(provider_data, self)
 
         pricing_request.setProviderData(provider_data)
@@ -335,4 +314,4 @@ class OppsClient:
         opps_output = OppsOutput()
         opps_output.claim_id = claim.claimid
         opps_output.from_java(pricing_response)
-        return opps_output
+        return opps_output, opsf_provider

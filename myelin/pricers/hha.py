@@ -248,7 +248,7 @@ class HhaClient:
 
     def create_input_claim(
         self, claim: Claim, hhag_output: HhagOutput | None = None, **kwargs: object
-    ) -> jpype.JObject:
+    ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database engine is not set for HhaClient")
         claim_object = self.hha_pricer_claim_data_class()
@@ -341,28 +341,8 @@ class HhaClient:
             claim_object.setPriorPaymentTotal(self.java_big_decimal_class(0))
             claim_object.setPriorOutlierTotal(self.java_big_decimal_class(0))
 
-        if claim.billing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            elif isinstance(claim.thru_date, str):
-                date_int = int(claim.thru_date.replace("-", ""))
-            ipsf_provider = IPSFProvider()
-            ipsf_provider.from_sqlite(
-                self.db, claim.billing_provider, date_int, **kwargs
-            )
-        elif claim.servicing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            elif isinstance(claim.thru_date, str):
-                date_int = int(claim.thru_date.replace("-", ""))
-            ipsf_provider = IPSFProvider()
-            ipsf_provider.from_sqlite(
-                self.db, claim.servicing_provider, date_int, **kwargs
-            )
-        else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for IPPS pricing."
-            )
+        ipsf_provider = IPSFProvider()
+        ipsf_provider.from_claim(claim, self.db, **kwargs)
         claim_object.setProviderCcn(ipsf_provider.provider_ccn)
         pricing_request.setClaimData(claim_object)
         # HHA Uses the special provider update factor as vbp adjustment
@@ -381,7 +361,7 @@ class HhaClient:
                         claim.patient.address.zip[:5]
                     )
         pricing_request.setProviderData(provider_data)
-        return pricing_request
+        return pricing_request, ipsf_provider
 
     def process_claim(
         self, claim: Claim, pricing_request: jpype.JObject
@@ -393,7 +373,7 @@ class HhaClient:
     @handle_java_exceptions
     def process(
         self, claim: Claim, hhag_output: HhagOutput | None = None, **kwargs: object
-    ):
+    ) -> tuple[HhaOutput, IPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
 
@@ -402,10 +382,12 @@ class HhaClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        pricing_request = self.create_input_claim(claim, hhag_output, **kwargs)
+        pricing_request, ipsf_provider = self.create_input_claim(
+            claim, hhag_output, **kwargs
+        )
         pricing_response = self.process_claim(claim, pricing_request)
         hha_output = HhaOutput()
         hha_output.claim_id = claim.claimid
         hha_output.from_java(pricing_response)
         hha_output.hhrg_code = str(pricing_request.getClaimData().getHhrgInputCode())
-        return hha_output
+        return hha_output, ipsf_provider

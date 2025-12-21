@@ -28,6 +28,8 @@ from myelin.pricers.irf import IrfClient, IrfOutput
 from myelin.pricers.ltch import LtchClient, LtchOutput
 from myelin.pricers.opps import OppsClient, OppsOutput
 from myelin.pricers.snf import SnfClient, SnfOutput
+from myelin.pricers.ipsf import IPSFProvider
+from myelin.pricers.opsf import OPSFProvider
 
 PRICERS: dict[str, str] = {
     "Esrd": "esrd-pricer",
@@ -44,7 +46,7 @@ PRICERS: dict[str, str] = {
 
 
 class MyelinOutput(BaseModel):
-    model_config = ConfigDict(json_schema_mode_override='validation')
+    model_config = ConfigDict(json_schema_mode_override="validation")
     error: str | None = None
     # Editors
     ioce: IoceOutput | None = None
@@ -64,6 +66,8 @@ class MyelinOutput(BaseModel):
     hha: HhaOutput | None = None
     esrd: EsrdOutput | None = None
     fqhc: FqhcOutput | None = None
+    ipsf: IPSFProvider | None = None
+    opsf: OPSFProvider | None = None
 
     def to_excel(self, filepath: str, claim: "Claim | None" = None) -> None:
         """
@@ -107,11 +111,17 @@ class MyelinOutput(BaseModel):
 
         return export_to_excel_bytes(self, claim=claim)
 
+
 class MyelinIO(BaseModel):
     """Container for claim input/output pairs - used for batch results and exports."""
-    
-    input: Annotated[Claim | None, Field(default=None, json_schema_extra={"readOnly": False})]
-    output: Annotated[MyelinOutput | None, Field(default=None, json_schema_extra={"readOnly": True})]
+
+    input: Annotated[
+        Claim | None, Field(default=None, json_schema_extra={"readOnly": False})
+    ]
+    output: Annotated[
+        MyelinOutput | None, Field(default=None, json_schema_extra={"readOnly": True})
+    ]
+
 
 class Myelin:
     # Class-level locks and tracking for thread safety
@@ -328,27 +338,37 @@ class Myelin:
             if self.ipps_client is None:
                 results.error = "IPPS client not initialized"
                 return results
-            results.ipps = self.ipps_client.process(claim, results.msdrg, **kwargs)
+            results.ipps, results.ipsf = self.ipps_client.process(
+                claim, results.msdrg, **kwargs
+            )
         if Modules.OPPS in unique_modules:
             if self.opps_client is None:
                 results.error = "OPPS client not initialized"
                 return results
-            results.opps = self.opps_client.process(claim, results.ioce, **kwargs)
+            results.opps, results.opsf = self.opps_client.process(
+                claim, results.ioce, **kwargs
+            )
         if Modules.PSYCH in unique_modules:
             if self.ipf_client is None:
                 results.error = "IPF client not initialized"
                 return results
-            results.psych = self.ipf_client.process(claim, results.msdrg, **kwargs)
+            results.psych, results.ipsf = self.ipf_client.process(
+                claim, results.msdrg, **kwargs
+            )
         if Modules.LTCH in unique_modules:
             if self.ltch_client is None:
                 results.error = "LTCH client not initialized"
                 return results
-            results.ltch = self.ltch_client.process(claim, results.msdrg, **kwargs)
+            results.ltch, results.ipsf = self.ltch_client.process(
+                claim, results.msdrg, **kwargs
+            )
         if Modules.IRF in unique_modules:
             if self.irf_client is None:
                 results.error = "IRF client not initialized"
                 return results
-            results.irf = self.irf_client.process(claim, results.cmg, **kwargs)
+            results.irf, results.ipsf = self.irf_client.process(
+                claim, results.cmg, **kwargs
+            )
         if Modules.HOSPICE in unique_modules:
             if self.hospice_client is None:
                 results.error = "Hospice client not initialized"
@@ -358,17 +378,19 @@ class Myelin:
             if self.snf_client is None:
                 results.error = "SNF client not initialized"
                 return results
-            results.snf = self.snf_client.process(claim, **kwargs)
+            results.snf, results.ipsf = self.snf_client.process(claim, **kwargs)
         if Modules.HHA in unique_modules:
             if self.hha_client is None:
                 results.error = "HHA client not initialized"
                 return results
-            results.hha = self.hha_client.process(claim, results.hhag, **kwargs)
+            results.hha, results.ipsf = self.hha_client.process(
+                claim, results.hhag, **kwargs
+            )
         if Modules.ESRD in unique_modules:
             if self.esrd_client is None:
                 results.error = "ESRD client not initialized"
                 return results
-            results.esrd = self.esrd_client.process(claim, **kwargs)
+            results.esrd, results.opsf = self.esrd_client.process(claim, **kwargs)
         if Modules.FQHC in unique_modules:
             if self.fqhc_client is None:
                 results.error = "FQHC client not initialized"

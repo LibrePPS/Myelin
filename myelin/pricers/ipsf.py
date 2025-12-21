@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 import os
 from typing import Any, Iterable, Literal
 
@@ -7,6 +8,7 @@ import sqlalchemy
 from pydantic import BaseModel
 from sqlalchemy import (
     Column,
+    Engine,
     Float,
     Index,
     Integer,
@@ -17,7 +19,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-from myelin.input.claim import Provider
+from myelin.input.claim import Provider, Claim
 from myelin.plugins import apply_client_methods
 
 IPSF_URL = "https://pds.mps.cms.gov/fiss/v2/inpatient/export?fromDate=2023-01-01&toDate=2030-12-31"
@@ -517,6 +519,25 @@ class IPSFProvider(BaseModel):
         **kwargs: object,
     ):  # backward compat
         return self.from_db(conn, provider, date_int, **kwargs)
+
+    def from_claim(self, claim: Claim, db: Engine, **kwargs: object) -> None:
+        if claim.billing_provider is not None:
+            if isinstance(claim.thru_date, datetime):
+                date_int = int(claim.thru_date.strftime("%Y%m%d"))
+            else:
+                date_int = int(claim.thru_date.replace("-", ""))
+            self.from_sqlite(db, claim.billing_provider, date_int, **kwargs)
+        elif claim.servicing_provider is not None:
+            if isinstance(claim.thru_date, datetime):
+                date_int = int(claim.thru_date.strftime("%Y%m%d"))
+            else:
+                date_int = int(claim.thru_date.replace("-", ""))
+            self.from_sqlite(db, claim.servicing_provider, date_int, **kwargs)
+        else:
+            raise ValueError(
+                "Either billing or servicing provider must be provided for pricing."
+            )
+        return
 
     def set_java_values(self, java_provider, client):
         if not hasattr(client, "java_integer_class") or not hasattr(

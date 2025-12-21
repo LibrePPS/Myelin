@@ -488,10 +488,14 @@ def _create_summary_sheet(
         ("HHA", output.hha, _get_generic_summary),
         ("ESRD", output.esrd, _get_generic_summary),
         ("FQHC", output.fqhc, _get_fqhc_summary),
+        ("IPSF", output.ipsf, _get_ipsf_summary),
+        ("OPSF", output.opsf, _get_opsf_summary),
     ]
 
     for name, module_output, summary_func in modules:
         status = "✓ Processed" if module_output else "— Not Run"
+        if name == "IPSF" or name == "OPSF":
+            status = "✓ Used for Pricing" 
         key_info = summary_func(module_output) if module_output else ""
 
         ws.cell(row=current_row, column=1, value=name)
@@ -617,6 +621,30 @@ def _get_fqhc_summary(output: Any) -> str:
     return ", ".join(parts) if parts else "Processed"
 
 
+def _get_ipsf_summary(output: Any) -> str:
+    """Get summary info for IPSF output."""
+    if not output:
+        return ""
+    parts = []
+    if hasattr(output, "provider_ccn") and output.provider_ccn:
+        parts.append(f"CCN: {output.provider_ccn}")
+    if hasattr(output, "provider_type") and output.provider_type:
+        parts.append(f"Type: {output.provider_type}")
+    return ", ".join(parts) if parts else "Used for Processing"
+
+
+def _get_opsf_summary(output: Any) -> str:
+    """Get summary info for OPSF output."""
+    if not output:
+        return ""
+    parts = []
+    if hasattr(output, "provider_ccn") and output.provider_ccn:
+        parts.append(f"CCN: {output.provider_ccn}")
+    if hasattr(output, "provider_type") and output.provider_type:
+        parts.append(f"Type: {output.provider_type}")
+    return ", ".join(parts) if parts else "Used for Processing"
+
+
 def _get_generic_summary(output: Any) -> str:
     """Get generic summary for any output."""
     if not output:
@@ -707,12 +735,15 @@ class ExcelExporter:
             ("hha", "HHA", self.output.hha),
             ("esrd", "ESRD", self.output.esrd),
             ("fqhc", "FQHC", self.output.fqhc),
+            ("ipsf", "IPSF", self.output.ipsf),
+            ("opsf", "OPSF", self.output.opsf),
         ]
 
         for attr_name, sheet_name, module_output in modules:
             if module_output is not None:
                 ws = wb.create_sheet(title=sheet_name)
-                _write_model_to_sheet(ws, module_output, f"{sheet_name} Output")
+                title = f"{sheet_name} Output" if attr_name != "ipsf" and attr_name != "opsf" else f"{sheet_name} Used for Pricing"
+                _write_model_to_sheet(ws, module_output, title)
                 _auto_adjust_column_widths(ws)
 
         return wb

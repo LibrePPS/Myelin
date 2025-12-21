@@ -98,7 +98,7 @@ def run_pricers(myelin: Myelin):
         ipps_claim = claim_example()
         ipps_claim.claimid = "IPPS_CLAIM_001"
         drg_output = myelin.drg_client.process(ipps_claim)
-        ipps_output = myelin.ipps_client.process(ipps_claim, drg_output)
+        ipps_output, _ = myelin.ipps_client.process(ipps_claim, drg_output)
         print(ipps_output.model_dump_json(indent=2))
 
     # OPPS Pricer
@@ -107,7 +107,7 @@ def run_pricers(myelin: Myelin):
         opps_claim = opps_claim_example()
         opps_claim.claimid = "OPPS_CLAIM_001"
         ioce_output = myelin.ioce_client.process(opps_claim)
-        opps_output = myelin.opps_client.process(opps_claim, ioce_output)
+        opps_output, _ = myelin.opps_client.process(opps_claim, ioce_output)
         print(opps_output.model_dump_json(indent=2))
 
     # IPF Pricer
@@ -116,7 +116,7 @@ def run_pricers(myelin: Myelin):
         ipf_claim = claim_example()
         ipf_claim.claimid = "IPF_CLAIM_001"
         drg_output = myelin.drg_client.process(ipf_claim)
-        ipf_output = myelin.ipf_client.process(ipf_claim, drg_output)
+        ipf_output, _ = myelin.ipf_client.process(ipf_claim, drg_output)
         print(ipf_output.model_dump_json(indent=2))
 
     # LTCH Pricer
@@ -138,7 +138,7 @@ def run_pricers(myelin: Myelin):
             icd_converter=myelin.icd10_converter,
             poa_exempt=True,
         )
-        ltch_output = myelin.ltch_client.process(ltch_claim, drg_output)
+        ltch_output, _ = myelin.ltch_client.process(ltch_claim, drg_output)
         print(ltch_output.model_dump_json(indent=2))
 
     # Hospice Pricer
@@ -210,7 +210,7 @@ def run_pricers(myelin: Myelin):
         hha_claim.oasis_assessment.multiple_hospital_stays = 1
         hha_claim.oasis_assessment.grooming = "1"
         hhag_output = myelin.hhag_client.process(hha_claim)
-        hha_pricer = myelin.hha_client.process(hha_claim, hhag_output)
+        hha_pricer, _ = myelin.hha_client.process(hha_claim, hhag_output)
         print(hha_pricer.model_dump_json(indent=2))
 
     # IRF Pricer
@@ -243,7 +243,7 @@ def run_pricers(myelin: Myelin):
         irf_claim.irf_pai.urinary_continence_cd = "0"
         irf_claim.irf_pai.bowel_continence_cd = "0"
         irf_output = myelin.irfg_client.process(irf_claim)
-        irf_pricer = myelin.irf_client.process(irf_claim, irf_output)
+        irf_pricer, _ = myelin.irf_client.process(irf_claim, irf_output)
         print(irf_pricer.model_dump_json(indent=2))
 
     # ESRD Pricer
@@ -268,7 +268,7 @@ def run_pricers(myelin: Myelin):
             start_date += timedelta(days=1)
         esrd_claim.value_codes.append(ValueCode(code="A8", amount=70.0))
         esrd_claim.value_codes.append(ValueCode(code="A9", amount=180.0))
-        esrd_output = myelin.esrd_client.process(esrd_claim)
+        esrd_output, _ = myelin.esrd_client.process(esrd_claim)
         print(esrd_output.model_dump_json(indent=2))
 
     # FQHC Pricer
