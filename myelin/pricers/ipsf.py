@@ -367,86 +367,86 @@ class IPSFDatabase:
 
 
 class IPSFProvider(BaseModel):
-    provider_ccn: str = ""
-    effective_date: int = 19000101
-    fiscal_year_begin_date: int = 19000101
-    export_date: int = 19000101
-    termination_date: int = 19000101
-    waiver_indicator: str = ""
-    intermediary_number: str = ""
-    provider_type: str = ""
-    census_division: str = ""
-    msa_actual_geographic_location: str = ""
-    msa_wage_index_location: str = ""
-    msa_standardized_amount_location: str = ""
-    sole_community_or_medicare_dependent_hospital_base_year: str = ""
-    change_code_for_lugar_reclassification: str = ""
-    temporary_relief_indicator: str = ""
-    federal_pps_blend: str = ""
-    state_code: str = ""
-    pps_facility_specific_rate: float = 0.0
-    cost_of_living_adjustment: float = 0.0
-    interns_to_beds_ratio: float = 0.0
-    bed_size: int = 0
-    operating_cost_to_charge_ratio: float = 0.0
-    case_mix_index: float = 0.0
-    supplemental_security_income_ratio: float = 0.0
-    medicaid_ratio: float = 0.0
-    special_provider_update_factor: float = 0.0
-    operating_dsh: float = 0.0
-    fiscal_year_end_date: int = 19000101
-    special_payment_indicator: str = ""
-    hosp_quality_indicator: str = ""
-    cbsa_actual_geographic_location: str = ""
-    cbsa_wi_location: str = ""
-    cbsa_standardized_amount_location: str = ""
-    special_wage_index: float = 0.0
-    pass_through_amount_for_capital: float = 0.0
-    pass_through_amount_for_direct_medical_education: float = 0.0
-    pass_through_amount_for_organ_acquisition: float = 0.0
-    pass_through_total_amount: float = 0.0
-    capital_pps_payment_code: str = ""
-    hospital_specific_capital_rate: float = 0.0
-    old_capital_hold_harmless_rate: float = 0.0
-    new_capital_hold_harmless_rate: float = 0.0
-    capital_cost_to_charge_ratio: float = 0.0  # Default to 0.0 if not provided in data.
-    new_hospital: str = ""
-    capital_indirect_medical_education_ratio: float = (
+    provider_ccn: str | None = ""
+    effective_date: int | None = 19000101
+    fiscal_year_begin_date: int | None = 19000101
+    export_date: int | None = 19000101
+    termination_date: int | None = 19000101
+    waiver_indicator: str | None = ""
+    intermediary_number: str | None = ""
+    provider_type: str | None = ""
+    census_division: str | None = ""
+    msa_actual_geographic_location: str | None = ""
+    msa_wage_index_location: str | None = ""
+    msa_standardized_amount_location: str | None = ""
+    sole_community_or_medicare_dependent_hospital_base_year: str | None = ""
+    change_code_for_lugar_reclassification: str | None = ""
+    temporary_relief_indicator: str | None = ""
+    federal_pps_blend: str | None = ""
+    state_code: str | None = ""
+    pps_facility_specific_rate: float | None = 0.0
+    cost_of_living_adjustment: float | None = 0.0
+    interns_to_beds_ratio: float | None = 0.0
+    bed_size: int | None = 0
+    operating_cost_to_charge_ratio: float | None = 0.0
+    case_mix_index: float | None = 0.0
+    supplemental_security_income_ratio: float | None = 0.0
+    medicaid_ratio: float | None = 0.0
+    special_provider_update_factor: float | None = 0.0
+    operating_dsh: float | None = 0.0
+    fiscal_year_end_date: int | None = 19000101
+    special_payment_indicator: str | None = ""
+    hosp_quality_indicator: str | None = ""
+    cbsa_actual_geographic_location: str | None = ""
+    cbsa_wi_location: str | None = ""
+    cbsa_standardized_amount_location: str | None = ""
+    special_wage_index: float | None = 0.0
+    pass_through_amount_for_capital: float | None = 0.0
+    pass_through_amount_for_direct_medical_education: float | None = 0.0
+    pass_through_amount_for_organ_acquisition: float | None = 0.0
+    pass_through_total_amount: float | None = 0.0
+    capital_pps_payment_code: str | None = ""
+    hospital_specific_capital_rate: float | None = 0.0
+    old_capital_hold_harmless_rate: float | None = 0.0
+    new_capital_hold_harmless_rate: float | None = 0.0
+    capital_cost_to_charge_ratio: float | None = 0.0  # Default to 0.0 if not provided in data.
+    new_hospital: str | None = ""
+    capital_indirect_medical_education_ratio: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
-    capital_exception_payment_rate: float = (
+    capital_exception_payment_rate: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
-    vpb_participant_indicator: str = ""
-    vbp_adjustment: float = 0.0  # Default to 0.0 if not provided in data.
-    hrr_participant_indicator: int = 0  # Default to 0 if not provided in data.
-    hrr_adjustment: float = 0.0  # Default to 0.0 if not provided in data.
-    bundle_model_discount: float = 0.0  # Default to 0.0 if not provided in data.
-    hac_reduction_participant_indicator: str = ""
-    uncompensated_care_amount: float = 0.0  # Default to 0.0 if not provided in data.
-    ehr_reduction_indicator: str = ""
-    low_volume_adjustment_factor: float = 0.0  # Default to 0.0 if not provided in data.
-    county_code: str = ""
-    medicare_performance_adjustment: float = (
+    vpb_participant_indicator: str | None = ""
+    vbp_adjustment: float | None = 0.0  # Default to 0.0 if not provided in data.
+    hrr_participant_indicator: int | None = 0  # Default to 0 if not provided in data.
+    hrr_adjustment: float | None = 0.0  # Default to 0.0 if not provided in data.
+    bundle_model_discount: float | None = 0.0  # Default to 0.0 if not provided in data.
+    hac_reduction_participant_indicator: str | None = ""
+    uncompensated_care_amount: float | None = 0.0  # Default to 0.0 if not provided in data.
+    ehr_reduction_indicator: str | None = ""
+    low_volume_adjustment_factor: float | None = 0.0  # Default to 0.0 if not provided in data.
+    county_code: str | None = ""
+    medicare_performance_adjustment: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
-    ltch_dpp_indicator: str = ""
-    supplemental_wage_index: float = 0.0  # Default to 0.0 if not provided in data.
-    supplemental_wage_index_indicator: str = ""
-    change_code_wage_index_reclassification: str = ""
-    national_provider_identifier: str = ""
-    pass_through_amount_for_allogenic_stem_cell_acquisition: float = (
+    ltch_dpp_indicator: str | None = ""
+    supplemental_wage_index: float | None = 0.0  # Default to 0.0 if not provided in data.
+    supplemental_wage_index_indicator: str | None = ""
+    change_code_wage_index_reclassification: str | None = ""
+    national_provider_identifier: str | None = ""
+    pass_through_amount_for_allogenic_stem_cell_acquisition: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
-    pps_blend_year_indicator: str = ""
-    last_updated: str = ""
-    pass_through_amount_for_direct_graduate_medical_education: float = (
+    pps_blend_year_indicator: str | None = ""
+    last_updated: str | None = ""
+    pass_through_amount_for_direct_graduate_medical_education: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
-    pass_through_amount_for_kidney_acquisition: float = (
+    pass_through_amount_for_kidney_acquisition: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
-    pass_through_amount_for_supply_chain: float = (
+    pass_through_amount_for_supply_chain: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
 
@@ -521,17 +521,10 @@ class IPSFProvider(BaseModel):
         return self.from_db(conn, provider, date_int, **kwargs)
 
     def from_claim(self, claim: Claim, db: Engine, **kwargs: object) -> None:
+        date_int = int(claim.thru_date.strftime("%Y%m%d")) if isinstance(claim.thru_date, datetime) else 19000101
         if claim.billing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(claim.thru_date.replace("-", ""))
             self.from_sqlite(db, claim.billing_provider, date_int, **kwargs)
         elif claim.servicing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(claim.thru_date.replace("-", ""))
             self.from_sqlite(db, claim.servicing_provider, date_int, **kwargs)
         else:
             raise ValueError(

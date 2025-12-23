@@ -211,6 +211,10 @@ def run_pricers(myelin: Myelin):
         hha_claim.oasis_assessment.grooming = "1"
         hhag_output = myelin.hhag_client.process(hha_claim)
         hha_pricer, _ = myelin.hha_client.process(hha_claim, hhag_output)
+        myout = MyelinOutput()
+        myout.hhag = hhag_output
+        myout.hha = hha_pricer
+        myout.to_excel("hha_pricer_output.xlsx", hha_claim)
         print(hha_pricer.model_dump_json(indent=2))
 
     # IRF Pricer

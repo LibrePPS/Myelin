@@ -233,8 +233,8 @@ class HhaClient:
         return py_date_to_java_date(self, py_date)
 
     def calculate_hhrg_days(self, claim: Claim) -> int:
-        earliest_date = None
-        latest_date = None
+        earliest_date: datetime | None = None
+        latest_date: datetime | None = None
         for line in claim.lines:
             if line.revenue_code == "0023":
                 if line.service_date:
@@ -349,17 +349,38 @@ class HhaClient:
         if (
             ipsf_provider.special_provider_update_factor is not None
             and ipsf_provider.special_provider_update_factor > 0
-            and ipsf_provider.vbp_adjustment == 0
+            and (ipsf_provider.vbp_adjustment == 0 or ipsf_provider.vbp_adjustment is None)
         ):
             ipsf_provider.vbp_adjustment = ipsf_provider.special_provider_update_factor
         ipsf_provider.set_java_values(provider_data, self)
-        if claim.patient:
-            if claim.patient.address:
-                if claim.patient.address.zip:
-                    provider_data.setCountyCode(claim.patient.address.zip[:5])
-                    provider_data.setCbsaActualGeographicLocation(
-                        claim.patient.address.zip[:5]
+        cbsa_set = False
+        county_set = False
+        for val in claim.value_codes:
+            if val.code == "61": # Zip Code for CBSA
+                #convert val amount to int -> str -> take first 5 chars
+                zip_val = str(int(val.amount))
+                provider_data.setCbsaActualGeographicLocation(zip_val[:5])
+                cbsa_set = True
+            elif val.code == "85": # County Code
+                #convert val amount to int -> str -> take first 2 chars
+                county_val = str(int(val.amount))
+                provider_data.setCountyCode(county_val[:5])
+                county_set = True
+        if not cbsa_set or not county_set:
+            if claim.patient:
+                if claim.patient.address:
+                    if claim.patient.address.zip:
+                        provider_data.setCountyCode(claim.patient.address.zip[:5])
+                        provider_data.setCbsaActualGeographicLocation(
+                            claim.patient.address.zip[:5]
                     )
+                    cbsa_set = True
+                    county_set = True
+
+        if not cbsa_set:
+            raise ValueError("CBSA code not found. This needs to billed on the Patient Address or via Value Code 61")
+        if not county_set:
+            raise ValueError("County code not found. This needs to billed on the Patient Address or via Value Code 85")
         pricing_request.setProviderData(provider_data)
         return pricing_request, ipsf_provider
 
