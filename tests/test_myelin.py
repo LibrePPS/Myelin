@@ -1,5 +1,4 @@
 import os
-import shutil
 import tempfile
 from datetime import datetime
 
@@ -119,7 +118,7 @@ def test_ipps_pricer_if_available(myelin_or_skip):
 
     claim = claim_example()
     drg_output = myelin_or_skip.drg_client.process(claim)
-    output = myelin_or_skip.ipps_client.process(claim, drg_output)
+    output, _ = myelin_or_skip.ipps_client.process(claim, drg_output)
     assert hasattr(output, "model_dump")
 
 
@@ -138,7 +137,7 @@ def test_opps_pricer_if_available(myelin_or_skip):
 
     claim = opps_claim_example()
     ioce_output = myelin_or_skip.ioce_client.process(claim)
-    output = myelin_or_skip.opps_client.process(claim, ioce_output)
+    output, _ = myelin_or_skip.opps_client.process(claim, ioce_output)
     assert hasattr(output, "model_dump")
 
 
@@ -150,7 +149,7 @@ def test_ipf_pricer_if_available(myelin_or_skip):
 
     claim = claim_example()
     drg_output = myelin_or_skip.drg_client.process(claim)
-    output = myelin_or_skip.ipf_client.process(claim, drg_output)
+    output, _ = myelin_or_skip.ipf_client.process(claim, drg_output)
     assert hasattr(output, "model_dump")
 
 
@@ -164,7 +163,7 @@ def test_ltch_pricer_if_available(myelin_or_skip):
     # Example parity: LTCH requires special provider id in example
     claim.billing_provider.other_id = "012006"
     drg_output = myelin_or_skip.drg_client.process(claim)
-    output = myelin_or_skip.ltch_client.process(claim, drg_output)
+    output, _ = myelin_or_skip.ltch_client.process(claim, drg_output)
     assert hasattr(output, "model_dump")
 
 
@@ -225,7 +224,7 @@ def test_snf_pricer_if_available(myelin_or_skip):
     claim.lines[0].hcpcs = "ABAC1"
     claim.lines[0].service_date = datetime(2025, 1, 1)
     claim.lines[0].units = 20
-    output = myelin_or_skip.snf_client.process(claim)
+    output, _ = myelin_or_skip.snf_client.process(claim)
     assert hasattr(output, "model_dump")
 
 
@@ -262,7 +261,7 @@ def test_irf_pricer_if_availabler(myelin_or_skip):
     claim.irf_pai.urinary_continence_cd = "0"
     claim.irf_pai.bowel_continence_cd = "0"
     cmg_output = myelin_or_skip.irfg_client.process(claim)
-    irf_output = myelin_or_skip.irf_client.process(claim, cmg_output)
+    irf_output, _ = myelin_or_skip.irf_client.process(claim, cmg_output)
     assert hasattr(irf_output, "model_dump")
 
 
@@ -310,7 +309,7 @@ def test_hha_pricer_if_available(myelin_or_skip):
     claim.oasis_assessment.transferring = "2"
     claim.oasis_assessment.ambulation = "3"
     hhag_output = myelin_or_skip.hhag_client.process(claim)
-    hha_pricer = myelin_or_skip.hha_client.process(claim, hhag_output)
+    hha_pricer, _ = myelin_or_skip.hha_client.process(claim, hhag_output)
     assert hasattr(hha_pricer, "model_dump")
 
 

@@ -233,8 +233,8 @@ class HhaClient:
         return py_date_to_java_date(self, py_date)
 
     def calculate_hhrg_days(self, claim: Claim) -> int:
-        earliest_date = None
-        latest_date = None
+        earliest_date: datetime | None = None
+        latest_date: datetime | None = None
         for line in claim.lines:
             if line.revenue_code == "0023":
                 if line.service_date:
@@ -248,7 +248,7 @@ class HhaClient:
 
     def create_input_claim(
         self, claim: Claim, hhag_output: HhagOutput | None = None, **kwargs: object
-    ) -> jpype.JObject:
+    ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database engine is not set for HhaClient")
         claim_object = self.hha_pricer_claim_data_class()
@@ -341,47 +341,48 @@ class HhaClient:
             claim_object.setPriorPaymentTotal(self.java_big_decimal_class(0))
             claim_object.setPriorOutlierTotal(self.java_big_decimal_class(0))
 
-        if claim.billing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            elif isinstance(claim.thru_date, str):
-                date_int = int(claim.thru_date.replace("-", ""))
-            ipsf_provider = IPSFProvider()
-            ipsf_provider.from_sqlite(
-                self.db, claim.billing_provider, date_int, **kwargs
-            )
-        elif claim.servicing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            elif isinstance(claim.thru_date, str):
-                date_int = int(claim.thru_date.replace("-", ""))
-            ipsf_provider = IPSFProvider()
-            ipsf_provider.from_sqlite(
-                self.db, claim.servicing_provider, date_int, **kwargs
-            )
-        else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for IPPS pricing."
-            )
+        ipsf_provider = IPSFProvider()
+        ipsf_provider.from_claim(claim, self.db, **kwargs)
         claim_object.setProviderCcn(ipsf_provider.provider_ccn)
         pricing_request.setClaimData(claim_object)
         # HHA Uses the special provider update factor as vbp adjustment
         if (
             ipsf_provider.special_provider_update_factor is not None
             and ipsf_provider.special_provider_update_factor > 0
-            and ipsf_provider.vbp_adjustment == 0
+            and (ipsf_provider.vbp_adjustment == 0 or ipsf_provider.vbp_adjustment is None)
         ):
             ipsf_provider.vbp_adjustment = ipsf_provider.special_provider_update_factor
         ipsf_provider.set_java_values(provider_data, self)
-        if claim.patient:
-            if claim.patient.address:
-                if claim.patient.address.zip:
-                    provider_data.setCountyCode(claim.patient.address.zip[:5])
-                    provider_data.setCbsaActualGeographicLocation(
-                        claim.patient.address.zip[:5]
+        cbsa_set = False
+        county_set = False
+        for val in claim.value_codes:
+            if val.code == "61": # Zip Code for CBSA
+                #convert val amount to int -> str -> take first 5 chars
+                zip_val = str(int(val.amount))
+                provider_data.setCbsaActualGeographicLocation(zip_val[:5])
+                cbsa_set = True
+            elif val.code == "85": # County Code
+                #convert val amount to int -> str -> take first 2 chars
+                county_val = str(int(val.amount))
+                provider_data.setCountyCode(county_val[:5])
+                county_set = True
+        if not cbsa_set or not county_set:
+            if claim.patient:
+                if claim.patient.address:
+                    if claim.patient.address.zip:
+                        provider_data.setCountyCode(claim.patient.address.zip[:5])
+                        provider_data.setCbsaActualGeographicLocation(
+                            claim.patient.address.zip[:5]
                     )
+                    cbsa_set = True
+                    county_set = True
+
+        if not cbsa_set:
+            raise ValueError("CBSA code not found. This needs to billed on the Patient Address or via Value Code 61")
+        if not county_set:
+            raise ValueError("County code not found. This needs to billed on the Patient Address or via Value Code 85")
         pricing_request.setProviderData(provider_data)
-        return pricing_request
+        return pricing_request, ipsf_provider
 
     def process_claim(
         self, claim: Claim, pricing_request: jpype.JObject
@@ -393,7 +394,7 @@ class HhaClient:
     @handle_java_exceptions
     def process(
         self, claim: Claim, hhag_output: HhagOutput | None = None, **kwargs: object
-    ):
+    ) -> tuple[HhaOutput, IPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
 
@@ -402,10 +403,12 @@ class HhaClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        pricing_request = self.create_input_claim(claim, hhag_output, **kwargs)
+        pricing_request, ipsf_provider = self.create_input_claim(
+            claim, hhag_output, **kwargs
+        )
         pricing_response = self.process_claim(claim, pricing_request)
         hha_output = HhaOutput()
         hha_output.claim_id = claim.claimid
         hha_output.from_java(pricing_response)
         hha_output.hhrg_code = str(pricing_request.getClaimData().getHhrgInputCode())
-        return hha_output
+        return hha_output, ipsf_provider

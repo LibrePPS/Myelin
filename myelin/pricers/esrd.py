@@ -786,7 +786,9 @@ class EsrdClient:
                     dialysis_dates.add(line.service_date)
         return len(dialysis_dates)
 
-    def create_input_claim(self, claim: Claim, **kwargs: object) -> jpype.JObject:
+    def create_input_claim(
+        self, claim: Claim, **kwargs: object
+    ) -> tuple[jpype.JObject, OPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for ESRD pricing")
         claim_object = self.esrd_pricer_claim_data_class()
@@ -896,28 +898,8 @@ class EsrdClient:
         comorbidity_obj.setComorbidityCodes(comorbidity_codes)
         claim_object.setComorbidities(comorbidity_obj)
 
-        if claim.billing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(str(claim.thru_date).replace("-", ""))
-            opsf_provider = OPSFProvider()
-            opsf_provider.from_sqlite(
-                self.db, claim.billing_provider, date_int, **kwargs
-            )
-        elif claim.servicing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(str(claim.thru_date).replace("-", ""))
-            opsf_provider = OPSFProvider()
-            opsf_provider.from_sqlite(
-                self.db, claim.servicing_provider, date_int, **kwargs
-            )
-        else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for IPPS pricing."
-            )
+        opsf_provider = OPSFProvider()
+        opsf_provider.from_claim(claim, self.db, **kwargs)
         if opsf_provider:
             opsf_provider.set_java_values(provider_data, self)
             if (
@@ -927,7 +909,7 @@ class EsrdClient:
                 provider_data.setSpecialPaymentIndicator("")
             pricing_request.setProviderData(provider_data)
         pricing_request.setClaimData(claim_object)
-        return pricing_request
+        return pricing_request, opsf_provider
 
     def process_claim(
         self, claim: Claim, pricing_request: jpype.JObject
@@ -937,7 +919,7 @@ class EsrdClient:
         raise ValueError("Dispatch object does not have a process method.")
 
     @handle_java_exceptions
-    def process(self, claim: Claim, **kwargs: object) -> EsrdOutput:
+    def process(self, claim: Claim, **kwargs: object) -> tuple[EsrdOutput, OPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
 
@@ -946,9 +928,9 @@ class EsrdClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        pricing_request = self.create_input_claim(claim, **kwargs)
+        pricing_request, opsf_provider = self.create_input_claim(claim, **kwargs)
         pricing_response = self.process_claim(claim, pricing_request)
         esrd_output = EsrdOutput()
         esrd_output.claim_id = claim.claimid
         esrd_output.from_java(pricing_response)
-        return esrd_output
+        return esrd_output, opsf_provider

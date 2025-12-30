@@ -1,6 +1,7 @@
 import time
 from datetime import datetime
 from enum import Enum
+from logging import getLogger
 from threading import RLock
 
 import jpype
@@ -37,6 +38,8 @@ class MsdrgHospitalStatusOptionFlag(Enum):
 
 
 class DrgClient:
+    logger = getLogger(__name__)
+
     def __init__(self):
         """
         DrgClient class is responsible for interacting with the CMS Java based DRG system.
@@ -164,9 +167,9 @@ class DrgClient:
                 self.drg_versions[curr_version]["non_exempt"] = drg_component(
                     non_exempt_drg_options
                 )
-                print(f"Loaded DRG version: {curr_version}")
+                self.logger.info(f"Loaded DRG version: {curr_version}")
             except Exception as e:
-                print(f"Failed to load DRG version {curr_version}: {e}")
+                self.logger.error(f"Failed to load DRG version {curr_version}: {e}")
                 if curr_version > end_version:
                     break
                 curr_version = self.increment_version(curr_version)
@@ -185,10 +188,13 @@ class DrgClient:
         """
         with self._reconfig_lock:
             if not isinstance(hospital_status, MsdrgHospitalStatusOptionFlag):
+                self.logger.error("Invalid hospital status option")
                 raise ValueError("Invalid hospital status option")
             if not isinstance(affect_drg, MsdrgAffectDrgOptionFlag):
+                self.logger.error("Invalid affect DRG option")
                 raise ValueError("Invalid affect DRG option")
             if not isinstance(logic_tiebreaker, MarkingLogicTieBreaker):
+                self.logger.error("Invalid logic tie breaker option")
                 raise ValueError("Invalid logic tie breaker option")
 
             runtime_options = self.runtime_options_class()
@@ -209,6 +215,7 @@ class DrgClient:
                         self.logic_tiebreaker.CODE_ORDER
                     )
             if drg_version not in self.drg_versions:
+                self.logger.error(f"DRG version {drg_version} is not loaded")
                 raise ValueError(f"DRG version {drg_version} is not loaded")
             if hospital_status == MsdrgHospitalStatusOptionFlag.EXEMPT:
                 drg_component = self.drg_versions[drg_version]["exempt"]
@@ -298,6 +305,9 @@ class DrgClient:
             or len(mapped.conversion_choices) == 0
         ):
             return op
+        self.logger.debug(
+            f"Mapped procedure code {op} to {mapped.conversion_choices[0]}"
+        )
         return mapped.conversion_choices[
             0
         ]  # <---- We always return the first conversion choice
@@ -317,13 +327,16 @@ class DrgClient:
             or len(mapped.conversion_choices) == 0
         ):
             return dx
+        self.logger.debug(
+            f"Mapped diagnosis code {dx} to {mapped.conversion_choices[0]}"
+        )   
         return mapped.conversion_choices[
             0
         ]  # <---- We always return the first conversion choice
 
     def create_drg_input(
         self, claim: Claim, mappings: ICD10ConvertOutput | None = None
-    ) -> jpype.JObject | None:
+    ) -> jpype.JObject:
         """
         Creates the DRG input object from the claim and mappings.
         """
@@ -338,13 +351,15 @@ class DrgClient:
                 input.withAgeDaysDischarge(age_in_days + claim.los)
             else:
                 raise ValueError("Patient age or date of birth must be provided")
-        if claim.patient.sex:
-            if str(claim.patient.sex).upper().startswith("M"):
-                input.withSex(self.sex.MALE)
-            elif str(claim.patient.sex).upper().startswith("F"):
-                input.withSex(self.sex.FEMALE)
-            else:
-                input.withSex(self.sex.UNKNOWN)
+            if claim.patient.sex:
+                if str(claim.patient.sex).upper().startswith("M"):
+                    input.withSex(self.sex.MALE)
+                elif str(claim.patient.sex).upper().startswith("F"):
+                    input.withSex(self.sex.FEMALE)
+                else:
+                    input.withSex(self.sex.UNKNOWN)
+        else:
+            input.withSex(self.sex.UNKNOWN)
 
         if claim.patient_status:
             # try to convert to integer
@@ -505,7 +520,7 @@ class DrgClient:
                     )
 
         except Exception as e:
-            print(f"Warning: Could not extract some output fields: {e}")
+            self.logger.warning(f"Warning: Could not extract some output fields: {e}")
 
         return output
 
@@ -554,7 +569,7 @@ class DrgClient:
         if not claim.principal_dx:
             raise ValueError("Claim principal_dx must be provided")
 
-        # Determine if code conversions are requests
+        # Determine if code conversions are requested
         mappings = None
         if claim.icd_convert is not None and icd_converter is not None:
             if claim.icd_convert.option != ICDConvertOption.NONE:
@@ -562,7 +577,7 @@ class DrgClient:
                 mappings = icd_converter.generate_claim_mappings(claim, drg_version)
 
         drg_input = self.create_drg_input(claim, mappings)
-        drg_claim = self.drg_claim_class(drg_input)
+        drg_claim = self.drg_claim_class(drg_input) # type: ignore
         drg_component.process(drg_claim)
         drg_output = drg_claim.getOutput()
         if drg_output.isPresent() == 0:

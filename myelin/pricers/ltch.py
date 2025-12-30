@@ -309,7 +309,7 @@ class LtchClient:
 
     def create_input_claim(
         self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
-    ) -> jpype.JObject:
+    ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for LtchClient.")
         claim_object = self.ltc_claim_data_class()
@@ -357,38 +357,12 @@ class LtchClient:
                 java_pxs.add(self.java_string_class(px.code))
         claim_object.setProcedureCodes(java_pxs)
 
-        if claim.billing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(claim.thru_date.replace("-", ""))
-            ipsf_provider = IPSFProvider()
-            ipsf_provider.from_sqlite(
-                self.db, claim.billing_provider, date_int, **kwargs
-            )
-            if ipsf_provider.provider_type not in ("02", "2", "52"):
-                raise ValueError(
-                    f"Billed provider has a Provider Type of {ipsf_provider.provider_type} which is not valid for LTCH Pricer"
-                )
-            claim_object.setProviderCcn(ipsf_provider.provider_ccn)
-        elif claim.servicing_provider is not None:
-            if isinstance(claim.thru_date, datetime):
-                date_int = int(claim.thru_date.strftime("%Y%m%d"))
-            else:
-                date_int = int(claim.thru_date.replace("-", ""))
-            ipsf_provider = IPSFProvider()
-            ipsf_provider.from_sqlite(
-                self.db, claim.servicing_provider, date_int, **kwargs
-            )
-            claim_object.setProviderCcn(ipsf_provider.provider_ccn)
-        else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for IPPS pricing."
-            )
+        ipsf_provider = IPSFProvider()
+        ipsf_provider.from_claim(claim, self.db, **kwargs)
         ipsf_provider.set_java_values(provider_object, self)
         pricing_request.setClaimData(claim_object)
         pricing_request.setProviderData(provider_object)
-        return pricing_request
+        return pricing_request, ipsf_provider
 
     def process_claim(
         self, claim: Claim, pricing_request: jpype.JObject
@@ -400,16 +374,18 @@ class LtchClient:
     @handle_java_exceptions
     def process(
         self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
-    ) -> LtchOutput:
+    ) -> tuple[LtchOutput, IPSFProvider]:
         """
         Processes the python claim object through the CMS LTCH Java Pricer.
         """
         self.logger.debug(
             f"LtchClient processing claim on thread {current_thread().ident}"
         )
-        pricing_request = self.create_input_claim(claim, drg_output, **kwargs)
+        pricing_request, ipsf_provider = self.create_input_claim(
+            claim, drg_output, **kwargs
+        )
         pricing_response = self.process_claim(claim, pricing_request, **kwargs)
         ltch_output = LtchOutput()
         ltch_output.claim_id = claim.claimid
         ltch_output.from_java(pricing_response)
-        return ltch_output
+        return ltch_output, ipsf_provider
