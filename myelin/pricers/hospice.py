@@ -383,6 +383,10 @@ class HospiceClient:
             claim_object.setServiceFromDate(self.py_date_to_java_date(claim.from_date))
         if claim.admit_date is not None:
             claim_object.setAdmissionDate(self.py_date_to_java_date(claim.admit_date))
+        elif claim.from_date is not None:
+            claim_object.setAdmissionDate(self.py_date_to_java_date(claim.from_date))
+        else:
+            raise ValueError("Claim has no from_date or admit_date.")
         # @TODO: Add a way for the user to provide prior benefit days and reporting quality data flag
         claim_object.setPriorBenefitDayUnits(0)
         claim_object.setReportingQualityData("0")
