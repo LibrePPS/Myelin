@@ -359,10 +359,10 @@ class LtchClient:
 
         ipsf_provider = IPSFProvider()
         ipsf_provider.from_claim(claim, self.db, **kwargs)
-        ipsf_provider.set_java_values(provider_object, self)
-        pricing_request.setClaimData(claim_object)
         if ipsf_provider.federal_pps_blend is not None and not ipsf_provider.federal_pps_blend.isnumeric():
             ipsf_provider.federal_pps_blend = "0"
+        ipsf_provider.set_java_values(provider_object, self)
+        pricing_request.setClaimData(claim_object)
         pricing_request.setProviderData(provider_object)
         return pricing_request, ipsf_provider
 
