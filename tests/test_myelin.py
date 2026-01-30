@@ -357,8 +357,8 @@ def test_ipps_extract_resource_file(myelin_or_skip):
         attempted_files = []
         start = 2020
 
-        # Try to extract drgstable files from 2020 to current year + 1
-        while start < datetime.now().year + 1:
+        # Try to extract drgstable files from 2020 to current year
+        while start < datetime.now().year:
             year = start + 1
             filename = f"drgstable-{year}.csv"
             attempted_files.append(filename)
@@ -409,8 +409,8 @@ def test_ipf_extract_resource_file(myelin_or_skip):
         attempted_files = []
         start = 2020
 
-        # Try to extract drg files from 2020 to current year + 1
-        while start < datetime.now().year + 1:
+        # Try to extract drg files from 2020 to current year
+        while start < datetime.now().year:
             year = start + 1
             filename = f"drg-{year}.csv"
             attempted_files.append(filename)
@@ -461,8 +461,8 @@ def test_ltch_extract_resource_file(myelin_or_skip):
         attempted_files = []
         start = 2020
 
-        # Try to extract ltdrgstable files from 2020 to current year + 1
-        while start < datetime.now().year + 1:
+        # Try to extract ltdrgstable files from 2020 to current year
+        while start < datetime.now().year:
             year = start + 1
             filename = f"ltdrgstable-{year}.csv"
             attempted_files.append(filename)

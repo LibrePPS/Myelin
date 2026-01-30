@@ -331,7 +331,7 @@ class LtchClient:
         claim_object.setOutlierSpecialPaymentIndicator("0")
         # @TODO provide a way to set the lifetime reserve days
         claim_object.setLifetimeReserveDays(self.java_integer_class(0))
-        claim_object.setReviewCode("00")
+        claim_object.setReviewCode(claim.additional_data.get("review_code", "01"))
         if drg_output is not None:
             claim_object.setDiagnosisRelatedGroup(str(drg_output.final_drg_value))
             claim_object.setDiagnosisRelatedGroupSeverity(
@@ -361,6 +361,8 @@ class LtchClient:
         ipsf_provider.from_claim(claim, self.db, **kwargs)
         ipsf_provider.set_java_values(provider_object, self)
         pricing_request.setClaimData(claim_object)
+        if ipsf_provider.federal_pps_blend is not None and not ipsf_provider.federal_pps_blend.isnumeric():
+            ipsf_provider.federal_pps_blend = "0"
         pricing_request.setProviderData(provider_object)
         return pricing_request, ipsf_provider
 
