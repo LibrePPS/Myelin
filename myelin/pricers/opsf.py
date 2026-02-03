@@ -219,9 +219,13 @@ class OPSFProvider(BaseModel):
             raise ValueError(
                 f"No OPSF data found for provider {provider.other_id or provider.npi} on date {date_int}."
             )
-        for field in DATATYPES.keys():
-            if hasattr(result, field):
-                setattr(self, field, getattr(result, field))
+        # if field is TEXT, strip whitespace
+        for field in DATATYPES:
+            val = getattr(result, field)
+            if val is not None:
+                if DATATYPES[field]["type"] == "TEXT":
+                    val = val.strip()
+                setattr(self, field, val)
         if self.termination_date in (19000101, 0, None):
             self.termination_date = 20991231
         extra = (

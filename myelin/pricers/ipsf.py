@@ -493,9 +493,12 @@ class IPSFProvider(BaseModel):
             raise ValueError(
                 f"No IPSF data found for provider {provider.other_id or provider.npi} on date {date_int}."
             )
-        for field in DATATYPES.keys():
-            if hasattr(row, field):
-                setattr(self, field, getattr(row, field))
+        for field in DATATYPES:
+            val = getattr(row, field)
+            if val is not None:
+                if DATATYPES[field]["type"] == "TEXT":
+                    val = val.strip()
+                setattr(self, field, val)
         if self.termination_date in (19000101, 0, None):
             self.termination_date = 20991231
         extra = (
