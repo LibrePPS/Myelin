@@ -262,10 +262,6 @@ class OppsClient:
                 if line.discounting_formula is not None:
                     if str(line.discounting_formula).isnumeric():
                         ioce_line.setDiscountingFormula((int(line.discounting_formula)))
-                else:
-                    raise ValueError(
-                        f"Invalid discounting formula: {line.discounting_formula}. Expected an integer."
-                    )
                 ioce_line.setDateOfService(
                     self.py_date_to_java_date(input_line.service_date)
                 )
