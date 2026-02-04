@@ -199,9 +199,14 @@ class IoceClient:
                 )
                 override_set = True
             if line_item.override.discounting_formula != "":
-                java_line.setContractorDiscountingFormula(
-                    line_item.override.discounting_formula
-                )
+                if str(line_item.override.discounting_formula).isnumeric():
+                    java_line.setContractorDiscountingFormula(
+                        line_item.override.discounting_formula
+                    )
+                else:
+                    raise ValueError(
+                        f"Discounting formula must be a numeric value: {line_item.override.discounting_formula} for code {line_item.hcpcs}"
+                    )
                 override_set = True
             if line_item.override.rejection_denial_flag != "":
                 java_line.setContractorRejectionDenialFlag(
