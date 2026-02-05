@@ -69,7 +69,7 @@ class CMSDownloader:
         "msdrg": [
             r"msdrg-binary-access-[\d\.]+\.jar",
             r"msdrg-model-v2-[\d\.]+\.jar",
-            r"msdrg-v\d+-[\d\.]+\.jar",
+            r"msdrg-(?:v\d+-|core-)[\d\.]+\.jar",
             r"MCE-[\d\.]+-?[\d\.]+\.jar",
             r"mce-proto-[\d\.]+\.jar",
             r"Utility-[\d\.]+\.jar",
