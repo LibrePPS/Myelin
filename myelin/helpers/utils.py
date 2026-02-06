@@ -63,9 +63,14 @@ def py_date_to_java_date(
             date = datetime.strptime(py_date, "%Y-%m-%d")
             return py_date_to_java_date(self, date)
         except ValueError:
-            raise ValueError(
-                f"Invalid date format: {py_date}. Expected format is YYYY-MM-DD."
-            )
+            # Try to parse as YYYYMMDD
+            try:
+                date = datetime.strptime(py_date, "%Y%m%d")
+                return py_date_to_java_date(self, date)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid date format: {py_date}. Expected format is YYYY-MM-DD or YYYYMMDD."
+                )
     else:
         # Assuming the int is in YYYYMMDD format
         date_str = str(py_date)
