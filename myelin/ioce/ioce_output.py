@@ -14,7 +14,7 @@ from myelin.ioce.ioce_types import (
 )
 
 
-class ReturnCode(BaseModel):
+class IoceReturnCode(BaseModel):
     """Return code information"""
 
     code: int = 0
@@ -66,7 +66,7 @@ class IoceProcessingInformation(BaseModel):
     """Processing information from IOCE output"""
 
     claim_id: str = ""
-    return_code: ReturnCode = Field(default_factory=ReturnCode)
+    return_code:IoceReturnCode = Field(default_factory=IoceReturnCode)
     lines_processed: int = 0
     internal_version: int = 0
     version: str = ""

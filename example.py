@@ -101,15 +101,6 @@ def run_pricers(myelin: Myelin):
         ipps_output, _ = myelin.ipps_client.process(ipps_claim, drg_output)
         print(ipps_output.model_dump_json(indent=2))
 
-    # OPPS Pricer
-    if myelin.opps_client:
-        print("--- OPPS Pricer Example ---")
-        opps_claim = opps_claim_example()
-        opps_claim.claimid = "OPPS_CLAIM_001"
-        ioce_output = myelin.ioce_client.process(opps_claim)
-        opps_output, _ = myelin.opps_client.process(opps_claim, ioce_output)
-        print(opps_output.model_dump_json(indent=2))
-
     # IPF Pricer
     if myelin.ipf_client:
         print("--- IPF Pricer Example ---")
@@ -322,6 +313,16 @@ def run_pricers(myelin: Myelin):
         res.to_excel("./fqhc_pricer_output.xlsx", fqhc_claim)
         print(fqhc_output.model_dump_json(indent=2))
 
+        # OPPS Pricer
+    if myelin.opps_client:
+        print("--- OPPS Pricer Example ---")
+        opps_claim = opps_claim_example()
+        opps_claim.claimid = "OPPS_CLAIM_001"
+        ioce_output = myelin.ioce_client.process(opps_claim)
+        opps_output, _ = myelin.opps_client.process(opps_claim, ioce_output)
+        print(opps_output.model_dump_json(indent=2))
+
+
 
 def run_myelin_process(myelin: Myelin):
     claim = claim_example()
@@ -344,7 +345,7 @@ def main():
     ) as myelin:
         run_groupers(myelin)
         run_pricers(myelin)
-        run_myelin_process(myelin)
+        #run_myelin_process(myelin)
 
 
 if __name__ == "__main__":
