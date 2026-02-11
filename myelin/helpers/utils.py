@@ -33,6 +33,38 @@ class ReturnCode(BaseModel):
         return
 
 
+class JavaRuntimeError(Exception):
+    def __init__(self, code: str, description: str, explanation: str = ""):
+        self.code = code
+        self.description = description
+        self.explanation = explanation
+        super().__init__(description)
+
+    def to_return_code(self) -> ReturnCode:
+        """Convert this error into a :class:`ReturnCode` for output objects."""
+        return ReturnCode(
+            code=self.code,
+            description=self.description,
+            explanation=self.explanation,
+        )
+
+
+class PricerRuntimeError(Exception):
+    def __init__(self, code: str, description: str, explanation: str = ""):
+        self.code = code
+        self.description = description
+        self.explanation = explanation
+        super().__init__(description)
+
+    def to_return_code(self) -> ReturnCode:
+        """Convert this error into a :class:`ReturnCode` for output objects."""
+        return ReturnCode(
+            code=self.code,
+            description=self.description,
+            explanation=self.explanation,
+        )
+
+
 class ProviderDataError(Exception):
     """Raised when provider data cannot be loaded for pricing.
 
@@ -97,15 +129,19 @@ def py_date_to_java_date(
                 date = datetime.strptime(py_date, "%Y%m%d")
                 return py_date_to_java_date(self, date)
             except ValueError:
-                raise ValueError(
-                    f"Invalid date format: {py_date}. Expected format is YYYY-MM-DD or YYYYMMDD."
+                raise PricerRuntimeError(
+                    "DT01",
+                    f"Invalid date format: {py_date}. Expected format is YYYY-MM-DD or YYYYMMDD.",
+                    "The date format is invalid. Please provide a date in the format YYYY-MM-DD or YYYYMMDD.",
                 )
     else:
         # Assuming the int is in YYYYMMDD format
         date_str = str(py_date)
         if len(date_str) != 8:
-            raise ValueError(
-                f"Invalid date integer: {py_date}. Expected format is YYYYMMDD."
+            raise PricerRuntimeError(
+                "DT02",
+                f"Invalid date integer: {py_date}. Expected format is YYYYMMDD.",
+                "The date integer is invalid. Please provide a date in the format YYYYMMDD.",
             )
         formatter = self.java_data_formatter.ofPattern("yyyyMMdd")
         return self.java_date_class.parse(date_str, formatter)
@@ -175,6 +211,16 @@ def handle_java_exceptions(func: Callable[P, T]) -> Callable[P, T]:
             if java_stack_trace:
                 error_msg += f"Java Stack Trace:\n{java_stack_trace}"
 
-            raise RuntimeError(error_msg) from java_ex
+            # Check if self exists, if so, check if logger exists on self and log error
+            if args and hasattr(args[0], "logger"):
+                args[0].logger.error(error_msg)
+            else:
+                print(error_msg)
+
+            raise JavaRuntimeError(
+                code="JERR",
+                description="An internal error occurred during processing through a CMS Java module.",
+                explanation="An internal error occurred in the Java processing module. Please contact the system administrator for assistance.",
+            )
 
     return wrapper

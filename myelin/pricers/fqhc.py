@@ -1,6 +1,6 @@
 import os
-from logging import Logger, getLogger
 from datetime import datetime
+from logging import Logger, getLogger
 
 import jpype
 from pydantic import BaseModel, Field
@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from myelin.helpers import Zip9Data
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -207,8 +208,10 @@ class FqhcClient:
                 plus4 = str(claim.servicing_provider.address.zip4)
 
         if zip_code.strip() == "":
-            raise ValueError(
+            raise PricerRuntimeError(
+                "FQHC01",
                 "No Carrier/Locality provided and no Zip code available to lookup Carrier/Locality Information"
+                "No Carrier/Locality provided and no Zip code available to lookup Carrier/Locality Information",
             )
 
         session: Session | None = None
@@ -242,7 +245,11 @@ class FqhcClient:
         )
 
         if result is None:
-            raise ValueError("No matching zip code found")
+            raise PricerRuntimeError(
+                "FQHC02",
+                "No matching zip code found",
+                "No matching zip code found",
+            )
 
         for row in result:
             zip_code_val, carrier_val, loc_val, plus_four_val = row
@@ -256,7 +263,11 @@ class FqhcClient:
                 return (carrier_val, loc_val)
         if local_session:
             session.close()
-        raise ValueError("No matching zip code found")
+        raise PricerRuntimeError(
+            "FQHC02",
+            "No matching zip code found",
+            "No matching zip code found",
+        )
 
     def create_input_claim(
         self, claim: Claim, ioce_output: IoceOutput, **kwargs: object
@@ -287,7 +298,11 @@ class FqhcClient:
         if not found_carrier_locality:
             carrier, locality = self.get_carrier_locality(claim, **kwargs)
             if carrier is None or locality is None:
-                raise ValueError("Carrier and locality could not be determined.")
+                raise PricerRuntimeError(
+                    "FQHC03",
+                    "Carrier and locality could not be determined.",
+                    "Carrier and locality could not be determined.",
+                )
             claim_object.setCarrierCode(carrier)
             claim_object.setLocalityCode(locality)
 
@@ -362,7 +377,23 @@ class FqhcClient:
     def process(
         self, claim: Claim, ioce_output: IoceOutput, **kwargs: object
     ) -> FqhcOutput:
-        pricing_request = self.create_input_claim(claim, ioce_output, **kwargs)
+        try:
+            pricing_request = self.create_input_claim(claim, ioce_output, **kwargs)
+        except PricerRuntimeError as e:
+            fqhc_output = FqhcOutput()
+            fqhc_output.claim_id = claim.claimid
+            fqhc_output.return_code = e.to_return_code()
+            return fqhc_output
+        except Exception as e:
+            self.logger.error(f"Unexpected error occurred: {e}")
+            fqhc_output = FqhcOutput()
+            fqhc_output.claim_id = claim.claimid
+            fqhc_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected/Uncaught error occurred",
+            )
+            return fqhc_output
         pricing_response = self.dispatch_obj.process(pricing_request)
         fqhc_output = FqhcOutput()
         fqhc_output.claim_id = claim.claimid

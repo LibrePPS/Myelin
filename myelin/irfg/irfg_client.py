@@ -5,6 +5,7 @@ import jpype
 from myelin.helpers.utils import (
     handle_java_exceptions,
     py_date_to_java_date,
+    JavaRuntimeError,
 )
 from myelin.input import IrfPai
 from myelin.input.claim import (
@@ -102,12 +103,20 @@ class IrfgClient:
         Create a new IrfClaim Java object.
         """
         if not claim.irf_pai:
-            raise ValueError("IRF-PAI assessment data is required for IRF claims")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="IRF-PAI assessment data is required for IRF claims",
+            )
         claim_obj = self.irf_claim_class()
         claim_obj.setAssessmentSystem(claim.irf_pai.assessment_system)
         claim_obj.setTransactionType(claim.irf_pai.transaction_type)
         if not claim.patient:
-            raise ValueError("Patient information is required for IRF claims")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Patient information is required for IRF claims",
+            )
         claim_obj.setBirthDate(self.py_date_to_java_date(claim.patient.date_of_birth))
         claim_obj.setAdmissionDate(self.py_date_to_java_date(claim.admit_date))
         claim_obj.setImpairmentGroup(claim.irf_pai.impairment_admit_group_code)
@@ -134,16 +143,26 @@ class IrfgClient:
         Process the given claim and return the DRG output.
         """
         if not claim:
-            raise ValueError("Claim cannot be None")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Claim cannot be None",
+            )
         claim_input = self.create_claim_input(claim)
         if not claim_input:
-            raise RuntimeError("Failed to create claim input for IRF Grouper")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Failed to create claim input for IRF Grouper",
+            )
         grouper = self.cmg_grouper_class()
         try:
             grouper.process(claim_input)
         except jpype.JException as ex:
-            raise RuntimeError(
-                f"Java exception during IRF Grouper processing: {str(ex)}"
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation=f"Java exception during IRF Grouper processing: {str(ex)}",
             )
         output = IrfgOutput()
         output.claim_id = claim.claimid

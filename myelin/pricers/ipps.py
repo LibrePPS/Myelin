@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -790,14 +791,22 @@ class IppsClient:
         claim_object.setMidnightAdjustmentGeolocation(midnight_adjustment_geolocation)
         claim_object.setCoveredCharges(self.java_big_decimal_class(claim.total_charges))
         if claim.los < claim.non_covered_days:
-            raise ValueError("LOS cannot be less than non-covered days")
+            raise PricerRuntimeError(
+                "IPPS01",
+                "LOS cannot be less than non-covered days",
+                f"LOS: {claim.los}, Non-Covered Days: {claim.non_covered_days}",
+            )
         claim_object.setCoveredDays(
             self.java_integer_class(claim.los - claim.non_covered_days)
         )
         if claim.thru_date is not None:
             claim_object.setDischargeDate(self.py_date_to_java_date(claim.thru_date))
         else:
-            raise ValueError("Thru date is required.")
+            raise PricerRuntimeError(
+                "IPPS02",
+                "Thru date is required.",
+                "Thru date is required.",
+            )
         claim_object.setLengthOfStay(self.java_integer_class(claim.los))
         if claim.billing_provider is not None:
             claim_object.setProviderCcn(claim.billing_provider.other_id)
@@ -836,8 +845,10 @@ class IppsClient:
                 drg = claim.additional_data["drg"]
                 claim_object.setDiagnosisRelatedGroup(str(drg))
             else:
-                raise ValueError(
-                    "Either MS DRG Grouper output or DRG code in additional data is required."
+                raise PricerRuntimeError(
+                    "IPPS03",
+                    "DRG output is required for LTC pricing."
+                    "A valid DRG must be provided in the claim's additional data. Or the MS-DRG module must be run prior to pricing.",
                 )
         pricing_request.setClaimData(claim_object)
 
@@ -871,6 +882,7 @@ class IppsClient:
         self.logger.debug(
             f"IppsClient processing claim on thread {current_thread().ident}"
         )
+        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
                 claim, drg_output, **kwargs
@@ -883,6 +895,27 @@ class IppsClient:
             ipps_output.claim_id = claim.claimid
             ipps_output.return_code = e.to_return_code()
             return ipps_output, IPSFProvider()
+        except PricerRuntimeError as e:
+            ipps_output = IppsOutput()
+            ipps_output.claim_id = claim.claimid
+            ipps_output.return_code = e.to_return_code()
+            return (
+                ipps_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Unexpected error occurred: {e}")
+            ipps_output = IppsOutput()
+            ipps_output.claim_id = claim.claimid
+            ipps_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected/Uncaught error occurred",
+            )
+            return (
+                ipps_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
         pricing_response = self.process_claim(claim, pricing_request, **kwargs)
         ipps_output = IppsOutput()
         ipps_output.claim_id = claim.claimid

@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -777,7 +778,11 @@ class EsrdClient:
                 or line.revenue_code == "0881"
             ):
                 return line.revenue_code
-        raise ValueError("No dialysis revenue code found in claim lines")
+        raise PricerRuntimeError(
+            "ESRD01",
+            "No dialysis revenue code found in claim lines",
+            "Please check the claim lines for the correct revenue code.",
+        )
 
     def get_dialysis_session_count(self, claim: Claim, dialysis_rev: str) -> int:
         dialysis_dates = set()
@@ -796,7 +801,11 @@ class EsrdClient:
         pricing_request = self.esrd_pricer_request_class()
         provider_data = self.provider_data_class()
         if claim.esrd_initial_date is None:
-            raise ValueError("esrd_initial_date is required for ESRD pricing")
+            raise PricerRuntimeError(
+                "ESRD02",
+                "ESRD initial date is required for ESRD pricing",
+                "Please provide the ESRD initial date in the claim object.",
+            )
         claim_object.setDialysisStartDate(
             self.py_date_to_java_date(claim.esrd_initial_date)
         )
@@ -809,14 +818,26 @@ class EsrdClient:
         dialysis_rev = self.get_dialysis_rev(claim)
         session_count = self.get_dialysis_session_count(claim, dialysis_rev)
         if session_count == 0:
-            raise ValueError("No dialysis sessions found in claim")
+            raise PricerRuntimeError(
+                "ESRD03",
+                "No dialysis sessions found in claim",
+                "Please provide a valid claim with at least one dialysis session.",
+            )
         claim_object.setDialysisSessionCount(self.java_integer_class(session_count))
         claim_object.setRevenueCode(dialysis_rev)
 
         if claim.patient is None:
-            raise ValueError("Patient Date of Birth is required for ESRD pricing")
+            raise PricerRuntimeError(
+                "ESRD04",
+                "Patient is required for ESRD pricing",
+                "Please provide a valid claim with a patient.",
+            )
         if claim.patient.date_of_birth is None:
-            raise ValueError("Patient Date of Birth is required for ESRD pricing")
+            raise PricerRuntimeError(
+                "ESRD05",
+                "Patient Date of Birth is required for ESRD pricing",
+                "Please provide a valid claim with a patient's date of birth.",
+            )
         claim_object.setPatientDateOfBirth(
             self.py_date_to_java_date(claim.patient.date_of_birth)
         )
@@ -844,9 +865,17 @@ class EsrdClient:
                 )
 
         if not height_set:
-            raise ValueError("Patient Height is required for ESRD pricing")
+            raise PricerRuntimeError(
+                "ESRD06",
+                "Patient Height is required for ESRD pricing"
+                "Please provide the patient's height in centimeters in Value code A9",
+            )
         if not weight_set:
-            raise ValueError("Patient Weight is required for ESRD pricing")
+            raise PricerRuntimeError(
+                "ESRD07",
+                "Patient Weight is required for ESRD pricing"
+                "Please provide the patient's weight in kilograms in Value code A8",
+            )
 
         if claim.from_date:
             claim_object.setServiceDate(self.py_date_to_java_date(claim.from_date))
@@ -869,8 +898,10 @@ class EsrdClient:
                 if esrd_data["ect_choice"] in ["H", "P", "B", None, ""]:
                     ect_choice = esrd_data["ect_choice"]
                     if "ppa_adjustment" not in esrd_data and ect_choice in ("P", "B"):
-                        raise ValueError(
-                            "ppa_adjustment must be provided when ECT is 'P' or 'B'"
+                        raise PricerRuntimeError(
+                            "ESRD08",
+                            "PPA adjustment is required when ECT is 'P' or 'B'",
+                            "Please provide a valid PPA adjustment value",
                         )
                     else:
                         ppa_adjustment = 1
@@ -881,7 +912,11 @@ class EsrdClient:
                                     self.java_big_decimal_class(ppa_adjustment)
                                 )
                 else:
-                    raise ValueError("ect_choice must be 'H', 'P', 'B', or None/empty")
+                    raise PricerRuntimeError(
+                        "ESRD09",
+                        "Invalid ECT choice",
+                        "ECT choice must be 'H', 'P', 'B', or None/empty",
+                    )
         claim_object.setTreatmentChoicesIndicator(str(ect_choice))
 
         comorbidity_codes = self.array_list_class()
@@ -929,6 +964,7 @@ class EsrdClient:
         :param claim: Claim object to process.
         :return: SnfOutput object.
         """
+        opsf_provider = None
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
         try:
@@ -941,6 +977,28 @@ class EsrdClient:
             esrd_output.claim_id = claim.claimid
             esrd_output.return_code = e.to_return_code()
             return esrd_output, OPSFProvider()
+        except PricerRuntimeError as e:
+            esrd_output = EsrdOutput()
+            esrd_output.claim_id = claim.claimid
+            esrd_output.return_code = e.to_return_code()
+            return (
+                esrd_output,
+                opsf_provider if opsf_provider is not None else OPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Unexpected error occurred: {e}")
+            esrd_output = EsrdOutput()
+            esrd_output.claim_id = claim.claimid
+            esrd_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected/Uncaught error occurred",
+            )
+            return (
+                esrd_output,
+                opsf_provider if opsf_provider is not None else OPSFProvider(),
+            )
+
         pricing_response = self.process_claim(claim, pricing_request)
         esrd_output = EsrdOutput()
         esrd_output.claim_id = claim.claimid

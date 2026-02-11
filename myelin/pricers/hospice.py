@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -102,11 +103,19 @@ class BillingGroup:
             # Calculate the number of days from the units
             days = self.units // 96  # 96 15-minute increments in a day
             if days > covered_days:
-                raise ValueError("More units than covered days")
+                raise PricerRuntimeError(
+                    "HOSPICE01",
+                    "More units than covered days",
+                    f"Units: {self.units}, Covered Days: {covered_days}",
+                )
             return
         # All other revenue codes are reported in whole days
         if self.units > covered_days:
-            raise ValueError("More units than covered days")
+            raise PricerRuntimeError(
+                "HOSPICE01",
+                "More units than covered days",
+                f"Units: {self.units}, Covered Days: {covered_days}",
+            )
 
 
 class BillingGroups:
@@ -154,10 +163,12 @@ class BillingGroups:
         for revenue_code, group in self.groups.items():
             try:
                 group.verify_units(self.covered_days)
-            except ValueError as e:
-                raise ValueError(
-                    f"Invalid billing for revenue code {revenue_code} as units {group.units} exceed covered days {self.covered_days}"
-                ) from e
+            except ValueError:
+                raise PricerRuntimeError(
+                    "HOSPICE02",
+                    "Invalid billing for revenue code",
+                    f"Invalid billing for revenue code {revenue_code} as units {group.units} exceed covered days {self.covered_days}",
+                )
 
 
 class NonCoveredRanges:
@@ -331,8 +342,10 @@ class HospiceClient:
             if claim.thru_date is not None:
                 return claim.thru_date
             else:
-                raise ValueError(
-                    "Claim has expired discharge status but no thru_date is set."
+                raise PricerRuntimeError(
+                    "HOSPICE03",
+                    "Claim has expired discharge status but no thru_date is set.",
+                    f"Discharge status: {claim.patient_status}",
                 )
         return None
 
@@ -386,7 +399,11 @@ class HospiceClient:
         elif claim.from_date is not None:
             claim_object.setAdmissionDate(self.py_date_to_java_date(claim.from_date))
         else:
-            raise ValueError("Claim has no from_date or admit_date.")
+            raise PricerRuntimeError(
+                "HOSPICE04",
+                "Claim has no from_date or admit_date.",
+                f"Discharge status: {claim.patient_status}",
+            )
         # @TODO: Add a way for the user to provide prior benefit days and reporting quality data flag
         claim_object.setPriorBenefitDayUnits(0)
         claim_object.setReportingQualityData("0")
@@ -414,7 +431,22 @@ class HospiceClient:
 
     @handle_java_exceptions
     def process(self, claim: Claim) -> HospiceOutput:
-        pricing_request = self.create_input_claim(claim)
+        try:
+            pricing_request = self.create_input_claim(claim)
+        except PricerRuntimeError as e:
+            hospice_output = HospiceOutput()
+            hospice_output.claim_id = claim.claimid
+            hospice_output.return_code = e.to_return_code()
+            return hospice_output
+        except Exception as e:
+            self.logger.error(f"Unexpected error occurred: {e}")
+            hospice_output = HospiceOutput()
+            hospice_output.claim_id = claim.claimid
+            hospice_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected/Uncaught error occurred",
+            )
         pricing_response = self.dispatch_obj.process(pricing_request)
         hospice_output = HospiceOutput()
         hospice_output.claim_id = claim.claimid

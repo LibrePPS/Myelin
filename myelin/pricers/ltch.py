@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -319,11 +320,19 @@ class LtchClient:
         provider_object = self.inpatient_prov_data()
         claim_object.setCoveredCharges(self.java_big_decimal_class(claim.total_charges))
         if claim.los < claim.non_covered_days:
-            raise ValueError("LOS cannot be less than non-covered days")
+            raise PricerRuntimeError(
+                "LTC01",
+                "LOS cannot be less than non-covered days",
+                f"LOS: {claim.los}, Non-Covered Days: {claim.non_covered_days}",
+            )
         if claim.thru_date is not None:
             claim_object.setDischargeDate(self.py_date_to_java_date(claim.thru_date))
         else:
-            raise ValueError("Thru date is required.")
+            raise PricerRuntimeError(
+                "LTC02",
+                "Thru date is required.",
+                "Thru date is required.",
+            )
         claim_object.setCoveredDays(
             self.java_integer_class(claim.los - claim.non_covered_days)
         )
@@ -339,8 +348,15 @@ class LtchClient:
                 str(drg_output.final_severity)
             )
         else:
-            # @TODO need to add the ability to pass a DRG without a MsdrgOutput object
-            raise ValueError("DRG output is required for LTC pricing.")
+            if "drg" in claim.additional_data:
+                drg = claim.additional_data["drg"]
+                claim_object.setDiagnosisRelatedGroup(str(drg))
+            else:
+                raise PricerRuntimeError(
+                    "LTC03",
+                    "DRG output is required for LTC pricing."
+                    "A valid DRG must be provided in the claim's additional data. Or the MS-DRG module must be run prior to pricing.",
+                )
 
         java_dxs = self.array_list_class()
         # @TODO need to verify if we need to strip out decimal points from diagnosis codes
@@ -384,9 +400,7 @@ class LtchClient:
         """
         Processes the python claim object through the CMS LTCH Java Pricer.
         """
-        self.logger.debug(
-            f"LtchClient processing claim on thread {current_thread().ident}"
-        )
+        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
                 claim, drg_output, **kwargs
@@ -399,6 +413,27 @@ class LtchClient:
             ltch_output.claim_id = claim.claimid
             ltch_output.return_code = e.to_return_code()
             return ltch_output, IPSFProvider()
+        except PricerRuntimeError as e:
+            ltch_output = LtchOutput()
+            ltch_output.claim_id = claim.claimid
+            ltch_output.return_code = e.to_return_code()
+            return (
+                ltch_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Unexpected error for claim {claim.claimid}: {e}")
+            ltch_output = LtchOutput()
+            ltch_output.claim_id = claim.claimid
+            ltch_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected error occurred",
+            )
+            return (
+                ltch_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
         pricing_response = self.process_claim(claim, pricing_request, **kwargs)
         ltch_output = LtchOutput()
         ltch_output.claim_id = claim.claimid

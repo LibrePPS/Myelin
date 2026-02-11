@@ -323,7 +323,6 @@ def run_pricers(myelin: Myelin):
         print(opps_output.model_dump_json(indent=2))
 
 
-
 def run_myelin_process(myelin: Myelin):
     claim = claim_example()
     claim.modules = [Modules.MCE, Modules.MSDRG, Modules.IPPS, Modules.PSYCH]
@@ -345,7 +344,7 @@ def main():
     ) as myelin:
         run_groupers(myelin)
         run_pricers(myelin)
-        #run_myelin_process(myelin)
+        # run_myelin_process(myelin)
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ from myelin.ioce.ioce_types import (
     OceValueCode,
     OceProcessingInformation,
 )
+from myelin.helpers.utils import JavaRuntimeError
 
 
 class IoceReturnCode(BaseModel):
@@ -43,7 +44,11 @@ def datestr_to_datetime(date_str: str) -> datetime:
         try:
             return datetime.strptime(date_str, "%Y-%m-%d")
         except ValueError:
-            raise ValueError(f"Invalid date format: {date_str}")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation=f"Invalid date format: {date_str}",
+            )
 
 
 def java_string_to_int(java_string: str) -> int | None:
@@ -66,7 +71,7 @@ class IoceProcessingInformation(BaseModel):
     """Processing information from IOCE output"""
 
     claim_id: str = ""
-    return_code:IoceReturnCode = Field(default_factory=IoceReturnCode)
+    return_code: IoceReturnCode = Field(default_factory=IoceReturnCode)
     lines_processed: int = 0
     internal_version: int = 0
     version: str = ""

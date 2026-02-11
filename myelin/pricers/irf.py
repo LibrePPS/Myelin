@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -267,15 +268,31 @@ class IrfClient:
                     if line.hcpcs.strip() != "":
                         cmg_code = line.hcpcs.strip()
                     else:
-                        raise ValueError("CMG code is required for IRF claims.")
+                        raise PricerRuntimeError(
+                            "IRF01",
+                            "CMG code is required for IRF claims."
+                            "No CMG code found in claim lines.",
+                        )
             if cmg_code is None:
-                raise ValueError("CMG code is required for IRF claims.")
+                raise PricerRuntimeError(
+                    "IRF01",
+                    "CMG code is required for IRF claims."
+                    "No CMG code found in claim lines.",
+                )
         else:
             if irfg.cmg_group is None:
-                raise ValueError("CMG code is required for IRF claims.")
+                raise PricerRuntimeError(
+                    "IRF01",
+                    "CMG code is required for IRF claims."
+                    "No CMG code found in claim lines.",
+                )
             cmg_code = irfg.cmg_group
         if cmg_code is None:
-            raise ValueError("CMG code is required for IRF claims.")
+            raise PricerRuntimeError(
+                "IRF01",
+                "CMG code is required for IRF claims.",
+                "No CMG code found in claim lines.",
+            )
         claim_obj.setCaseMixGroup(cmg_code)
         claim_obj.setCoveredCharges(self.java_big_decimal_class(claim.total_charges))
         claim_obj.setCoveredDays(claim.los - claim.non_covered_days)
@@ -321,18 +338,37 @@ class IrfClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
+        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
                 claim, irfg, **kwargs
             )
         except ProviderDataError as e:
-            self.logger.warning(
-                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
-            )
             irf_output = IrfOutput()
             irf_output.claim_id = claim.claimid
             irf_output.return_code = e.to_return_code()
             return irf_output, IPSFProvider()
+        except PricerRuntimeError as e:
+            irf_output = IrfOutput()
+            irf_output.claim_id = claim.claimid
+            irf_output.return_code = e.to_return_code()
+            return (
+                irf_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Error processing claim {claim.claimid}: {e}")
+            irf_output = IrfOutput()
+            irf_output.claim_id = claim.claimid
+            irf_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error occurred",
+                explanation="Unexpected error occurred",
+            )
+            return (
+                irf_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
         pricing_response = self.process_claim(claim, pricing_request)
         irf_output = IrfOutput()
         irf_output.claim_id = claim.claimid

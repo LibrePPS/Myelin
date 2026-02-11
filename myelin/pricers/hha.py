@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -299,7 +300,11 @@ class HhaClient:
                     claim_object.setHhrgInputCode(line.hcpcs)
                     hipps_set = True
         if not hipps_set:
-            raise ValueError("Hipps code not found")
+            raise PricerRuntimeError(
+                "HHA01",
+                "Hipps code not found",
+                "HHA Reader result not found, or no Hipps code billed on claim",
+            )
         rev_data = get_rev_code_data(claim)
         if rev_data is None:
             raise RuntimeError("No revenue code data found in claim")
@@ -382,12 +387,16 @@ class HhaClient:
                     county_set = True
 
         if not cbsa_set:
-            raise ValueError(
-                "CBSA code not found. This needs to billed on the Patient Address or via Value Code 61"
+            raise PricerRuntimeError(
+                "HHA02",
+                "CBSA code not found.",
+                "CBSA Code must be provided on the Patient Address object or via Value Code 61 on the claim",
             )
         if not county_set:
-            raise ValueError(
-                "County code not found. This needs to billed on the Patient Address or via Value Code 85"
+            raise PricerRuntimeError(
+                "HHA03",
+                "County code not found.",
+                "County Code must be provided on the Patient Address object or via Value Code 85 on the claim",
             )
         pricing_request.setProviderData(provider_data)
         return pricing_request, ipsf_provider
@@ -411,18 +420,35 @@ class HhaClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
+        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
                 claim, hhag_output, **kwargs
             )
         except ProviderDataError as e:
-            self.logger.warning(
-                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
-            )
             hha_output = HhaOutput()
             hha_output.claim_id = claim.claimid
             hha_output.return_code = e.to_return_code()
             return hha_output, IPSFProvider()
+        except PricerRuntimeError as e:
+            hha_output = HhaOutput()
+            hha_output.claim_id = claim.claimid
+            hha_output.return_code = e.to_return_code()
+            return (
+                hha_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Unexpected error occurred: {e}")
+            hha_output = HhaOutput()
+            hha_output.claim_id = claim.claimid
+            hha_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected/Uncaught error occurred",
+            )
+            return hha_output, IPSFProvider()
+
         pricing_response = self.process_claim(claim, pricing_request)
         hha_output = HhaOutput()
         hha_output.claim_id = claim.claimid

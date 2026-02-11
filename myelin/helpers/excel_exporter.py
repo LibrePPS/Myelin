@@ -496,7 +496,7 @@ def _create_summary_sheet(
         status = "✓ Processed" if module_output else "— Not Run"
         if name == "IPSF" or name == "OPSF":
             if module_output:
-                status = "✓ Used for Pricing" 
+                status = "✓ Used for Pricing"
         key_info = summary_func(module_output) if module_output else ""
 
         ws.cell(row=current_row, column=1, value=name)
@@ -743,7 +743,11 @@ class ExcelExporter:
         for attr_name, sheet_name, module_output in modules:
             if module_output is not None:
                 ws = wb.create_sheet(title=sheet_name)
-                title = f"{sheet_name} Output" if attr_name != "ipsf" and attr_name != "opsf" else f"{sheet_name} Used for Pricing"
+                title = (
+                    f"{sheet_name} Output"
+                    if attr_name != "ipsf" and attr_name != "opsf"
+                    else f"{sheet_name} Used for Pricing"
+                )
                 _write_model_to_sheet(ws, module_output, title)
                 _auto_adjust_column_widths(ws)
 

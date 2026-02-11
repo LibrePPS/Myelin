@@ -2,7 +2,7 @@ from datetime import datetime
 
 import jpype
 
-from myelin.helpers.utils import handle_java_exceptions
+from myelin.helpers.utils import handle_java_exceptions, JavaRuntimeError
 from myelin.input.claim import Claim
 from myelin.plugins import apply_client_methods, run_client_load_classes
 
@@ -47,19 +47,29 @@ class MceClient:
         elif isinstance(claim.from_date, datetime):
             from_date = claim.from_date
         else:
-            raise ValueError("from_date must be a string or datetime object")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="from_date must be a string or datetime object",
+            )
         if isinstance(claim.thru_date, str):
             thru_date = datetime.strptime(claim.thru_date, "%Y-%m-%d")
         elif isinstance(claim.thru_date, datetime):
             thru_date = claim.thru_date
         else:
-            raise ValueError("thru_date must be a string or datetime object")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="thru_date must be a string or datetime object",
+            )
         return (thru_date - from_date).days + 1 if thru_date >= from_date else 1
 
     def create_input(self, claim: Claim) -> jpype.JObject | None:
         if claim.patient_status is None or not claim.patient_status.isnumeric():
-            raise ValueError(
-                "Invalid Patient Discharge Status given for MCE processing."
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Invalid Patient Discharge Status given for MCE processing.",
             )
 
         mce_record = self.mce_record.builder()
@@ -95,7 +105,11 @@ class MceClient:
             discharge_date = claim.thru_date.strftime("%Y%m%d")
             mce_record.withDischargeDate(discharge_date)
         else:
-            raise ValueError("thru_date must be a string or datetime object")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="thru_date must be a string or datetime object",
+            )
         mce_record = mce_record.build()
         if claim.principal_dx:
             mce_record.addCode(
@@ -111,7 +125,11 @@ class MceClient:
     def process(self, claim: Claim) -> MceOutput:
         mce_input = self.create_input(claim)
         if not mce_input:
-            raise RuntimeError("Failed to create MCE input")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Failed to create MCE input",
+            )
         self.mce_component.process(mce_input)
         java_output = mce_input.getMceOutput()
         mce_output = MceOutput()

@@ -7,7 +7,7 @@ from threading import RLock
 import jpype
 
 from myelin.converter.icd_converter import ICD10ConvertOutput, ICDConverter
-from myelin.helpers.utils import handle_java_exceptions
+from myelin.helpers.utils import handle_java_exceptions, JavaRuntimeError
 from myelin.input.claim import (
     Claim,
     DiagnosisCode,
@@ -189,13 +189,25 @@ class DrgClient:
         with self._reconfig_lock:
             if not isinstance(hospital_status, MsdrgHospitalStatusOptionFlag):
                 self.logger.error("Invalid hospital status option")
-                raise ValueError("Invalid hospital status option")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation="Invalid hospital status option",
+                )
             if not isinstance(affect_drg, MsdrgAffectDrgOptionFlag):
                 self.logger.error("Invalid affect DRG option")
-                raise ValueError("Invalid affect DRG option")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation="Invalid affect DRG option",
+                )
             if not isinstance(logic_tiebreaker, MarkingLogicTieBreaker):
                 self.logger.error("Invalid logic tie breaker option")
-                raise ValueError("Invalid logic tie breaker option")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation="Invalid logic tie breaker option",
+                )
 
             runtime_options = self.runtime_options_class()
             match affect_drg:
@@ -216,7 +228,11 @@ class DrgClient:
                     )
             if drg_version not in self.drg_versions:
                 self.logger.error(f"DRG version {drg_version} is not loaded")
-                raise ValueError(f"DRG version {drg_version} is not loaded")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation=f"DRG version {drg_version} is not loaded",
+                )
             if hospital_status == MsdrgHospitalStatusOptionFlag.EXEMPT:
                 drg_component = self.drg_versions[drg_version]["exempt"]
                 runtime_options.setPoaReportingExempt(self.hospital_status.EXEMPT)
@@ -258,7 +274,11 @@ class DrgClient:
         Determine the DRG version based on the date provided.
         """
         if not isinstance(date, datetime):
-            raise ValueError("Date must be a datetime object")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Date must be a datetime object",
+            )
 
         year = date.year - 1983
         if date.month >= 10:
@@ -279,14 +299,22 @@ class DrgClient:
         elif isinstance(claim.from_date, datetime):
             from_date = claim.from_date
         else:
-            raise ValueError("Invalid date format for claim.from_date")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Invalid date format for claim.from_date",
+            )
 
         if isinstance(claim.patient.date_of_birth, str):
             dob = datetime.strptime(claim.patient.date_of_birth, "%Y-%m-%d")
         elif isinstance(claim.patient.date_of_birth, datetime):
             dob = claim.patient.date_of_birth
         else:
-            raise ValueError("Invalid date format for patient.date_of_birth")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Invalid date format for patient.date_of_birth",
+            )
         age_in_days = (from_date - dob).days
         return age_in_days if age_in_days > 0 else 0
 
@@ -329,7 +357,7 @@ class DrgClient:
             return dx
         self.logger.debug(
             f"Mapped diagnosis code {dx} to {mapped.conversion_choices[0]}"
-        )   
+        )
         return mapped.conversion_choices[
             0
         ]  # <---- We always return the first conversion choice
@@ -350,7 +378,11 @@ class DrgClient:
                 input.withAgeDaysAdmit(age_in_days)
                 input.withAgeDaysDischarge(age_in_days + claim.los)
             else:
-                raise ValueError("Patient age or date of birth must be provided")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation="Patient age or date of birth must be provided",
+                )
             if claim.patient.sex:
                 if str(claim.patient.sex).upper().startswith("M"):
                     input.withSex(self.sex.MALE)
@@ -369,7 +401,11 @@ class DrgClient:
                     self.drg_status.getEnumFromInt(discharge_status)
                 )
             except ValueError:
-                raise ValueError(f"Invalid patient status: {claim.patient_status}")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation=f"Invalid patient status: {claim.patient_status}",
+                )
         else:
             input.withDischargeStatus(self.drg_status.HOME_SELFCARE_ROUTINE)
 
@@ -393,7 +429,11 @@ class DrgClient:
                 )
             )
         else:
-            raise ValueError("Principal diagnosis must be provided")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Principal diagnosis must be provided",
+            )
 
         java_dxs = self.array_list_class()
         for dx in claim.secondary_dxs:
@@ -416,8 +456,10 @@ class DrgClient:
                         )
                     )
                 else:
-                    raise ValueError(
-                        "Secondary diagnosis must be a DiagnosisCode object"
+                    raise JavaRuntimeError(
+                        code="JERR_INVALID_DATE",
+                        description="Invalid date format",
+                        explanation="Secondary diagnosis must be a DiagnosisCode object",
                     )
         if len(java_dxs) > 0:
             input.withSecondaryDiagnosisCodes(java_dxs)
@@ -431,8 +473,10 @@ class DrgClient:
                     )
                 )
             else:
-                raise ValueError(
-                    "Inpatient procedure codes must be ProcedureCode objects"
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation="Inpatient procedure codes must be ProcedureCode objects",
                 )
         if len(java_pxs) > 0:
             input.withProcedureCodes(java_pxs)
@@ -555,19 +599,35 @@ class DrgClient:
             elif isinstance(claim.thru_date, datetime):
                 claim_date = claim.thru_date
             else:
-                raise ValueError("Invalid date format for claim.thru_date")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation="Invalid date format for claim.thru_date",
+                )
             drg_version = self.determine_drg_version(claim_date)
         if drg_version not in self.drg_versions:
-            raise ValueError(f"DRG version {drg_version} is not loaded")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation=f"DRG version {drg_version} is not loaded",
+            )
         if poa_exempt:
             drg_component = self.drg_versions[drg_version]["exempt"]
         else:
             drg_component = self.drg_versions[drg_version]["non_exempt"]
 
         if not claim.thru_date:
-            raise ValueError("Claim thru_date must be provided")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Claim thru_date must be provided",
+            )
         if not claim.principal_dx:
-            raise ValueError("Claim principal_dx must be provided")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Claim principal_dx must be provided",
+            )
 
         # Determine if code conversions are requested
         mappings = None
@@ -577,7 +637,7 @@ class DrgClient:
                 mappings = icd_converter.generate_claim_mappings(claim, drg_version)
 
         drg_input = self.create_drg_input(claim, mappings)
-        drg_claim = self.drg_claim_class(drg_input) # type: ignore
+        drg_claim = self.drg_claim_class(drg_input)  # type: ignore
         drg_component.process(drg_claim)
         drg_output = drg_claim.getOutput()
         if drg_output.isPresent() == 0:

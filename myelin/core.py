@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from myelin.converter import ICDConverter
 from myelin.database.manager import DatabaseManager
 from myelin.helpers.cms_downloader import CMSDownloader
-from myelin.helpers.utils import handle_java_exceptions
+from myelin.helpers.utils import JavaRuntimeError
 from myelin.hhag import HhagClient, HhagOutput
 from myelin.input.claim import Claim, Modules
 from myelin.ioce import IoceClient, IoceOutput
@@ -282,7 +282,6 @@ class Myelin:
                     f"{pricer} pricer JAR not found in {self.pricers_path}. Please ensure it is downloaded."
                 )
 
-    @handle_java_exceptions
     def process(self, claim: Claim, **kwargs: object) -> MyelinOutput:
         """Process a claim through the appropriate modules based on its configuration."""
 
@@ -293,111 +292,115 @@ class Myelin:
         _ = Claim.model_validate(claim)
 
         results = MyelinOutput()
-        if len(claim.modules) == 0:
-            results.error = "No modules specified in claim"
+        try:
+            if len(claim.modules) == 0:
+                results.error = "No modules specified in claim"
+                return results
+            # Claims Flow Editors -> Groupers -> Pricers
+            # Create unique list of modules preserving order
+            unique_modules: list[Modules] = []
+            for module in claim.modules:
+                if module not in unique_modules:
+                    unique_modules.append(module)
+            # Editors
+            if Modules.MCE in unique_modules:
+                if self.mce_client is None:
+                    results.error = "MCE client not initialized"
+                    return results
+                results.mce = self.mce_client.process(claim)
+            if Modules.IOCE in unique_modules:
+                if self.ioce_client is None:
+                    results.error = "IOCE client not initialized"
+                    return results
+                results.ioce = self.ioce_client.process(
+                    claim, include_descriptions=True, **kwargs
+                )
+            # Groupers
+            if Modules.MSDRG in unique_modules:
+                if self.drg_client is None:
+                    results.error = "DRG client not initialized"
+                    return results
+                results.msdrg = self.drg_client.process(
+                    claim, icd_converter=self.icd10_converter
+                )
+            if Modules.HHAG in unique_modules:
+                if self.hhag_client is None:
+                    results.error = "HHAG client not initialized"
+                    return results
+                results.hhag = self.hhag_client.process(claim)
+            if Modules.CMG in unique_modules:
+                if self.irfg_client is None:
+                    results.error = "IRFG client not initialized"
+                    return results
+                results.cmg = self.irfg_client.process(claim)
+            # Pricers
+            if Modules.IPPS in unique_modules:
+                if self.ipps_client is None:
+                    results.error = "IPPS client not initialized"
+                    return results
+                results.ipps, results.ipsf = self.ipps_client.process(
+                    claim, results.msdrg, **kwargs
+                )
+            if Modules.OPPS in unique_modules:
+                if self.opps_client is None:
+                    results.error = "OPPS client not initialized"
+                    return results
+                results.opps, results.opsf = self.opps_client.process(
+                    claim, results.ioce, **kwargs
+                )
+            if Modules.PSYCH in unique_modules:
+                if self.ipf_client is None:
+                    results.error = "IPF client not initialized"
+                    return results
+                results.psych, results.ipsf = self.ipf_client.process(
+                    claim, results.msdrg, **kwargs
+                )
+            if Modules.LTCH in unique_modules:
+                if self.ltch_client is None:
+                    results.error = "LTCH client not initialized"
+                    return results
+                results.ltch, results.ipsf = self.ltch_client.process(
+                    claim, results.msdrg, **kwargs
+                )
+            if Modules.IRF in unique_modules:
+                if self.irf_client is None:
+                    results.error = "IRF client not initialized"
+                    return results
+                results.irf, results.ipsf = self.irf_client.process(
+                    claim, results.cmg, **kwargs
+                )
+            if Modules.HOSPICE in unique_modules:
+                if self.hospice_client is None:
+                    results.error = "Hospice client not initialized"
+                    return results
+                results.hospice = self.hospice_client.process(claim)
+            if Modules.SNF in unique_modules:
+                if self.snf_client is None:
+                    results.error = "SNF client not initialized"
+                    return results
+                results.snf, results.ipsf = self.snf_client.process(claim, **kwargs)
+            if Modules.HHA in unique_modules:
+                if self.hha_client is None:
+                    results.error = "HHA client not initialized"
+                    return results
+                results.hha, results.ipsf = self.hha_client.process(
+                    claim, results.hhag, **kwargs
+                )
+            if Modules.ESRD in unique_modules:
+                if self.esrd_client is None:
+                    results.error = "ESRD client not initialized"
+                    return results
+                results.esrd, results.opsf = self.esrd_client.process(claim, **kwargs)
+            if Modules.FQHC in unique_modules:
+                if self.fqhc_client is None:
+                    results.error = "FQHC client not initialized"
+                    return results
+                if results.ioce is None:
+                    results.error = "FQHC pricer requires IOCE module to be run"
+                    return results
+                else:
+                    results.fqhc = self.fqhc_client.process(claim, results.ioce)
             return results
-        # Claims Flow Editors -> Groupers -> Pricers
-        # Create unique list of modules preserving order
-        unique_modules: list[Modules] = []
-        for module in claim.modules:
-            if module not in unique_modules:
-                unique_modules.append(module)
-        # Editors
-        if Modules.MCE in unique_modules:
-            if self.mce_client is None:
-                results.error = "MCE client not initialized"
-                return results
-            results.mce = self.mce_client.process(claim)
-        if Modules.IOCE in unique_modules:
-            if self.ioce_client is None:
-                results.error = "IOCE client not initialized"
-                return results
-            results.ioce = self.ioce_client.process(
-                claim, include_descriptions=True, **kwargs
-            )
-        # Groupers
-        if Modules.MSDRG in unique_modules:
-            if self.drg_client is None:
-                results.error = "DRG client not initialized"
-                return results
-            results.msdrg = self.drg_client.process(
-                claim, icd_converter=self.icd10_converter
-            )
-        if Modules.HHAG in unique_modules:
-            if self.hhag_client is None:
-                results.error = "HHAG client not initialized"
-                return results
-            results.hhag = self.hhag_client.process(claim)
-        if Modules.CMG in unique_modules:
-            if self.irfg_client is None:
-                results.error = "IRFG client not initialized"
-                return results
-            results.cmg = self.irfg_client.process(claim)
-        # Pricers
-        if Modules.IPPS in unique_modules:
-            if self.ipps_client is None:
-                results.error = "IPPS client not initialized"
-                return results
-            results.ipps, results.ipsf = self.ipps_client.process(
-                claim, results.msdrg, **kwargs
-            )
-        if Modules.OPPS in unique_modules:
-            if self.opps_client is None:
-                results.error = "OPPS client not initialized"
-                return results
-            results.opps, results.opsf = self.opps_client.process(
-                claim, results.ioce, **kwargs
-            )
-        if Modules.PSYCH in unique_modules:
-            if self.ipf_client is None:
-                results.error = "IPF client not initialized"
-                return results
-            results.psych, results.ipsf = self.ipf_client.process(
-                claim, results.msdrg, **kwargs
-            )
-        if Modules.LTCH in unique_modules:
-            if self.ltch_client is None:
-                results.error = "LTCH client not initialized"
-                return results
-            results.ltch, results.ipsf = self.ltch_client.process(
-                claim, results.msdrg, **kwargs
-            )
-        if Modules.IRF in unique_modules:
-            if self.irf_client is None:
-                results.error = "IRF client not initialized"
-                return results
-            results.irf, results.ipsf = self.irf_client.process(
-                claim, results.cmg, **kwargs
-            )
-        if Modules.HOSPICE in unique_modules:
-            if self.hospice_client is None:
-                results.error = "Hospice client not initialized"
-                return results
-            results.hospice = self.hospice_client.process(claim)
-        if Modules.SNF in unique_modules:
-            if self.snf_client is None:
-                results.error = "SNF client not initialized"
-                return results
-            results.snf, results.ipsf = self.snf_client.process(claim, **kwargs)
-        if Modules.HHA in unique_modules:
-            if self.hha_client is None:
-                results.error = "HHA client not initialized"
-                return results
-            results.hha, results.ipsf = self.hha_client.process(
-                claim, results.hhag, **kwargs
-            )
-        if Modules.ESRD in unique_modules:
-            if self.esrd_client is None:
-                results.error = "ESRD client not initialized"
-                return results
-            results.esrd, results.opsf = self.esrd_client.process(claim, **kwargs)
-        if Modules.FQHC in unique_modules:
-            if self.fqhc_client is None:
-                results.error = "FQHC client not initialized"
-                return results
-            if results.ioce is None:
-                results.error = "FQHC pricer requires IOCE module to be run"
-                return results
-            else:
-                results.fqhc = self.fqhc_client.process(claim, results.ioce)
-        return results
+        except JavaRuntimeError as e:
+            results.error = e.explanation
+            return results

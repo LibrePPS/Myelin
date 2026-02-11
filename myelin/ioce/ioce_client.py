@@ -1,7 +1,7 @@
 from datetime import datetime
 import jpype  # pyright: ignore[reportMissingTypeStubs]
 
-from myelin.helpers.utils import handle_java_exceptions
+from myelin.helpers.utils import handle_java_exceptions, JavaRuntimeError
 from myelin.input.claim import (
     Claim,
     DiagnosisCode,
@@ -95,7 +95,11 @@ class IoceClient:
                 # Try to parse as YYYYMMDD already
                 if len(date_input) == 8 and date_input.isdigit():
                     return date_input
-                raise ValueError(f"Invalid date format: {date_input}")
+                raise JavaRuntimeError(
+                    code="JERR_INVALID_DATE",
+                    description="Invalid date format",
+                    explanation=f"Invalid date format: {date_input}",
+                )
         else:
             return date_input.strftime("%Y%m%d")
 
@@ -204,8 +208,10 @@ class IoceClient:
                         line_item.override.discounting_formula
                     )
                 else:
-                    raise ValueError(
-                        f"Discounting formula must be a numeric value: {line_item.override.discounting_formula} for code {line_item.hcpcs}"
+                    raise JavaRuntimeError(
+                        code="JERR_INVALID_DISCOUNTING_FORMULA",
+                        description="Discounting formula must be a numeric value",
+                        explanation=f"Discounting formula must be a numeric value: {line_item.override.discounting_formula} for code {line_item.hcpcs}",
                     )
                 override_set = True
             if line_item.override.rejection_denial_flag != "":

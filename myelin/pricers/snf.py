@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -183,8 +184,10 @@ class SnfClient:
                     hipps_units = line.units
                     hipps_date = line.service_date
         if hipps_date is None or hipps_code.strip() == "" or hipps_units <= 0:
-            raise ValueError(
-                "Claim must have at least one line with revenue code 0022 and valid HCPCS code, units, and service date."
+            raise ProviderDataError(
+                "SNF01",
+                "HIPPS code missing/invalid or HIPPS units <= 0"
+                "Claim must have at least one line with revenue code 0022 and valid HCPCS code, units, and service date.",
             )
 
         claim_obj.setHippsCode(hipps_code)
@@ -237,16 +240,35 @@ class SnfClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
+        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(claim, **kwargs)
         except ProviderDataError as e:
-            self.logger.warning(
-                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
-            )
             snf_output = SnfOutput()
             snf_output.claim_id = claim.claimid
             snf_output.return_code = e.to_return_code()
             return snf_output, IPSFProvider()
+        except PricerRuntimeError as e:
+            snf_output = SnfOutput()
+            snf_output.claim_id = claim.claimid
+            snf_output.return_code = e.to_return_code()
+            return (
+                snf_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Unexpected error for claim {claim.claimid}: {e}")
+            snf_output = SnfOutput()
+            snf_output.claim_id = claim.claimid
+            snf_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected error occurred",
+            )
+            return (
+                snf_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
         pricing_response = self.process_claim(claim, pricing_request)
         snf_output = SnfOutput()
         snf_output.claim_id = claim.claimid

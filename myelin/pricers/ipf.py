@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -348,8 +349,10 @@ class IpfClient:
                         try:
                             px_date = datetime.strptime(px.date, "%Y-%m-%d")
                         except ValueError:
-                            raise ValueError(
-                                f"Invalid date format for procedure code {px.code}: {px.date}"
+                            raise PricerRuntimeError(
+                                "IPF01",
+                                "Invalid procedure date format"
+                                f"Invalid date format for procedure code {px.code}: {px.date}",
                             )
                     if (
                         ECTCodes[px.code]["start_date"]
@@ -364,9 +367,12 @@ class IpfClient:
                         try:
                             from_date = datetime.strptime(claim.from_date, "%Y-%m-%d")
                         except ValueError:
-                            raise ValueError(
-                                f"Invalid from_date format: {claim.from_date}"
+                            raise PricerRuntimeError(
+                                "IPF01",
+                                "Invalid date format",
+                                f"Invalid date format for procedure code {px.code}: {px.date}",
                             )
+
                     if (
                         ECTCodes[px.code]["start_date"]
                         <= from_date
@@ -386,11 +392,19 @@ class IpfClient:
         provider_object = self.inpatient_prov_data()
         claim_object.setCoveredCharges(self.java_big_decimal_class(claim.total_charges))
         if claim.los < claim.non_covered_days:
-            raise ValueError("LOS cannot be less than non-covered days")
+            raise PricerRuntimeError(
+                "IPF02",
+                "LOS cannot be less than non-covered days",
+                f"LOS: {claim.los}, Non-Covered Days: {claim.non_covered_days}",
+            )
         if claim.thru_date is not None:
             claim_object.setDischargeDate(self.py_date_to_java_date(claim.thru_date))
         else:
-            raise ValueError("Thru date is required.")
+            raise PricerRuntimeError(
+                "IPF03",
+                "Thru date is required.",
+                "Thru date is required.",
+            )
         claim_object.setLengthOfStay(self.java_integer_class(claim.los))
         claim_object.setPatientStatus(claim.patient_status)
         claim_object.setSourceOfAdmission(claim.admission_source)
@@ -408,8 +422,15 @@ class IpfClient:
                 str(drg_output.final_severity)
             )
         else:
-            # @TODO need to add the ability to pass a DRG without a MsdrgOutput object
-            raise ValueError("DRG output is required for IPF pricing.")
+            if "drg" in claim.additional_data:
+                drg = claim.additional_data["drg"]
+                claim_object.setDiagnosisRelatedGroup(str(drg))
+            else:
+                raise PricerRuntimeError(
+                    "IPF04",
+                    "DRG output is required for LTC pricing."
+                    "A valid DRG must be provided in the claim's additional data. Or the MS-DRG module must be run prior to pricing.",
+                )
 
         java_dxs = self.array_list_class()
         # @TODO need to verify if we need to strip out decimal points from diagnosis codes
@@ -451,18 +472,37 @@ class IpfClient:
         self.logger.debug(
             f"IpfClient processing claim on thread {current_thread().ident}"
         )
+        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
                 claim, drg_output, **kwargs
             )
         except ProviderDataError as e:
-            self.logger.warning(
-                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
-            )
             ipf_output = IpfOutput()
             ipf_output.claim_id = claim.claimid
             ipf_output.return_code = e.to_return_code()
             return ipf_output, IPSFProvider()
+        except PricerRuntimeError as e:
+            ipf_output = IpfOutput()
+            ipf_output.claim_id = claim.claimid
+            ipf_output.return_code = e.to_return_code()
+            return (
+                ipf_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
+        except Exception as e:
+            self.logger.error(f"Unexpected error occurred: {e}")
+            ipf_output = IpfOutput()
+            ipf_output.claim_id = claim.claimid
+            ipf_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="Unexpected/Uncaught error occurred",
+            )
+            return (
+                ipf_output,
+                ipsf_provider if ipsf_provider is not None else IPSFProvider(),
+            )
         pricing_response = self.process_claim(claim, pricing_request, **kwargs)
         ipf_output = IpfOutput()
         ipf_output.claim_id = claim.claimid

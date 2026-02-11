@@ -1,6 +1,6 @@
 import jpype
 
-from myelin.helpers.utils import handle_java_exceptions
+from myelin.helpers.utils import handle_java_exceptions, JavaRuntimeError
 from myelin.hhag.hhag_output import HhagOutput
 from myelin.input.claim import Claim
 
@@ -57,12 +57,20 @@ class HhagClient:
                 claim_obj.setPeriodTiming("2")
             claim_obj.setFromDate(claim.from_date.strftime("%Y%m%d"))
         else:
-            raise ValueError("Claim 'from_date' is required.")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Claim 'from_date' is required.",
+            )
 
         if claim.thru_date is not None:
             claim_obj.setThroughDate(claim.thru_date.strftime("%Y%m%d"))
         else:
-            raise ValueError("Claim 'thru_date' is required.")
+            raise JavaRuntimeError(
+                code="JERR_INVALID_DATE",
+                description="Invalid date format",
+                explanation="Claim 'thru_date' is required.",
+            )
 
         for code in claim.occurrence_codes:
             if code.code == "61":

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    PricerRuntimeError,
     ProviderDataError,
     ReturnCode,
     create_supported_years,
@@ -240,7 +241,9 @@ class OppsClient:
                 try:
                     input_line = claim.lines[i]
                 except IndexError:
-                    raise IndexError(
+                    raise PricerRuntimeError(
+                        "OPPS05",
+                        "Mismatching number of lines between IOCE output and claim lines",
                         f"IOCE output has more lines ({len(ioce_output.line_item_list)}) than claim lines ({len(claim.lines)})"
                     )
                 ioce_line.setActionFlag(line.action_flag_output)
@@ -279,8 +282,10 @@ class OppsClient:
                     ioce_line.setHcpcsModifiers(modifiers)
                 ioce_lines.add(ioce_line)
         else:
-            raise ValueError(
-                "Not implemented yet: IOCE output is required for OPPS claims."
+            raise PricerRuntimeError(
+                "OPPS01",
+                "Not implemented yet: IOCE output is required for OPPS claims.",
+                "The IOCE output is required for OPPS processing",
             )
         opps_claim_object.setIoceServiceLines(ioce_lines)
         return opps_claim_object
@@ -313,6 +318,27 @@ class OppsClient:
             opps_output.claim_id = claim.claimid
             opps_output.return_code = e.to_return_code()
             return opps_output, opsf_provider
+        except PricerRuntimeError as e:
+            opps_output = OppsOutput()
+            opps_output.claim_id = claim.claimid
+            opps_output.return_code = e.to_return_code()
+            return (
+                opps_output,
+                opsf_provider if opsf_provider is not None else OPSFProvider(),
+            )
+        except Exception as e:
+            opps_output = OppsOutput()
+            opps_output.claim_id = claim.claimid
+            opps_output.return_code = ReturnCode(
+                code="UNX",
+                description="Unexpected error",
+                explanation="An unexpected error occurred while processing the claim.",
+            )
+            self.logger.error(f"Unexpected error for claim {claim.claimid}: {e}")
+            return (
+                opps_output,
+                opsf_provider if opsf_provider is not None else OPSFProvider(),
+            )
         opsf_provider.set_java_values(provider_data, self)
 
         pricing_request.setProviderData(provider_data)
