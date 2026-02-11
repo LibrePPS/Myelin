@@ -1,6 +1,6 @@
 import csv
-from datetime import datetime
 import os
+from datetime import datetime
 from typing import Any, Iterable, Literal
 
 import requests
@@ -19,7 +19,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-from myelin.input.claim import Provider, Claim
+from myelin.helpers.utils import ProviderDataError
+from myelin.input.claim import Claim, Provider
 from myelin.plugins import apply_client_methods
 
 IPSF_URL = "https://pds.mps.cms.gov/fiss/v2/inpatient/export?fromDate=2023-01-01&toDate=2030-12-31"
@@ -409,7 +410,9 @@ class IPSFProvider(BaseModel):
     hospital_specific_capital_rate: float | None = 0.0
     old_capital_hold_harmless_rate: float | None = 0.0
     new_capital_hold_harmless_rate: float | None = 0.0
-    capital_cost_to_charge_ratio: float | None = 0.0  # Default to 0.0 if not provided in data.
+    capital_cost_to_charge_ratio: float | None = (
+        0.0  # Default to 0.0 if not provided in data.
+    )
     new_hospital: str | None = ""
     capital_indirect_medical_education_ratio: float | None = (
         0.0  # Default to 0.0 if not provided in data.
@@ -423,15 +426,21 @@ class IPSFProvider(BaseModel):
     hrr_adjustment: float | None = 0.0  # Default to 0.0 if not provided in data.
     bundle_model_discount: float | None = 0.0  # Default to 0.0 if not provided in data.
     hac_reduction_participant_indicator: str | None = ""
-    uncompensated_care_amount: float | None = 0.0  # Default to 0.0 if not provided in data.
+    uncompensated_care_amount: float | None = (
+        0.0  # Default to 0.0 if not provided in data.
+    )
     ehr_reduction_indicator: str | None = ""
-    low_volume_adjustment_factor: float | None = 0.0  # Default to 0.0 if not provided in data.
+    low_volume_adjustment_factor: float | None = (
+        0.0  # Default to 0.0 if not provided in data.
+    )
     county_code: str | None = ""
     medicare_performance_adjustment: float | None = (
         0.0  # Default to 0.0 if not provided in data.
     )
     ltch_dpp_indicator: str | None = ""
-    supplemental_wage_index: float | None = 0.0  # Default to 0.0 if not provided in data.
+    supplemental_wage_index: float | None = (
+        0.0  # Default to 0.0 if not provided in data.
+    )
     supplemental_wage_index_indicator: str | None = ""
     change_code_wage_index_reclassification: str | None = ""
     national_provider_identifier: str | None = ""
@@ -487,11 +496,17 @@ class IPSFProvider(BaseModel):
             params["npi"] = provider.npi
             query = IPSF_BY_NPI
         else:
-            raise ValueError("Provider must have either an NPI or other_id")
+            raise ProviderDataError(
+                code="P0002",
+                description="Provider missing NPI and CCN",
+                explanation="Provider must have either an NPI or other_id (CCN) to look up IPSF data.",
+            )
         row = session.execute(query, params).scalar_one_or_none()
         if row is None:
-            raise ValueError(
-                f"No IPSF data found for provider {provider.other_id or provider.npi} on date {date_int}."
+            raise ProviderDataError(
+                code="P0003",
+                description="Provider not found in IPSF",
+                explanation=f"No IPSF data found for provider {provider.other_id or provider.npi} on date {date_int}.",
             )
         for field in DATATYPES:
             val = getattr(row, field)
@@ -524,14 +539,20 @@ class IPSFProvider(BaseModel):
         return self.from_db(conn, provider, date_int, **kwargs)
 
     def from_claim(self, claim: Claim, db: Engine, **kwargs: object) -> None:
-        date_int = int(claim.thru_date.strftime("%Y%m%d")) if isinstance(claim.thru_date, datetime) else 19000101
+        date_int = (
+            int(claim.thru_date.strftime("%Y%m%d"))
+            if isinstance(claim.thru_date, datetime)
+            else 19000101
+        )
         if claim.billing_provider is not None:
             self.from_sqlite(db, claim.billing_provider, date_int, **kwargs)
         elif claim.servicing_provider is not None:
             self.from_sqlite(db, claim.servicing_provider, date_int, **kwargs)
         else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for pricing."
+            raise ProviderDataError(
+                code="P0001",
+                description="No provider on claim",
+                explanation="Either billing or servicing provider must be provided for pricing.",
             )
         return
 

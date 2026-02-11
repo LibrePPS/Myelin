@@ -1,6 +1,6 @@
 import csv
-from datetime import datetime
 import os
+from datetime import datetime
 from multiprocessing import cpu_count
 from typing import Any, Iterable, Literal
 
@@ -21,7 +21,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-from myelin.input.claim import Provider, Claim
+from myelin.helpers.utils import ProviderDataError
+from myelin.input.claim import Claim, Provider
 from myelin.plugins import apply_client_methods
 
 OPSF_URL = "https://pds.mps.cms.gov/fiss/v2/outpatient/export?fromDate=2023-01-01&toDate=2030-12-31"
@@ -213,11 +214,17 @@ class OPSFProvider(BaseModel):
             params["npi"] = provider.npi
             query = OPSF_BY_NPI
         else:
-            raise ValueError("Provider must have either an NPI or other_id")
+            raise ProviderDataError(
+                code="P0002",
+                description="Provider missing NPI and CCN",
+                explanation="Provider must have either an NPI or other_id (CCN) to look up OPSF data.",
+            )
         result = session.execute(query, params).scalar_one_or_none()
         if result is None:
-            raise ValueError(
-                f"No OPSF data found for provider {provider.other_id or provider.npi} on date {date_int}."
+            raise ProviderDataError(
+                code="P0003",
+                description="Provider not found in OPSF",
+                explanation=f"No OPSF data found for provider {provider.other_id or provider.npi} on date {date_int}.",
             )
         # if field is TEXT, strip whitespace
         for field in DATATYPES:
@@ -265,8 +272,10 @@ class OPSFProvider(BaseModel):
                 date_int = int(claim.thru_date.replace("-", ""))
             self.from_sqlite(db, claim.servicing_provider, date_int, **kwargs)
         else:
-            raise ValueError(
-                "Either billing or servicing provider must be provided for pricing."
+            raise ProviderDataError(
+                code="P0001",
+                description="No provider on claim",
+                explanation="Either billing or servicing provider must be provided for pricing.",
             )
         return
 

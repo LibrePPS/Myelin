@@ -1,6 +1,7 @@
 from .claim_examples import claim_example, json_claim_example, opps_claim_example
 from .cms_downloader import CMSDownloader
 from .utils import (
+    ProviderDataError,
     ReturnCode,
     float_or_none,
     handle_java_exceptions,
@@ -13,6 +14,7 @@ from .zipCL_loader import Zip9Data, load_records
 
 __all__ = [
     "CMSDownloader",
+    "ProviderDataError",
     "ReturnCode",
     "float_or_none",
     "handle_java_exceptions",

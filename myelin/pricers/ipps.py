@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -870,9 +871,18 @@ class IppsClient:
         self.logger.debug(
             f"IppsClient processing claim on thread {current_thread().ident}"
         )
-        pricing_request, ipsf_provider = self.create_input_claim(
-            claim, drg_output, **kwargs
-        )
+        try:
+            pricing_request, ipsf_provider = self.create_input_claim(
+                claim, drg_output, **kwargs
+            )
+        except ProviderDataError as e:
+            self.logger.warning(
+                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
+            )
+            ipps_output = IppsOutput()
+            ipps_output.claim_id = claim.claimid
+            ipps_output.return_code = e.to_return_code()
+            return ipps_output, IPSFProvider()
         pricing_response = self.process_claim(claim, pricing_request, **kwargs)
         ipps_output = IppsOutput()
         ipps_output.claim_id = claim.claimid

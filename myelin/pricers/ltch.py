@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -359,7 +360,10 @@ class LtchClient:
 
         ipsf_provider = IPSFProvider()
         ipsf_provider.from_claim(claim, self.db, **kwargs)
-        if ipsf_provider.federal_pps_blend is not None and not ipsf_provider.federal_pps_blend.isnumeric():
+        if (
+            ipsf_provider.federal_pps_blend is not None
+            and not ipsf_provider.federal_pps_blend.isnumeric()
+        ):
             ipsf_provider.federal_pps_blend = "0"
         ipsf_provider.set_java_values(provider_object, self)
         pricing_request.setClaimData(claim_object)
@@ -383,9 +387,18 @@ class LtchClient:
         self.logger.debug(
             f"LtchClient processing claim on thread {current_thread().ident}"
         )
-        pricing_request, ipsf_provider = self.create_input_claim(
-            claim, drg_output, **kwargs
-        )
+        try:
+            pricing_request, ipsf_provider = self.create_input_claim(
+                claim, drg_output, **kwargs
+            )
+        except ProviderDataError as e:
+            self.logger.warning(
+                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
+            )
+            ltch_output = LtchOutput()
+            ltch_output.claim_id = claim.claimid
+            ltch_output.return_code = e.to_return_code()
+            return ltch_output, IPSFProvider()
         pricing_response = self.process_claim(claim, pricing_request, **kwargs)
         ltch_output = LtchOutput()
         ltch_output.claim_id = claim.claimid

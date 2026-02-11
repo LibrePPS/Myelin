@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -919,7 +920,9 @@ class EsrdClient:
         raise ValueError("Dispatch object does not have a process method.")
 
     @handle_java_exceptions
-    def process(self, claim: Claim, **kwargs: object) -> tuple[EsrdOutput, OPSFProvider]:
+    def process(
+        self, claim: Claim, **kwargs: object
+    ) -> tuple[EsrdOutput, OPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
 
@@ -928,7 +931,16 @@ class EsrdClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        pricing_request, opsf_provider = self.create_input_claim(claim, **kwargs)
+        try:
+            pricing_request, opsf_provider = self.create_input_claim(claim, **kwargs)
+        except ProviderDataError as e:
+            self.logger.warning(
+                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
+            )
+            esrd_output = EsrdOutput()
+            esrd_output.claim_id = claim.claimid
+            esrd_output.return_code = e.to_return_code()
+            return esrd_output, OPSFProvider()
         pricing_response = self.process_claim(claim, pricing_request)
         esrd_output = EsrdOutput()
         esrd_output.claim_id = claim.claimid

@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -236,7 +237,16 @@ class SnfClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        pricing_request, ipsf_provider = self.create_input_claim(claim, **kwargs)
+        try:
+            pricing_request, ipsf_provider = self.create_input_claim(claim, **kwargs)
+        except ProviderDataError as e:
+            self.logger.warning(
+                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
+            )
+            snf_output = SnfOutput()
+            snf_output.claim_id = claim.claimid
+            snf_output.return_code = e.to_return_code()
+            return snf_output, IPSFProvider()
         pricing_response = self.process_claim(claim, pricing_request)
         snf_output = SnfOutput()
         snf_output.claim_id = claim.claimid

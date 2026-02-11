@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -302,7 +303,16 @@ class OppsClient:
         provider_data = self.outpatient_prov_data_class()
 
         opsf_provider = OPSFProvider()
-        opsf_provider.from_claim(claim, self.db, **kwargs)
+        try:
+            opsf_provider.from_claim(claim, self.db, **kwargs)
+        except ProviderDataError as e:
+            self.logger.warning(
+                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
+            )
+            opps_output = OppsOutput()
+            opps_output.claim_id = claim.claimid
+            opps_output.return_code = e.to_return_code()
+            return opps_output, opsf_provider
         opsf_provider.set_java_values(provider_data, self)
 
         pricing_request.setProviderData(provider_data)

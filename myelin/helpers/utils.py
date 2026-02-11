@@ -33,6 +33,35 @@ class ReturnCode(BaseModel):
         return
 
 
+class ProviderDataError(Exception):
+    """Raised when provider data cannot be loaded for pricing.
+
+    Instead of halting claim processing with an unhandled exception, pricer
+    ``process()`` methods catch this and surface the information as a
+    :class:`ReturnCode` on the output object so callers always receive a
+    structured result.
+
+    Attributes:
+        code: A short error code (e.g. ``"P0001"``).
+        description: A human-readable summary of the error.
+        explanation: A longer explanation with contextual details.
+    """
+
+    def __init__(self, code: str, description: str, explanation: str = ""):
+        self.code = code
+        self.description = description
+        self.explanation = explanation
+        super().__init__(description)
+
+    def to_return_code(self) -> ReturnCode:
+        """Convert this error into a :class:`ReturnCode` for output objects."""
+        return ReturnCode(
+            code=self.code,
+            description=self.description,
+            explanation=self.explanation,
+        )
+
+
 def float_or_none(value: jpype.JObject | None) -> float | None:
     """
     Convert a value to float or return None if conversion fails.

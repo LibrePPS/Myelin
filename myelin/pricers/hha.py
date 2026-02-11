@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
+    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -349,20 +350,23 @@ class HhaClient:
         if (
             ipsf_provider.special_provider_update_factor is not None
             and ipsf_provider.special_provider_update_factor > 0
-            and (ipsf_provider.vbp_adjustment == 0 or ipsf_provider.vbp_adjustment is None)
+            and (
+                ipsf_provider.vbp_adjustment == 0
+                or ipsf_provider.vbp_adjustment is None
+            )
         ):
             ipsf_provider.vbp_adjustment = ipsf_provider.special_provider_update_factor
         ipsf_provider.set_java_values(provider_data, self)
         cbsa_set = False
         county_set = False
         for val in claim.value_codes:
-            if val.code == "61": # Zip Code for CBSA
-                #convert val amount to int -> str -> take first 5 chars
+            if val.code == "61":  # Zip Code for CBSA
+                # convert val amount to int -> str -> take first 5 chars
                 zip_val = str(int(val.amount))
                 provider_data.setCbsaActualGeographicLocation(zip_val[:5])
                 cbsa_set = True
-            elif val.code == "85": # County Code
-                #convert val amount to int -> str -> take first 2 chars
+            elif val.code == "85":  # County Code
+                # convert val amount to int -> str -> take first 2 chars
                 county_val = str(int(val.amount))
                 provider_data.setCountyCode(county_val[:5])
                 county_set = True
@@ -373,14 +377,18 @@ class HhaClient:
                         provider_data.setCountyCode(claim.patient.address.zip[:5])
                         provider_data.setCbsaActualGeographicLocation(
                             claim.patient.address.zip[:5]
-                    )
+                        )
                     cbsa_set = True
                     county_set = True
 
         if not cbsa_set:
-            raise ValueError("CBSA code not found. This needs to billed on the Patient Address or via Value Code 61")
+            raise ValueError(
+                "CBSA code not found. This needs to billed on the Patient Address or via Value Code 61"
+            )
         if not county_set:
-            raise ValueError("County code not found. This needs to billed on the Patient Address or via Value Code 85")
+            raise ValueError(
+                "County code not found. This needs to billed on the Patient Address or via Value Code 85"
+            )
         pricing_request.setProviderData(provider_data)
         return pricing_request, ipsf_provider
 
@@ -403,9 +411,18 @@ class HhaClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        pricing_request, ipsf_provider = self.create_input_claim(
-            claim, hhag_output, **kwargs
-        )
+        try:
+            pricing_request, ipsf_provider = self.create_input_claim(
+                claim, hhag_output, **kwargs
+            )
+        except ProviderDataError as e:
+            self.logger.warning(
+                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
+            )
+            hha_output = HhaOutput()
+            hha_output.claim_id = claim.claimid
+            hha_output.return_code = e.to_return_code()
+            return hha_output, IPSFProvider()
         pricing_response = self.process_claim(claim, pricing_request)
         hha_output = HhaOutput()
         hha_output.claim_id = claim.claimid
