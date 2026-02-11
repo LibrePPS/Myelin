@@ -301,7 +301,7 @@ class OPSFProvider(BaseModel):
             if self.cost_of_living_adjustment is not None
             else client.java_big_decimal_class(0)
         )
-        java_obj.setCountyCode(self.county_code if self.county_code else "")
+        java_obj.setCountyCode(self.county_code if self.county_code else "0")
         java_obj.setHospitalQualityIndicator(
             self.hospital_quality_indicator if self.hospital_quality_indicator else ""
         )
