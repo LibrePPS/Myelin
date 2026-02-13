@@ -382,13 +382,12 @@ class IpfClient:
         return ect_units
 
     def create_input_claim(
-        self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for IpfClient.")
         claim_object = self.ipf_claim_data_class()
         pricing_request = self.ipf_price_request()
-        ipsf_provider = IPSFProvider()
         provider_object = self.inpatient_prov_data()
         claim_object.setCoveredCharges(self.java_big_decimal_class(claim.total_charges))
         if claim.los < claim.non_covered_days:
@@ -448,8 +447,6 @@ class IpfClient:
                 java_pxs.add(self.java_string_class(px.code))
         claim_object.setProcedureCodes(java_pxs)
 
-        ipsf_provider = IPSFProvider()
-        ipsf_provider.from_claim(claim, self.db, **kwargs)
         ipsf_provider.set_java_values(provider_object, self)
         pricing_request.setClaimData(claim_object)
         pricing_request.setProviderData(provider_object)
@@ -464,7 +461,7 @@ class IpfClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
     ) -> tuple[IpfOutput, IPSFProvider]:
         """
         Processes the python claim object through the CMS IPF Java Pricer.
@@ -472,16 +469,10 @@ class IpfClient:
         self.logger.debug(
             f"IpfClient processing claim on thread {current_thread().ident}"
         )
-        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
-                claim, drg_output, **kwargs
+                claim, ipsf_provider, drg_output, **kwargs
             )
-        except ProviderDataError as e:
-            ipf_output = IpfOutput()
-            ipf_output.claim_id = claim.claimid
-            ipf_output.return_code = e.to_return_code()
-            return ipf_output, IPSFProvider()
         except PricerRuntimeError as e:
             ipf_output = IpfOutput()
             ipf_output.claim_id = claim.claimid

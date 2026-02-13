@@ -292,7 +292,7 @@ class OppsClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, ioce_output: IoceOutput | None = None, **kwargs: object
+        self, claim: Claim, opsf_provider: OPSFProvider, ioce_output: IoceOutput | None = None, **kwargs: object
     ) -> tuple[OppsOutput, OPSFProvider]:
         """
         Process the python claim object through the CMS OPPS Java Pricer.
@@ -302,14 +302,12 @@ class OppsClient:
         self.logger.debug(
             f"OppsClient processing claim on thread {current_thread().ident}"
         )
-        opps_claim_object = self.create_input_claim(claim, ioce_output, **kwargs)
         pricing_request = self.opps_price_request_class()
-        pricing_request.setClaimData(opps_claim_object)
         provider_data = self.outpatient_prov_data_class()
-
-        opsf_provider = OPSFProvider()
+        opps_claim_object = None
         try:
-            opsf_provider.from_claim(claim, self.db, **kwargs)
+            opps_claim_object = self.create_input_claim(claim, ioce_output, **kwargs)
+            pricing_request.setClaimData(opps_claim_object)
         except ProviderDataError as e:
             self.logger.warning(
                 f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"

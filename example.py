@@ -1,3 +1,5 @@
+from myelin import OPSFProvider
+from myelin import IPSFProvider
 import os
 from datetime import datetime, timedelta
 
@@ -98,7 +100,10 @@ def run_pricers(myelin: Myelin):
         ipps_claim = claim_example()
         ipps_claim.claimid = "IPPS_CLAIM_001"
         drg_output = myelin.drg_client.process(ipps_claim)
-        ipps_output, _ = myelin.ipps_client.process(ipps_claim, drg_output)
+        assert myelin.ipps_client.db is not None
+        provider = IPSFProvider()
+        provider.from_claim(ipps_claim, myelin.ipps_client.db)
+        ipps_output, _ = myelin.ipps_client.process(ipps_claim, provider,drg_output)
         print(ipps_output.model_dump_json(indent=2))
 
     # IPF Pricer
@@ -106,8 +111,11 @@ def run_pricers(myelin: Myelin):
         print("--- IPF Pricer Example ---")
         ipf_claim = claim_example()
         ipf_claim.claimid = "IPF_CLAIM_001"
+        assert myelin.ipf_client.db is not None
+        provider = IPSFProvider()
+        provider.from_claim(ipf_claim, myelin.ipf_client.db)
         drg_output = myelin.drg_client.process(ipf_claim)
-        ipf_output, _ = myelin.ipf_client.process(ipf_claim, drg_output)
+        ipf_output, _ = myelin.ipf_client.process(ipf_claim, provider, drg_output)
         print(ipf_output.model_dump_json(indent=2))
 
     # LTCH Pricer
@@ -129,7 +137,10 @@ def run_pricers(myelin: Myelin):
             icd_converter=myelin.icd10_converter,
             poa_exempt=True,
         )
-        ltch_output, _ = myelin.ltch_client.process(ltch_claim, drg_output)
+        assert myelin.ltch_client.db is not None
+        provider = IPSFProvider()
+        provider.from_claim(ltch_claim, myelin.ltch_client.db)
+        ltch_output, _ = myelin.ltch_client.process(ltch_claim, provider, drg_output)
         print(ltch_output.model_dump_json(indent=2))
 
     # Hospice Pricer
@@ -201,7 +212,10 @@ def run_pricers(myelin: Myelin):
         hha_claim.oasis_assessment.multiple_hospital_stays = 1
         hha_claim.oasis_assessment.grooming = "1"
         hhag_output = myelin.hhag_client.process(hha_claim)
-        hha_pricer, _ = myelin.hha_client.process(hha_claim, hhag_output)
+        assert myelin.hha_client.db is not None
+        provider = IPSFProvider()
+        provider.from_claim(hha_claim, myelin.hha_client.db)
+        hha_pricer, _ = myelin.hha_client.process(hha_claim, provider, hhag_output)
         myout = MyelinOutput()
         myout.hhag = hhag_output
         myout.hha = hha_pricer
@@ -238,7 +252,10 @@ def run_pricers(myelin: Myelin):
         irf_claim.irf_pai.urinary_continence_cd = "0"
         irf_claim.irf_pai.bowel_continence_cd = "0"
         irf_output = myelin.irfg_client.process(irf_claim)
-        irf_pricer, _ = myelin.irf_client.process(irf_claim, irf_output)
+        assert myelin.irf_client.db is not None
+        provider = IPSFProvider()
+        provider.from_claim(irf_claim, myelin.irf_client.db)
+        irf_pricer, _ = myelin.irf_client.process(irf_claim, provider, irf_output)
         print(irf_pricer.model_dump_json(indent=2))
 
     # ESRD Pricer
@@ -263,7 +280,10 @@ def run_pricers(myelin: Myelin):
             start_date += timedelta(days=1)
         esrd_claim.value_codes.append(ValueCode(code="A8", amount=70.0))
         esrd_claim.value_codes.append(ValueCode(code="A9", amount=180.0))
-        esrd_output, _ = myelin.esrd_client.process(esrd_claim)
+        assert myelin.esrd_client.db is not None
+        provider = OPSFProvider()
+        provider.from_claim(esrd_claim, myelin.esrd_client.db)
+        esrd_output, _ = myelin.esrd_client.process(esrd_claim, provider)
         print(esrd_output.model_dump_json(indent=2))
 
     # FQHC Pricer
@@ -319,7 +339,10 @@ def run_pricers(myelin: Myelin):
         opps_claim = opps_claim_example()
         opps_claim.claimid = "OPPS_CLAIM_001"
         ioce_output = myelin.ioce_client.process(opps_claim)
-        opps_output, _ = myelin.opps_client.process(opps_claim, ioce_output)
+        assert myelin.opps_client.db is not None
+        provider = OPSFProvider()
+        provider.from_claim(opps_claim, myelin.opps_client.db)
+        opps_output, _ = myelin.opps_client.process(opps_claim, provider, ioce_output)
         print(opps_output.model_dump_json(indent=2))
 
 

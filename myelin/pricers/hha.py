@@ -249,7 +249,7 @@ class HhaClient:
         return 0
 
     def create_input_claim(
-        self, claim: Claim, hhag_output: HhagOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, hhag_output: HhagOutput | None = None, **kwargs: object
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database engine is not set for HhaClient")
@@ -347,8 +347,6 @@ class HhaClient:
             claim_object.setPriorPaymentTotal(self.java_big_decimal_class(0))
             claim_object.setPriorOutlierTotal(self.java_big_decimal_class(0))
 
-        ipsf_provider = IPSFProvider()
-        ipsf_provider.from_claim(claim, self.db, **kwargs)
         claim_object.setProviderCcn(ipsf_provider.provider_ccn)
         pricing_request.setClaimData(claim_object)
         # HHA Uses the special provider update factor as vbp adjustment
@@ -410,7 +408,7 @@ class HhaClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, hhag_output: HhagOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, hhag_output: HhagOutput | None = None, **kwargs: object
     ) -> tuple[HhaOutput, IPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
@@ -420,10 +418,9 @@ class HhaClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
-                claim, hhag_output, **kwargs
+                claim, ipsf_provider, hhag_output, **kwargs
             )
         except ProviderDataError as e:
             hha_output = HhaOutput()

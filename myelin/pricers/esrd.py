@@ -793,7 +793,7 @@ class EsrdClient:
         return len(dialysis_dates)
 
     def create_input_claim(
-        self, claim: Claim, **kwargs: object
+        self, claim: Claim, opsf_provider: OPSFProvider, **kwargs: object
     ) -> tuple[jpype.JObject, OPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for ESRD pricing")
@@ -934,8 +934,6 @@ class EsrdClient:
         comorbidity_obj.setComorbidityCodes(comorbidity_codes)
         claim_object.setComorbidities(comorbidity_obj)
 
-        opsf_provider = OPSFProvider()
-        opsf_provider.from_claim(claim, self.db, **kwargs)
         if opsf_provider:
             opsf_provider.set_java_values(provider_data, self)
             if (
@@ -956,7 +954,7 @@ class EsrdClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, **kwargs: object
+        self, claim: Claim, opsf_provider: OPSFProvider, **kwargs: object
     ) -> tuple[EsrdOutput, OPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
@@ -964,11 +962,10 @@ class EsrdClient:
         :param claim: Claim object to process.
         :return: SnfOutput object.
         """
-        opsf_provider = None
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
         try:
-            pricing_request, opsf_provider = self.create_input_claim(claim, **kwargs)
+            pricing_request, opsf_provider = self.create_input_claim(claim, opsf_provider, **kwargs)
         except ProviderDataError as e:
             self.logger.warning(
                 f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"

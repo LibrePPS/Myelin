@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from myelin.converter import ICDConverter
 from myelin.database.manager import DatabaseManager
 from myelin.helpers.cms_downloader import CMSDownloader
-from myelin.helpers.utils import JavaRuntimeError
+from myelin.helpers.utils import JavaRuntimeError, ProviderDataError
 from myelin.hhag import HhagClient, HhagOutput
 from myelin.input.claim import Claim, Modules
 from myelin.ioce import IoceClient, IoceOutput
@@ -44,6 +44,18 @@ PRICERS: dict[str, str] = {
     "Snf": "snf-pricer",
 }
 
+IPSF_PRICERS: set[Modules] = {
+    Modules.IPPS,
+    Modules.PSYCH,
+    Modules.LTCH,
+    Modules.IRF,
+    Modules.SNF,
+    Modules.HHA,
+}
+OPSF_PRICERS: set[Modules] = {
+    Modules.OPPS,
+    Modules.ESRD,
+}
 
 class MyelinOutput(BaseModel):
     model_config = ConfigDict(json_schema_mode_override="validation")
@@ -292,6 +304,7 @@ class Myelin:
         _ = Claim.model_validate(claim)
 
         results = MyelinOutput()
+        provider: IPSFProvider | OPSFProvider | None = None
         try:
             if len(claim.modules) == 0:
                 results.error = "No modules specified in claim"
@@ -301,7 +314,21 @@ class Myelin:
             unique_modules: list[Modules] = []
             for module in claim.modules:
                 if module not in unique_modules:
+                    if module in IPSF_PRICERS:
+                        provider = IPSFProvider()
+                    elif module in OPSF_PRICERS:
+                        provider = OPSFProvider()
                     unique_modules.append(module)
+            if provider is not None:
+                if self.db_manager.engine is not None:
+                    try:
+                        provider.from_claim(claim, self.db_manager.engine, **kwargs)
+                    except ProviderDataError as e:
+                        results.error = e.explanation
+                        return results
+                else:
+                    results.error = "No database connection to fetch provider information"
+                    return results
             # Editors
             if Modules.MCE in unique_modules:
                 if self.mce_client is None:
@@ -338,36 +365,51 @@ class Myelin:
                 if self.ipps_client is None:
                     results.error = "IPPS client not initialized"
                     return results
+                if not isinstance(provider, IPSFProvider):
+                    results.error = "IPSF provider not initialized"
+                    return results
                 results.ipps, results.ipsf = self.ipps_client.process(
-                    claim, results.msdrg, **kwargs
+                    claim, provider, results.msdrg, **kwargs
                 )
             if Modules.OPPS in unique_modules:
                 if self.opps_client is None:
                     results.error = "OPPS client not initialized"
                     return results
+                if not isinstance(provider, OPSFProvider):
+                    results.error = "OPSF provider not initialized"
+                    return results
                 results.opps, results.opsf = self.opps_client.process(
-                    claim, results.ioce, **kwargs
+                    claim, provider, results.ioce, **kwargs
                 )
             if Modules.PSYCH in unique_modules:
                 if self.ipf_client is None:
                     results.error = "IPF client not initialized"
                     return results
+                if not isinstance(provider, IPSFProvider):
+                    results.error = "IPSF provider not initialized"
+                    return results
                 results.psych, results.ipsf = self.ipf_client.process(
-                    claim, results.msdrg, **kwargs
+                    claim, provider, results.msdrg, **kwargs
                 )
             if Modules.LTCH in unique_modules:
                 if self.ltch_client is None:
                     results.error = "LTCH client not initialized"
                     return results
+                if not isinstance(provider, IPSFProvider):
+                    results.error = "IPSF provider not initialized"
+                    return results
                 results.ltch, results.ipsf = self.ltch_client.process(
-                    claim, results.msdrg, **kwargs
+                    claim, provider, results.msdrg, **kwargs
                 )
             if Modules.IRF in unique_modules:
                 if self.irf_client is None:
                     results.error = "IRF client not initialized"
                     return results
+                if not isinstance(provider, IPSFProvider):
+                    results.error = "IPSF provider not initialized"
+                    return results
                 results.irf, results.ipsf = self.irf_client.process(
-                    claim, results.cmg, **kwargs
+                    claim, provider, results.cmg, **kwargs
                 )
             if Modules.HOSPICE in unique_modules:
                 if self.hospice_client is None:
@@ -378,19 +420,28 @@ class Myelin:
                 if self.snf_client is None:
                     results.error = "SNF client not initialized"
                     return results
-                results.snf, results.ipsf = self.snf_client.process(claim, **kwargs)
+                if not isinstance(provider, IPSFProvider):
+                    results.error = "IPSF provider not initialized"
+                    return results
+                results.snf, results.ipsf = self.snf_client.process(claim, provider, **kwargs)
             if Modules.HHA in unique_modules:
                 if self.hha_client is None:
                     results.error = "HHA client not initialized"
                     return results
+                if not isinstance(provider, IPSFProvider):
+                    results.error = "IPSF provider not initialized"
+                    return results
                 results.hha, results.ipsf = self.hha_client.process(
-                    claim, results.hhag, **kwargs
+                    claim, provider, results.hhag, **kwargs
                 )
             if Modules.ESRD in unique_modules:
                 if self.esrd_client is None:
                     results.error = "ESRD client not initialized"
                     return results
-                results.esrd, results.opsf = self.esrd_client.process(claim, **kwargs)
+                if not isinstance(provider, OPSFProvider):
+                    results.error = "OPSF provider not initialized"
+                    return results
+                results.esrd, results.opsf = self.esrd_client.process(claim, provider, **kwargs)
             if Modules.FQHC in unique_modules:
                 if self.fqhc_client is None:
                     results.error = "FQHC client not initialized"

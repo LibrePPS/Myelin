@@ -7,7 +7,7 @@ from typing import Any, Iterable, Literal
 import jpype
 import requests
 import sqlalchemy
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import (
     Column,
     Engine,
@@ -178,9 +178,9 @@ class OPSFProvider(BaseModel):
     last_updated: str | None = None  # Date in YYYY-MM-DD format
     carrier_code: str | None = None
     locality_code: str | None = None
+    model_config = ConfigDict(extra='allow')
 
     def model_post_init(self, __context: Any) -> None:
-        self.model_config["extra"] = "allow"
         try:
             apply_client_methods(self)
         except Exception as e:

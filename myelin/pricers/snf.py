@@ -163,7 +163,7 @@ class SnfClient:
             )
 
     def create_input_claim(
-        self, claim: Claim, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, **kwargs: object
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for SnfClient.")
@@ -172,7 +172,7 @@ class SnfClient:
         pricing_request = self.snf_pricer_request_class()
         hipps_code = ""
         hipps_units = 0
-        hipps_date = None
+        hipps_date: datetime | None = None
         for line in claim.lines:
             if line.revenue_code == "0022":
                 if hipps_date is None:
@@ -215,8 +215,6 @@ class SnfClient:
                 dx_list.add(dx.code)
         claim_obj.setDiagnosisCodes(dx_list)
 
-        ipsf_provider = IPSFProvider()
-        ipsf_provider.from_claim(claim, self.db, **kwargs)
         claim_obj.setProviderCcn(ipsf_provider.provider_ccn)
         pricing_request.setClaimData(claim_obj)
         ipsf_provider.set_java_values(provider_data, self)
@@ -231,7 +229,7 @@ class SnfClient:
         raise ValueError("Dispatch object does not have a process method.")
 
     @handle_java_exceptions
-    def process(self, claim: Claim, **kwargs: object) -> tuple[SnfOutput, IPSFProvider]:
+    def process(self, claim: Claim, ipsf_provider: IPSFProvider, **kwargs: object) -> tuple[SnfOutput, IPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
 
@@ -240,9 +238,8 @@ class SnfClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        ipsf_provider = None
         try:
-            pricing_request, ipsf_provider = self.create_input_claim(claim, **kwargs)
+            pricing_request, ipsf_provider = self.create_input_claim(claim, ipsf_provider, **kwargs)
         except ProviderDataError as e:
             snf_output = SnfOutput()
             snf_output.claim_id = claim.claimid

@@ -756,7 +756,7 @@ class IppsClient:
         return py_date_to_java_date(self, py_date)
 
     def create_input_claim(
-        self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self, claim: Claim,ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
     ) -> tuple[jpype.JObject, IPSFProvider]:
         claim_object = self.ipps_claim_data_class()
         provider_data = self.inpatient_prov_data()
@@ -851,9 +851,6 @@ class IppsClient:
                     "A valid DRG must be provided in the claim's additional data. Or the MS-DRG module must be run prior to pricing.",
                 )
         pricing_request.setClaimData(claim_object)
-
-        ipsf_provider = IPSFProvider()
-        ipsf_provider.from_claim(claim, self.db, **kwargs)
         ipsf_provider.set_java_values(provider_data, self)
         pricing_request.setProviderData(provider_data)
         pricing_request.setHmoClaim(claim.hmo)
@@ -868,7 +865,7 @@ class IppsClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
     ) -> tuple[IppsOutput, IPSFProvider]:
         """
         Process the claim and return the IPPS pricing response.
@@ -882,19 +879,10 @@ class IppsClient:
         self.logger.debug(
             f"IppsClient processing claim on thread {current_thread().ident}"
         )
-        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
-                claim, drg_output, **kwargs
+                claim, ipsf_provider, drg_output, **kwargs
             )
-        except ProviderDataError as e:
-            self.logger.warning(
-                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
-            )
-            ipps_output = IppsOutput()
-            ipps_output.claim_id = claim.claimid
-            ipps_output.return_code = e.to_return_code()
-            return ipps_output, IPSFProvider()
         except PricerRuntimeError as e:
             ipps_output = IppsOutput()
             ipps_output.claim_id = claim.claimid

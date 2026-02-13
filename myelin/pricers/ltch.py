@@ -310,13 +310,12 @@ class LtchClient:
         return py_date_to_java_date(self, py_date)
 
     def create_input_claim(
-        self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for LtchClient.")
         claim_object = self.ltc_claim_data_class()
         pricing_request = self.ltc_price_request()
-        ipsf_provider = IPSFProvider()
         provider_object = self.inpatient_prov_data()
         claim_object.setCoveredCharges(self.java_big_decimal_class(claim.total_charges))
         if claim.los < claim.non_covered_days:
@@ -374,8 +373,6 @@ class LtchClient:
                 java_pxs.add(self.java_string_class(px.code))
         claim_object.setProcedureCodes(java_pxs)
 
-        ipsf_provider = IPSFProvider()
-        ipsf_provider.from_claim(claim, self.db, **kwargs)
         if (
             ipsf_provider.federal_pps_blend is not None
             and not ipsf_provider.federal_pps_blend.isnumeric()
@@ -395,24 +392,15 @@ class LtchClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
     ) -> tuple[LtchOutput, IPSFProvider]:
         """
         Processes the python claim object through the CMS LTCH Java Pricer.
         """
-        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
-                claim, drg_output, **kwargs
+                claim, ipsf_provider, drg_output, **kwargs
             )
-        except ProviderDataError as e:
-            self.logger.warning(
-                f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"
-            )
-            ltch_output = LtchOutput()
-            ltch_output.claim_id = claim.claimid
-            ltch_output.return_code = e.to_return_code()
-            return ltch_output, IPSFProvider()
         except PricerRuntimeError as e:
             ltch_output = LtchOutput()
             ltch_output.claim_id = claim.claimid

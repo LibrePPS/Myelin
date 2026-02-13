@@ -253,7 +253,7 @@ class IrfClient:
             )
 
     def create_input_claim(
-        self, claim: Claim, irfg: IrfgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, irfg: IrfgOutput | None = None, **kwargs: object
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for IrfClient.")
@@ -311,8 +311,6 @@ class IrfClient:
                 claim_obj.setLifetimeReserveDays(
                     claim.additional_data["irf"]["lifetime_reserve_days"]
                 )
-        ipsf_provider = IPSFProvider()
-        ipsf_provider.from_claim(claim, self.db, **kwargs)
         claim_obj.setProviderCcn(ipsf_provider.provider_ccn)
         pricing_request.setClaimData(claim_obj)
         ipsf_provider.set_java_values(provider_data, self)
@@ -328,7 +326,7 @@ class IrfClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, irfg: IrfgOutput | None = None, **kwargs: object
+        self, claim: Claim, ipsf_provider: IPSFProvider, irfg: IrfgOutput | None = None, **kwargs: object
     ) -> tuple[IrfOutput, IPSFProvider]:
         """
         Process the claim and return the IRF pricing response.
@@ -338,10 +336,9 @@ class IrfClient:
         """
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
-        ipsf_provider = None
         try:
             pricing_request, ipsf_provider = self.create_input_claim(
-                claim, irfg, **kwargs
+                claim, ipsf_provider, irfg, **kwargs
             )
         except ProviderDataError as e:
             irf_output = IrfOutput()
