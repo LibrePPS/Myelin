@@ -249,7 +249,11 @@ class HhaClient:
         return 0
 
     def create_input_claim(
-        self, claim: Claim, ipsf_provider: IPSFProvider, hhag_output: HhagOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        hhag_output: HhagOutput | None = None,
+        **kwargs: object,
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database engine is not set for HhaClient")
@@ -408,7 +412,11 @@ class HhaClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, ipsf_provider: IPSFProvider, hhag_output: HhagOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        hhag_output: HhagOutput | None = None,
+        **kwargs: object,
     ) -> tuple[HhaOutput, IPSFProvider]:
         """
         Process the claim and return the SNF pricing response.

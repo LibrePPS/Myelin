@@ -103,7 +103,7 @@ def run_pricers(myelin: Myelin):
         assert myelin.ipps_client.db is not None
         provider = IPSFProvider()
         provider.from_claim(ipps_claim, myelin.ipps_client.db)
-        ipps_output, _ = myelin.ipps_client.process(ipps_claim, provider,drg_output)
+        ipps_output, _ = myelin.ipps_client.process(ipps_claim, provider, drg_output)
         print(ipps_output.model_dump_json(indent=2))
 
     # IPF Pricer

@@ -965,7 +965,9 @@ class EsrdClient:
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
         try:
-            pricing_request, opsf_provider = self.create_input_claim(claim, opsf_provider, **kwargs)
+            pricing_request, opsf_provider = self.create_input_claim(
+                claim, opsf_provider, **kwargs
+            )
         except ProviderDataError as e:
             self.logger.warning(
                 f"Provider data error for claim {claim.claimid}: {e.description} — {e.explanation}"

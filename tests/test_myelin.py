@@ -328,7 +328,7 @@ def test_hha_pricer_if_available(myelin_or_skip):
     claim.oasis_assessment.toileting = "1"
     claim.oasis_assessment.transferring = "2"
     claim.oasis_assessment.ambulation = "3"
-    assert myelin_or_skip.hha_client.db is not None 
+    assert myelin_or_skip.hha_client.db is not None
     ipsf_provider = IPSFProvider()
     ipsf_provider.from_claim(claim, myelin_or_skip.hha_client.db)
     hhag_output = myelin_or_skip.hhag_client.process(claim)

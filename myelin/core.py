@@ -57,6 +57,7 @@ OPSF_PRICERS: set[Modules] = {
     Modules.ESRD,
 }
 
+
 class MyelinOutput(BaseModel):
     model_config = ConfigDict(json_schema_mode_override="validation")
     error: str | None = None
@@ -327,7 +328,9 @@ class Myelin:
                         results.error = e.explanation
                         return results
                 else:
-                    results.error = "No database connection to fetch provider information"
+                    results.error = (
+                        "No database connection to fetch provider information"
+                    )
                     return results
             # Editors
             if Modules.MCE in unique_modules:
@@ -423,7 +426,9 @@ class Myelin:
                 if not isinstance(provider, IPSFProvider):
                     results.error = "IPSF provider not initialized"
                     return results
-                results.snf, results.ipsf = self.snf_client.process(claim, provider, **kwargs)
+                results.snf, results.ipsf = self.snf_client.process(
+                    claim, provider, **kwargs
+                )
             if Modules.HHA in unique_modules:
                 if self.hha_client is None:
                     results.error = "HHA client not initialized"
@@ -441,7 +446,9 @@ class Myelin:
                 if not isinstance(provider, OPSFProvider):
                     results.error = "OPSF provider not initialized"
                     return results
-                results.esrd, results.opsf = self.esrd_client.process(claim, provider, **kwargs)
+                results.esrd, results.opsf = self.esrd_client.process(
+                    claim, provider, **kwargs
+                )
             if Modules.FQHC in unique_modules:
                 if self.fqhc_client is None:
                     results.error = "FQHC client not initialized"

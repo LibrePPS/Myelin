@@ -10,7 +10,6 @@ from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
     PricerRuntimeError,
-    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -382,7 +381,11 @@ class IpfClient:
         return ect_units
 
     def create_input_claim(
-        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        drg_output: MsdrgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for IpfClient.")
@@ -461,7 +464,11 @@ class IpfClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        drg_output: MsdrgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[IpfOutput, IPSFProvider]:
         """
         Processes the python claim object through the CMS IPF Java Pricer.

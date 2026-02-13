@@ -2,7 +2,6 @@ import os
 import shutil
 from datetime import datetime
 from logging import Logger, getLogger
-from threading import current_thread
 
 import jpype
 from pydantic import BaseModel
@@ -10,7 +9,6 @@ from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
     PricerRuntimeError,
-    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -310,7 +308,11 @@ class LtchClient:
         return py_date_to_java_date(self, py_date)
 
     def create_input_claim(
-        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        drg_output: MsdrgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for LtchClient.")
@@ -392,7 +394,11 @@ class LtchClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        drg_output: MsdrgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[LtchOutput, IPSFProvider]:
         """
         Processes the python claim object through the CMS LTCH Java Pricer.

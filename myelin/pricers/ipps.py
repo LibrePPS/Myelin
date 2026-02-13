@@ -10,7 +10,6 @@ from sqlalchemy import Engine
 
 from myelin.helpers.utils import (
     PricerRuntimeError,
-    ProviderDataError,
     ReturnCode,
     create_supported_years,
     float_or_none,
@@ -756,7 +755,11 @@ class IppsClient:
         return py_date_to_java_date(self, py_date)
 
     def create_input_claim(
-        self, claim: Claim,ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        drg_output: MsdrgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[jpype.JObject, IPSFProvider]:
         claim_object = self.ipps_claim_data_class()
         provider_data = self.inpatient_prov_data()
@@ -865,7 +868,11 @@ class IppsClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, ipsf_provider: IPSFProvider, drg_output: MsdrgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        drg_output: MsdrgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[IppsOutput, IPSFProvider]:
         """
         Process the claim and return the IPPS pricing response.

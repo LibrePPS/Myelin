@@ -253,7 +253,11 @@ class IrfClient:
             )
 
     def create_input_claim(
-        self, claim: Claim, ipsf_provider: IPSFProvider, irfg: IrfgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        irfg: IrfgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[jpype.JObject, IPSFProvider]:
         if self.db is None:
             raise ValueError("Database connection is required for IrfClient.")
@@ -326,7 +330,11 @@ class IrfClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, ipsf_provider: IPSFProvider, irfg: IrfgOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        ipsf_provider: IPSFProvider,
+        irfg: IrfgOutput | None = None,
+        **kwargs: object,
     ) -> tuple[IrfOutput, IPSFProvider]:
         """
         Process the claim and return the IRF pricing response.

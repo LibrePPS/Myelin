@@ -244,7 +244,7 @@ class OppsClient:
                     raise PricerRuntimeError(
                         "OPPS05",
                         "Mismatching number of lines between IOCE output and claim lines",
-                        f"IOCE output has more lines ({len(ioce_output.line_item_list)}) than claim lines ({len(claim.lines)})"
+                        f"IOCE output has more lines ({len(ioce_output.line_item_list)}) than claim lines ({len(claim.lines)})",
                     )
                 ioce_line.setActionFlag(line.action_flag_output)
                 ioce_line.setPaymentMethodFlag(line.payment_method_flag)
@@ -292,7 +292,11 @@ class OppsClient:
 
     @handle_java_exceptions
     def process(
-        self, claim: Claim, opsf_provider: OPSFProvider, ioce_output: IoceOutput | None = None, **kwargs: object
+        self,
+        claim: Claim,
+        opsf_provider: OPSFProvider,
+        ioce_output: IoceOutput | None = None,
+        **kwargs: object,
     ) -> tuple[OppsOutput, OPSFProvider]:
         """
         Process the python claim object through the CMS OPPS Java Pricer.

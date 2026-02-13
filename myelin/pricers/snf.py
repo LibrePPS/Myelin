@@ -229,7 +229,9 @@ class SnfClient:
         raise ValueError("Dispatch object does not have a process method.")
 
     @handle_java_exceptions
-    def process(self, claim: Claim, ipsf_provider: IPSFProvider, **kwargs: object) -> tuple[SnfOutput, IPSFProvider]:
+    def process(
+        self, claim: Claim, ipsf_provider: IPSFProvider, **kwargs: object
+    ) -> tuple[SnfOutput, IPSFProvider]:
         """
         Process the claim and return the SNF pricing response.
 
@@ -239,7 +241,9 @@ class SnfClient:
         if not isinstance(claim, Claim):
             raise ValueError("claim must be an instance of Claim")
         try:
-            pricing_request, ipsf_provider = self.create_input_claim(claim, ipsf_provider, **kwargs)
+            pricing_request, ipsf_provider = self.create_input_claim(
+                claim, ipsf_provider, **kwargs
+            )
         except ProviderDataError as e:
             snf_output = SnfOutput()
             snf_output.claim_id = claim.claimid
