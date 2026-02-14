@@ -54,6 +54,7 @@ class SnfOutput(BaseModel):
 
 
 class SnfClient:
+    REVENUE_CODE_FOR_HIPPS = "0022"
     def __init__(
         self,
         jar_path: str | None = None,
@@ -174,7 +175,7 @@ class SnfClient:
         hipps_units = 0
         hipps_date: datetime | None = None
         for line in claim.lines:
-            if line.revenue_code == "0022":
+            if line.revenue_code == self.REVENUE_CODE_FOR_HIPPS:
                 if hipps_date is None:
                     hipps_code = line.hcpcs
                     hipps_units = line.units
@@ -196,13 +197,9 @@ class SnfClient:
         claim_obj.setServiceThroughDate(self.py_date_to_java_date(claim.thru_date))
 
         prior_pdpm_days = 0
-        if isinstance(claim.additional_data, dict):
-            if "snf" in claim.additional_data:
-                snf_data = claim.additional_data["snf"]
-                if isinstance(snf_data, dict):
-                    if "prior_pdpm_days" in snf_data:
-                        if isinstance(snf_data["prior_pdpm_days"], int):
-                            prior_pdpm_days = snf_data["prior_pdpm_days"]
+        additional_snf = claim.additional_data or {}
+        snf_data = additional_snf.get("snf", {}) or {}
+        prior_pdpm_days = snf_data.get("prior_pdpm_days", 0) if isinstance(snf_data.get("prior_pdpm_days"), int) else 0
         claim_obj.setPdpmPriorDays(self.java_integer_class(prior_pdpm_days))
         dx_list = self.array_list_class()
         # @TODO need to verify if we need to strip out decimal points from diagnosis codes
