@@ -298,167 +298,267 @@ class Myelin:
     def process(self, claim: Claim, **kwargs: object) -> MyelinOutput:
         """Process a claim through the appropriate modules based on its configuration."""
 
-        if not isinstance(claim, Claim):
-            raise ValueError("Input must be an instance of Claim")
-
         # Validate the claim
-        _ = Claim.model_validate(claim)
+        Claim.model_validate(claim)
 
         results = MyelinOutput()
-        provider: IPSFProvider | OPSFProvider | None = None
-        try:
-            if len(claim.modules) == 0:
-                results.error = "No modules specified in claim"
+
+        # Early validation: no modules specified
+        if not claim.modules:
+            results.error = "No modules specified in claim"
+            return results
+
+        # Deduplicate modules while preserving order (O(n) instead of O(n²))
+        seen: set[Modules] = set()
+        unique_modules: list[Modules] = []
+        for module in claim.modules:
+            if module not in seen:
+                seen.add(module)
+                unique_modules.append(module)
+
+        # Determine required provider type upfront based on all modules
+        ipsf_needed = any(m in IPSF_PRICERS for m in unique_modules)
+        opsf_needed = any(m in OPSF_PRICERS for m in unique_modules)
+
+        # Create separate providers for IPSF and OPSF pricers
+        ipsf_provider: IPSFProvider | None = None
+        opsf_provider: OPSFProvider | None = None
+
+        if ipsf_needed:
+            ipsf_provider = IPSFProvider()
+        if opsf_needed:
+            opsf_provider = OPSFProvider()
+
+        # Initialize providers if needed
+        if ipsf_provider is not None or opsf_provider is not None:
+            if self.db_manager.engine is None:
+                results.error = "No database connection to fetch provider information"
                 return results
-            # Claims Flow Editors -> Groupers -> Pricers
-            # Create unique list of modules preserving order
-            unique_modules: list[Modules] = []
-            for module in claim.modules:
-                if module not in unique_modules:
-                    if module in IPSF_PRICERS:
-                        provider = IPSFProvider()
-                    elif module in OPSF_PRICERS:
-                        provider = OPSFProvider()
-                    unique_modules.append(module)
-            if provider is not None:
-                if self.db_manager.engine is not None:
-                    try:
-                        provider.from_claim(claim, self.db_manager.engine, **kwargs)
-                    except ProviderDataError as e:
-                        results.error = e.explanation
-                        return results
-                else:
-                    results.error = (
-                        "No database connection to fetch provider information"
-                    )
-                    return results
+            try:
+                if ipsf_provider is not None:
+                    ipsf_provider.from_claim(claim, self.db_manager.engine, **kwargs)
+                if opsf_provider is not None:
+                    opsf_provider.from_claim(claim, self.db_manager.engine, **kwargs)
+            except ProviderDataError as e:
+                results.error = e.explanation
+                return results
+
+        try:
             # Editors
             if Modules.MCE in unique_modules:
-                if self.mce_client is None:
-                    results.error = "MCE client not initialized"
-                    return results
-                results.mce = self.mce_client.process(claim)
+                self._process_editor(Modules.MCE, self.mce_client, results, claim)
             if Modules.IOCE in unique_modules:
-                if self.ioce_client is None:
-                    results.error = "IOCE client not initialized"
-                    return results
-                results.ioce = self.ioce_client.process(
-                    claim, include_descriptions=True, **kwargs
-                )
+                self._process_editor(Modules.IOCE, self.ioce_client, results, claim, include_descriptions=True, **kwargs)
+
             # Groupers
             if Modules.MSDRG in unique_modules:
-                if self.drg_client is None:
-                    results.error = "DRG client not initialized"
-                    return results
-                results.msdrg = self.drg_client.process(
-                    claim, icd_converter=self.icd10_converter
-                )
+                self._process_grouper(Modules.MSDRG, self.drg_client, results, claim, icd_converter=self.icd10_converter)
             if Modules.HHAG in unique_modules:
-                if self.hhag_client is None:
-                    results.error = "HHAG client not initialized"
-                    return results
-                results.hhag = self.hhag_client.process(claim)
+                self._process_grouper(Modules.HHAG, self.hhag_client, results, claim)
             if Modules.CMG in unique_modules:
-                if self.irfg_client is None:
-                    results.error = "IRFG client not initialized"
-                    return results
-                results.cmg = self.irfg_client.process(claim)
-            # Pricers
+                self._process_grouper(Modules.CMG, self.irfg_client, results, claim)
+
+            # Pricers - pass the appropriate provider
             if Modules.IPPS in unique_modules:
-                if self.ipps_client is None:
-                    results.error = "IPPS client not initialized"
-                    return results
-                if not isinstance(provider, IPSFProvider):
-                    results.error = "IPSF provider not initialized"
-                    return results
-                results.ipps, results.ipsf = self.ipps_client.process(
-                    claim, provider, results.msdrg, **kwargs
-                )
+                self._process_pricer_ipps(self.ipps_client, results, claim, ipsf_provider, results.msdrg, **kwargs)
             if Modules.OPPS in unique_modules:
-                if self.opps_client is None:
-                    results.error = "OPPS client not initialized"
-                    return results
-                if not isinstance(provider, OPSFProvider):
-                    results.error = "OPSF provider not initialized"
-                    return results
-                results.opps, results.opsf = self.opps_client.process(
-                    claim, provider, results.ioce, **kwargs
-                )
+                self._process_pricer_opps(self.opps_client, results, claim, opsf_provider, results.ioce, **kwargs)
             if Modules.PSYCH in unique_modules:
-                if self.ipf_client is None:
-                    results.error = "IPF client not initialized"
-                    return results
-                if not isinstance(provider, IPSFProvider):
-                    results.error = "IPSF provider not initialized"
-                    return results
-                results.psych, results.ipsf = self.ipf_client.process(
-                    claim, provider, results.msdrg, **kwargs
-                )
+                self._process_pricer_ipf(self.ipf_client, results, claim, ipsf_provider, results.msdrg, **kwargs)
             if Modules.LTCH in unique_modules:
-                if self.ltch_client is None:
-                    results.error = "LTCH client not initialized"
-                    return results
-                if not isinstance(provider, IPSFProvider):
-                    results.error = "IPSF provider not initialized"
-                    return results
-                results.ltch, results.ipsf = self.ltch_client.process(
-                    claim, provider, results.msdrg, **kwargs
-                )
+                self._process_pricer_ltch(self.ltch_client, results, claim, ipsf_provider, results.msdrg, **kwargs)
             if Modules.IRF in unique_modules:
-                if self.irf_client is None:
-                    results.error = "IRF client not initialized"
-                    return results
-                if not isinstance(provider, IPSFProvider):
-                    results.error = "IPSF provider not initialized"
-                    return results
-                results.irf, results.ipsf = self.irf_client.process(
-                    claim, provider, results.cmg, **kwargs
-                )
+                self._process_pricer_irf(self.irf_client, results, claim, ipsf_provider, results.cmg, **kwargs)
             if Modules.HOSPICE in unique_modules:
-                if self.hospice_client is None:
-                    results.error = "Hospice client not initialized"
-                    return results
-                results.hospice = self.hospice_client.process(claim)
+                self._process_pricer_hospice(self.hospice_client, results, claim)
             if Modules.SNF in unique_modules:
-                if self.snf_client is None:
-                    results.error = "SNF client not initialized"
-                    return results
-                if not isinstance(provider, IPSFProvider):
-                    results.error = "IPSF provider not initialized"
-                    return results
-                results.snf, results.ipsf = self.snf_client.process(
-                    claim, provider, **kwargs
-                )
+                self._process_pricer_snf(self.snf_client, results, claim, ipsf_provider, **kwargs)
             if Modules.HHA in unique_modules:
-                if self.hha_client is None:
-                    results.error = "HHA client not initialized"
-                    return results
-                if not isinstance(provider, IPSFProvider):
-                    results.error = "IPSF provider not initialized"
-                    return results
-                results.hha, results.ipsf = self.hha_client.process(
-                    claim, provider, results.hhag, **kwargs
-                )
+                self._process_pricer_hha(self.hha_client, results, claim, ipsf_provider, results.hhag, **kwargs)
             if Modules.ESRD in unique_modules:
-                if self.esrd_client is None:
-                    results.error = "ESRD client not initialized"
-                    return results
-                if not isinstance(provider, OPSFProvider):
-                    results.error = "OPSF provider not initialized"
-                    return results
-                results.esrd, results.opsf = self.esrd_client.process(
-                    claim, provider, **kwargs
-                )
+                self._process_pricer_esrd(self.esrd_client, results, claim, opsf_provider, **kwargs)
             if Modules.FQHC in unique_modules:
-                if self.fqhc_client is None:
-                    results.error = "FQHC client not initialized"
-                    return results
-                if results.ioce is None:
-                    results.error = "FQHC pricer requires IOCE module to be run"
-                    return results
-                else:
-                    results.fqhc = self.fqhc_client.process(claim, results.ioce)
+                self._process_pricer_fqhc(self.fqhc_client, results, claim, results.ioce)
+
             return results
         except JavaRuntimeError as e:
             results.error = e.explanation
             return results
+
+    def _process_editor(
+        self,
+        module: Modules,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        **kwargs
+    ) -> None:
+        """Process an editor module with null-checked client."""
+        if client is None:
+            results.error = f"{module.value} client not initialized"
+            return
+        # Map module to correct output attribute
+        attr_name = module.value.lower()
+        setattr(results, attr_name, client.process(claim, **kwargs))
+
+    def _process_grouper(
+        self,
+        module: Modules,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        **kwargs
+    ) -> None:
+        """Process a grouper module with null-checked client."""
+        if client is None:
+            results.error = f"{module.value} client not initialized"
+            return
+        # Map module to correct output attribute (e.g., MSDRG -> msdrg, CMG -> cmg)
+        attr_name = module.value.lower()
+        setattr(results, attr_name, client.process(claim, **kwargs))
+
+    def _process_pricer_ipps(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: IPSFProvider,
+        msdrg: MsdrgOutput | None,
+        **kwargs
+    ) -> None:
+        """Process IPPS pricer."""
+        if client is None:
+            results.error = "IPPS client not initialized"
+            return
+        results.ipps, results.ipsf = client.process(claim, provider, msdrg, **kwargs)
+
+    def _process_pricer_opps(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: OPSFProvider,
+        ioce: IoceOutput | None,
+        **kwargs
+    ) -> None:
+        """Process OPPS pricer."""
+        if client is None:
+            results.error = "OPPS client not initialized"
+            return
+        results.opps, results.opsf = client.process(claim, provider, ioce, **kwargs)
+
+    def _process_pricer_ipf(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: IPSFProvider,
+        msdrg: MsdrgOutput | None,
+        **kwargs
+    ) -> None:
+        """Process IPF (Psych) pricer."""
+        if client is None:
+            results.error = "IPF client not initialized"
+            return
+        results.psych, results.ipsf = client.process(claim, provider, msdrg, **kwargs)
+
+    def _process_pricer_ltch(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: IPSFProvider,
+        msdrg: MsdrgOutput | None,
+        **kwargs
+    ) -> None:
+        """Process LTCH pricer."""
+        if client is None:
+            results.error = "LTCH client not initialized"
+            return
+        results.ltch, results.ipsf = client.process(claim, provider, msdrg, **kwargs)
+
+    def _process_pricer_irf(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: IPSFProvider,
+        cmg: IrfgOutput | None,
+        **kwargs
+    ) -> None:
+        """Process IRF pricer."""
+        if client is None:
+            results.error = "IRF client not initialized"
+            return
+        results.irf, results.ipsf = client.process(claim, provider, cmg, **kwargs)
+
+    def _process_pricer_hospice(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+    ) -> None:
+        """Process Hospice pricer."""
+        if client is None:
+            results.error = "Hospice client not initialized"
+            return
+        results.hospice = client.process(claim)
+
+    def _process_pricer_snf(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: IPSFProvider,
+        **kwargs
+    ) -> None:
+        """Process SNF pricer."""
+        if client is None:
+            results.error = "SNF client not initialized"
+            return
+        results.snf, results.ipsf = client.process(claim, provider, **kwargs)
+
+    def _process_pricer_hha(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: IPSFProvider,
+        hhag: HhagOutput | None,
+        **kwargs
+    ) -> None:
+        """Process HHA pricer."""
+        if client is None:
+            results.error = "HHA client not initialized"
+            return
+        results.hha, results.ipsf = client.process(claim, provider, hhag, **kwargs)
+
+    def _process_pricer_esrd(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        provider: OPSFProvider,
+        **kwargs
+    ) -> None:
+        """Process ESRD pricer."""
+        if client is None:
+            results.error = "ESRD client not initialized"
+            return
+        results.esrd, results.opsf = client.process(claim, provider, **kwargs)
+
+    def _process_pricer_fqhc(
+        self,
+        client,
+        results: MyelinOutput,
+        claim: Claim,
+        ioce: IoceOutput | None,
+    ) -> None:
+        """Process FQHC pricer."""
+        if client is None:
+            results.error = "FQHC client not initialized"
+            return
+        if ioce is None:
+            results.error = "FQHC pricer requires IOCE module to be run"
+            return
+        results.fqhc = client.process(claim, ioce)
