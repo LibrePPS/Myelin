@@ -4,9 +4,53 @@ from contextlib import redirect_stderr
 from datetime import datetime
 from os import getenv
 from typing import Callable, ParamSpec, Protocol, TypeVar
+from myelin.input.claim import Modules
 
 import jpype
 from pydantic import BaseModel
+
+PROVIDER_TYPES = {
+    "00": {"description": "Short Term Facility", "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH]},
+    "02": {"description": "Long Term", "modules": [Modules.MCE, Modules.MSDRG, Modules.LTCH]},
+    "03": {"description": "Psychiatric", "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH]},
+    "04": {"description": "Rehabilitation Facility", "modules": [Modules.MCE, Modules.CMG, Modules.IRF]},
+    "05": {"description": "Pediatric"},
+    "06": {"description": "Hospital Distinct Parts"},
+    "07": {"description": "Rural Referral Center"},
+    "08": {"description": "Indian Health Service"},
+    "13": {"description": "Cancer Facility"},
+    "14": {"description": "Medicare Dependent Hospital"},
+    "15": {"description": "Medicare Dependent Hospital/Referral Center"},
+    "16": {"description": "Re-based Sole Community Hospital"},
+    "17": {"description": "Re-based Sole Community Hospital/Referral Center"},
+    "18": {"description": "Medical Assistance Facility"},
+    "21": {"description": "Essential Access Community Hospital"},
+    "22": {"description": "Essential Access Community Hospital/Referral Center"},
+    "23": {"description": "Rural Primary Care Hospital"},
+    "24": {"description": "Rural Emergency Hospitals"},
+    "32": {"description": "Nursing Home Case Mix Quality Demo Project Phase II"},
+    "33": {"description": "Nursing Home Case Mix Quality Demo Project Phase III"},
+    "34": {"description": "Reserved"},
+    "35": {"description": "Hospice", "modules": [Modules.HOSPICE]},
+    "36": {"description": "Home Health Agency", "modules": [Modules.HHAG, Modules.HHA]},
+    "37": {"description": "Critical Access Hospital"},
+    "38": {"description": "Skilled Nursing Facility (SNF)", "modules": [Modules.IOCE,Modules.SNF]},
+    "40": {"description": "Hospital Based ESRD Facility", "modules": [Modules.IOCE, Modules.ESRD]},
+    "41": {"description": "Independent ESRD Facility", "modules": [Modules.IOCE, Modules.ESRD]},
+    "42": {"description": "Federally Qualified Health Centers", "modules": [Modules.IOCE, Modules.FQHC]},
+    "43": {"description": "Religious Non-Medical Health Care Institutions"},
+    "44": {"description": "Rural Health Clinics-Free Standing"},
+    "45": {"description": "Rural Health Clinics-Provider Based"},
+    "46": {"description": "Comprehensive Outpatient Rehab Facilities"},
+    "47": {"description": "Community Mental Health Centers"},
+    "48": {"description": "Outpatient Physical Therapy Services"},
+    "49": {"description": "Psychiatric Distinct Part", "modules": [Modules.MCE, Modules.MSDRG,Modules.PSYCH]},
+    "50": {"description": "Rehabilitation Distinct Part"},
+    "51": {"description": "Short-Term Hospital Swing Bed"},
+    "52": {"description": "Long-Term Care Hospital Swing Bed"},
+    "53": {"description": "Rehabilitation Facility Swing Bed"},
+    "54": {"description": "Critical Access Hospital Swing Bed"},
+}
 
 
 class HasJavaDateClasses(Protocol):

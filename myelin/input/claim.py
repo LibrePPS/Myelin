@@ -28,6 +28,8 @@ class Modules(Enum):
     ESRD = "ESRD"
     HOSPICE = "HOSPICE"
     FQHC = "FQHC"
+    # Misc
+    AUTO = "AUTO"
 
 
 class ICDConvertOption(Enum):

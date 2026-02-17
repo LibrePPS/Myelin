@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from myelin.converter import ICDConverter
 from myelin.database.manager import DatabaseManager
 from myelin.helpers.cms_downloader import CMSDownloader
-from myelin.helpers.utils import JavaRuntimeError, ProviderDataError
+from myelin.helpers.utils import JavaRuntimeError, ProviderDataError, PROVIDER_TYPES
 from myelin.hhag import HhagClient, HhagOutput
 from myelin.input.claim import Claim, Modules
 from myelin.ioce import IoceClient, IoceOutput
@@ -295,6 +295,98 @@ class Myelin:
                     f"{pricer} pricer JAR not found in {self.pricers_path}. Please ensure it is downloaded."
                 )
 
+    def _generate_auto_modules(self, claim: Claim, ipsf_provider: IPSFProvider | None, opsf_provider: OPSFProvider | None) -> None:
+        """Generate a list of modules based on the claim type."""
+        provider_type = ""
+        if ipsf_provider is not None:
+            if ipsf_provider.provider_type and ipsf_provider.provider_type != "":
+                provider_type = ipsf_provider.provider_type
+        elif opsf_provider is not None:
+            if opsf_provider.provider_type and opsf_provider.provider_type != "":
+                provider_type = opsf_provider.provider_type
+        
+        provider_obj = PROVIDER_TYPES.get(provider_type, None)
+
+        #----------------------------------------------------------------------
+        #Generate modules based on provider type
+        #---------------------------------------------------------------------- 
+        mods_set = False
+        if provider_obj is not None:
+            modules = provider_obj.get("modules", None)
+            if modules is not None:
+                for module in modules:
+                    if isinstance(module, Modules):
+                        claim.modules.append(module)
+                        mods_set = True
+            #Remove specialized groupers if their assesment data is missing
+            if Modules.HHAG in claim.modules and claim.oasis_assessment is None:
+                claim.modules.remove(Modules.HHAG)
+            if Modules.CMG in claim.modules and claim.irf_pai is None:
+                claim.modules.remove(Modules.CMG)
+        
+        #--------------------------------------------------------------------------
+        #Generate modules based on Bill Type
+        #--------------------------------------------------------------------------
+
+        #IRF
+        for line in claim.lines:
+            if line.revenue_code == "0024":
+                if claim.irf_pai is not None:
+                    claim.modules.append(Modules.CMG)
+                claim.modules.append(Modules.IRF)
+                mods_set = True
+                break
+        #SNF
+        for line in claim.lines:
+            if line.revenue_code == "0022":
+                claim.modules.append(Modules.SNF)
+                mods_set = True
+                break
+    
+        if mods_set == False:
+            bill_type = claim.bill_type
+            if bill_type.startswith("0"):
+                bill_type = bill_type[1:] # Remove leading zero
+            if len(bill_type) < 2:
+                bill_type = "000"
+            bill_type_facility = bill_type[0]
+            bill_type_type_of_care = bill_type[1]
+
+            ipsf_ccn: str = ipsf_provider.provider_ccn if ipsf_provider is not None and ipsf_provider.provider_ccn is not None else ""
+            opsf_ccn: str = opsf_provider.provider_ccn if opsf_provider is not None and opsf_provider.provider_ccn is not None else ""
+
+            #FQHC
+            if bill_type.startswith("77"):
+                claim.modules.append(Modules.IOCE)
+                claim.modules.append(Modules.FQHC)
+            elif bill_type.startswith("72"): #ESRD
+                claim.modules.append(Modules.IOCE)
+                claim.modules.append(Modules.ESRD)
+            elif bill_type_facility == "2": #SNF, secondary to rev code lookup above
+                if bill_type_type_of_care in ("2", "3"):
+                    claim.modules.append(Modules.IOCE)
+                claim.modules.append(Modules.SNF)
+            elif bill_type_facility == "3": #Home Health
+                if claim.oasis_assessment is not None:
+                    claim.modules.append(Modules.HHAG)
+                claim.modules.append(Modules.HHA)
+            elif bill_type.startswith("11"):
+                claim.modules.append(Modules.MCE)
+                claim.modules.append(Modules.MSDRG)
+                if len(ipsf_ccn) >= 3:
+                    if ipsf_ccn[2] in ("4", "S", "M"):
+                        claim.modules.append(Modules.PSYCH)
+                    elif ipsf_ccn[2] == "2":
+                        claim.modules.append(Modules.LTCH)
+                    else:
+                        claim.modules.append(Modules.IPPS)
+                else:
+                    claim.modules.append(Modules.IPPS)
+            else:
+                claim.modules.append(Modules.IOCE)
+                claim.modules.append(Modules.OPPS)
+
+            
     def process(self, claim: Claim, **kwargs: object) -> MyelinOutput:
         """Process a claim through the appropriate modules based on its configuration."""
 
@@ -315,7 +407,7 @@ class Myelin:
             if module not in seen:
                 seen.add(module)
                 unique_modules.append(module)
-
+        
         # Determine required provider type upfront based on all modules
         ipsf_needed = any(m in IPSF_PRICERS for m in unique_modules)
         opsf_needed = any(m in OPSF_PRICERS for m in unique_modules)
@@ -341,6 +433,16 @@ class Myelin:
                     opsf_provider.from_claim(claim, self.db_manager.engine, **kwargs)
             except ProviderDataError as e:
                 results.error = e.explanation
+                return results
+
+        if Modules.AUTO in unique_modules:
+            if len(claim.modules) > 1:
+                results.error = "Auto module cannot be paired with any other module request"
+                return results
+            self._generate_auto_modules(claim, ipsf_provider, opsf_provider)
+        else:
+            if claim.bill_type.endswith("0"):
+                results.error = f"Bill type {claim.bill_type} is a non payment bill"
                 return results
 
         try:
@@ -422,7 +524,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: IPSFProvider,
+        provider: IPSFProvider | None,
         msdrg: MsdrgOutput | None,
         **kwargs
     ) -> None:
@@ -437,7 +539,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: OPSFProvider,
+        provider: OPSFProvider | None,
         ioce: IoceOutput | None,
         **kwargs
     ) -> None:
@@ -452,7 +554,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: IPSFProvider,
+        provider: IPSFProvider | None,
         msdrg: MsdrgOutput | None,
         **kwargs
     ) -> None:
@@ -467,7 +569,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: IPSFProvider,
+        provider: IPSFProvider | None,
         msdrg: MsdrgOutput | None,
         **kwargs
     ) -> None:
@@ -482,7 +584,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: IPSFProvider,
+        provider: IPSFProvider | None,
         cmg: IrfgOutput | None,
         **kwargs
     ) -> None:
@@ -509,7 +611,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: IPSFProvider,
+        provider: IPSFProvider | None,
         **kwargs
     ) -> None:
         """Process SNF pricer."""
@@ -523,7 +625,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: IPSFProvider,
+        provider: IPSFProvider | None,
         hhag: HhagOutput | None,
         **kwargs
     ) -> None:
@@ -538,7 +640,7 @@ class Myelin:
         client,
         results: MyelinOutput,
         claim: Claim,
-        provider: OPSFProvider,
+        provider: OPSFProvider | None,
         **kwargs
     ) -> None:
         """Process ESRD pricer."""
