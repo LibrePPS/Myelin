@@ -345,6 +345,47 @@ def run_pricers(myelin: Myelin):
         opps_output, _ = myelin.opps_client.process(opps_claim, provider, ioce_output)
         print(opps_output.model_dump_json(indent=2))
 
+    # ASC Pricer
+    if getattr(myelin, "asc_client", None):
+        print("--- ASC Pricer Example ---")
+        asc_claim = claim_example()
+        asc_claim.claimid = "ASC_CLAIM_001"
+        asc_claim.bill_type = "831"
+        asc_claim.from_date = datetime(2025, 7, 15)
+        asc_claim.thru_date = datetime(2025, 7, 15)
+        if asc_claim.billing_provider is None:
+            asc_claim.billing_provider = Provider()
+        asc_claim.billing_provider.other_id = "010001"
+        
+        asc_claim.lines.clear()
+        asc_claim.lines.append(
+            LineItem(
+                hcpcs="67105", 
+                service_date=datetime(2025, 7, 15), 
+                units=1, 
+                charges=1500.0, 
+                revenue_code="0490"
+            )
+        )
+        asc_claim.lines.append(
+            LineItem(
+                hcpcs="J0666", 
+                service_date=datetime(2025, 7, 15), 
+                units=1, 
+                charges=1500.0, 
+                revenue_code="0490"
+            )
+        )
+        # Requires OPSF Provider for Wage Index
+        provider = OPSFProvider()
+        provider.cbsa_wage_index_location = "19124" # Example CBSA
+        provider.provider_type = "ASC"
+        asc_claim.modules = [Modules.IOCE, Modules.ASC]
+        
+        asc_output = myelin.process(asc_claim)
+        assert asc_output.asc is not None   
+        print(asc_output.model_dump_json(indent=2))
+
 
 def run_myelin_process(myelin: Myelin):
     claim = claim_example()

@@ -10,10 +10,22 @@ import jpype
 from pydantic import BaseModel
 
 PROVIDER_TYPES = {
-    "00": {"description": "Short Term Facility", "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH]},
-    "02": {"description": "Long Term", "modules": [Modules.MCE, Modules.MSDRG, Modules.LTCH]},
-    "03": {"description": "Psychiatric", "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH]},
-    "04": {"description": "Rehabilitation Facility", "modules": [Modules.MCE, Modules.CMG, Modules.IRF]},
+    "00": {
+        "description": "Short Term Facility",
+        "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH],
+    },
+    "02": {
+        "description": "Long Term",
+        "modules": [Modules.MCE, Modules.MSDRG, Modules.LTCH],
+    },
+    "03": {
+        "description": "Psychiatric",
+        "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH],
+    },
+    "04": {
+        "description": "Rehabilitation Facility",
+        "modules": [Modules.MCE, Modules.CMG, Modules.IRF],
+    },
     "05": {"description": "Pediatric"},
     "06": {"description": "Hospital Distinct Parts"},
     "07": {"description": "Rural Referral Center"},
@@ -34,17 +46,32 @@ PROVIDER_TYPES = {
     "35": {"description": "Hospice", "modules": [Modules.HOSPICE]},
     "36": {"description": "Home Health Agency", "modules": [Modules.HHAG, Modules.HHA]},
     "37": {"description": "Critical Access Hospital"},
-    "38": {"description": "Skilled Nursing Facility (SNF)", "modules": [Modules.IOCE,Modules.SNF]},
-    "40": {"description": "Hospital Based ESRD Facility", "modules": [Modules.IOCE, Modules.ESRD]},
-    "41": {"description": "Independent ESRD Facility", "modules": [Modules.IOCE, Modules.ESRD]},
-    "42": {"description": "Federally Qualified Health Centers", "modules": [Modules.IOCE, Modules.FQHC]},
+    "38": {
+        "description": "Skilled Nursing Facility (SNF)",
+        "modules": [Modules.IOCE, Modules.SNF],
+    },
+    "40": {
+        "description": "Hospital Based ESRD Facility",
+        "modules": [Modules.IOCE, Modules.ESRD],
+    },
+    "41": {
+        "description": "Independent ESRD Facility",
+        "modules": [Modules.IOCE, Modules.ESRD],
+    },
+    "42": {
+        "description": "Federally Qualified Health Centers",
+        "modules": [Modules.IOCE, Modules.FQHC],
+    },
     "43": {"description": "Religious Non-Medical Health Care Institutions"},
     "44": {"description": "Rural Health Clinics-Free Standing"},
     "45": {"description": "Rural Health Clinics-Provider Based"},
     "46": {"description": "Comprehensive Outpatient Rehab Facilities"},
     "47": {"description": "Community Mental Health Centers"},
     "48": {"description": "Outpatient Physical Therapy Services"},
-    "49": {"description": "Psychiatric Distinct Part", "modules": [Modules.MCE, Modules.MSDRG,Modules.PSYCH]},
+    "49": {
+        "description": "Psychiatric Distinct Part",
+        "modules": [Modules.MCE, Modules.MSDRG, Modules.PSYCH],
+    },
     "50": {"description": "Rehabilitation Distinct Part"},
     "51": {"description": "Short-Term Hospital Swing Bed"},
     "52": {"description": "Long-Term Care Hospital Swing Bed"},

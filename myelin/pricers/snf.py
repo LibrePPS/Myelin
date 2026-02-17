@@ -55,6 +55,7 @@ class SnfOutput(BaseModel):
 
 class SnfClient:
     REVENUE_CODE_FOR_HIPPS = "0022"
+
     def __init__(
         self,
         jar_path: str | None = None,
@@ -199,7 +200,11 @@ class SnfClient:
         prior_pdpm_days = 0
         additional_snf = claim.additional_data or {}
         snf_data = additional_snf.get("snf", {}) or {}
-        prior_pdpm_days = snf_data.get("prior_pdpm_days", 0) if isinstance(snf_data.get("prior_pdpm_days"), int) else 0
+        prior_pdpm_days = (
+            snf_data.get("prior_pdpm_days", 0)
+            if isinstance(snf_data.get("prior_pdpm_days"), int)
+            else 0
+        )
         claim_obj.setPdpmPriorDays(self.java_integer_class(prior_pdpm_days))
         dx_list = self.array_list_class()
         # @TODO need to verify if we need to strip out decimal points from diagnosis codes

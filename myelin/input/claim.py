@@ -28,6 +28,7 @@ class Modules(Enum):
     ESRD = "ESRD"
     HOSPICE = "HOSPICE"
     FQHC = "FQHC"
+    ASC = "ASC"
     # Misc
     AUTO = "AUTO"
 
