@@ -28,6 +28,7 @@ class AscOutput(BaseModel):
     lines: List[AscLineOutput] = Field(default_factory=list)
     total_payment: float = 0.0
     error: Optional[ReturnCode] = None
+    message: Optional[str] = None
 
     def get_payment(self) -> float:
         return self.total_payment
@@ -42,7 +43,6 @@ class AscClient:
         self, claim: Claim, opsf_provider: Optional[OPSFProvider] = None, **kwargs
     ) -> AscOutput:
         output = AscOutput()
-
         # 1. Validation
         # Adjusted logic: We need either OPSF Provider OR a direct CBSA in additional_data.
         # Fail if BOTH are missing.
@@ -96,7 +96,10 @@ class AscClient:
             or provider_geo
             or "0"
         )
-        wage_index = ref_data["wage_indices"].get(cbsa, 1.0)
+        wage_index = ref_data["wage_indices"].get(cbsa, None)
+        if wage_index is None:
+            output.message = f"Wage Index not found for CBSA {cbsa}, it will default to 1.0. Please pass a valid CBSA in additional_data object and reprocess if desired."
+            wage_index = 1.0
 
         output.cbsa = cbsa
         output.wage_index = wage_index
