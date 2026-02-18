@@ -52,6 +52,28 @@ Data is stored in `myelin/pricers/asc/data/{Year}/{Quarter}/`:
 -   `BB.csv`: Ancillary Services (Radiology, Drugs).
 -   `FF.csv`: Device Offset amounts.
 -   `../wage_index.{csv,txt}`: Year-specific Wage Index files.
+-   `normalized/`: Pre-processed Code Pair files (see below).
+
+### Code Pair Data
+
+Code pair data defines the relationship between device codes and procedure codes for pass-through device pricing. Source files vary by year:
+
+| Year | Source Format |
+|------|---------------|
+| 2022-2023 | Legacy format with modifier columns (Device HCPCS Modifier, ASC Procedure HCPCS Modifier) |
+| 2024+ | New format with date ranges (Effective Date, End Date), no modifier columns |
+
+The normalizer script (`code_pair_normalizer.py`) converts these disparate formats into a unified layout:
+
+```
+device_hcpcs,procedure_hcpcs,device_modifier,procedure_modifier,percent_multiplier,effective_date,end_date
+```
+
+Normalized files are stored in `myelin/pricers/asc/data/normalized/`:
+-   `code_pairs_combined.csv`: All years combined
+-   `code_pairs_{YYYY}.csv`: Year-specific files for faster loading
+
+**Note:** 2021 data uses 2022 code pair file as a placeholder since 2021 source files were not available.
 
 ## Testing
 

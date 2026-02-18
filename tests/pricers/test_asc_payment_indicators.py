@@ -7,19 +7,12 @@ Per CMS §60.3, certain payment indicators result in denial or rejection:
 - L1, NI, S1: Denied as packaged (no separate payment)
 """
 
-import os
-import shutil
-import tempfile
 import pytest
 from datetime import datetime
 
 from myelin.input.claim import Claim, LineItem
 from myelin.pricers.asc.client import (
     AscClient,
-    AscLineOutput,
-    DENY_INDICATORS,
-    DENY_PACKAGED_INDICATORS,
-    UNPROCESSABLE_INDICATORS,
 )
 
 
@@ -117,7 +110,9 @@ class TestAscPaymentIndicators:
         """HCPCS with unprocessable indicators should have status='unprocessable' and $0."""
         result = client.process(self._make_claim(hcpcs))
         line = result.lines[0]
-        assert line.status == "unprocessable", f"Indicator {indicator} should be unprocessable"
+        assert line.status == "unprocessable", (
+            f"Indicator {indicator} should be unprocessable"
+        )
         assert line.adjusted_rate == 0.0
         assert f"Indicator {indicator}" in line.details
         assert result.total_payment == 0.0

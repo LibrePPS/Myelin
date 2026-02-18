@@ -356,34 +356,34 @@ def run_pricers(myelin: Myelin):
         if asc_claim.billing_provider is None:
             asc_claim.billing_provider = Provider()
         asc_claim.billing_provider.other_id = "010001"
-        
+
         asc_claim.lines.clear()
         asc_claim.lines.append(
             LineItem(
-                hcpcs="67105", 
-                service_date=datetime(2025, 7, 15), 
-                units=1, 
-                charges=1500.0, 
-                revenue_code="0490"
+                hcpcs="67105",
+                service_date=datetime(2025, 7, 15),
+                units=1,
+                charges=1500.0,
+                revenue_code="0490",
             )
         )
         asc_claim.lines.append(
             LineItem(
-                hcpcs="J0666", 
-                service_date=datetime(2025, 7, 15), 
-                units=1, 
-                charges=1500.0, 
-                revenue_code="0490"
+                hcpcs="J0666",
+                service_date=datetime(2025, 7, 15),
+                units=1,
+                charges=1500.0,
+                revenue_code="0490",
             )
         )
         # Requires OPSF Provider for Wage Index
         provider = OPSFProvider()
-        provider.cbsa_wage_index_location = "19124" # Example CBSA
+        provider.cbsa_wage_index_location = "19124"  # Example CBSA
         provider.provider_type = "ASC"
         asc_claim.modules = [Modules.IOCE, Modules.ASC]
-        
+
         asc_output = myelin.process(asc_claim)
-        assert asc_output.asc is not None   
+        assert asc_output.asc is not None
         print(asc_output.model_dump_json(indent=2))
 
 

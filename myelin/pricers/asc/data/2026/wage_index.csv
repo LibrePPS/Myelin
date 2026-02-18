@@ -1,0 +1,487 @@
+CBSA,CBSA Name,WI26
+01,ALABAMA,0.6367
+02,ALASKA,1.1274
+03,ARIZONA,0.8539
+04,ARKANSAS,0.7296
+05,CALIFORNIA,1.2775
+06,COLORADO,1.0501
+07,CONNECTICUT,0.9140
+08,DELAWARE,1.0095
+10,FLORIDA,0.8363
+11,GEORGIA,0.7364
+12,HAWAII,1.1312
+13,IDAHO,0.6858
+14,ILLINOIS,0.8743
+15,INDIANA,0.8565
+16,IOWA,0.7814
+17,KANSAS,0.8135
+18,KENTUCKY,0.8165
+19,LOUISIANA,0.6946
+20,MAINE,0.8039
+21,MARYLAND,0.8788
+22,MASSACHUSETTS,1.1372
+23,MICHIGAN,0.8232
+24,MINNESOTA,0.9037
+25,MISSISSIPPI,0.7124
+26,MISSOURI,0.8016
+27,MONTANA,1.1433
+28,NEBRASKA,0.8864
+29,NEVADA,1.1108
+30,NEW HAMPSHIRE,1.0138
+31,NEW JERSEY,0.0000
+32,NEW MEXICO,0.9194
+33,NEW YORK,0.8892
+34,NORTH CAROLINA,0.8122
+35,NORTH DAKOTA,0.8329
+36,OHIO,0.8032
+37,OKLAHOMA,0.8035
+38,OREGON,1.0209
+39,PENNSYLVANIA,0.8507
+40,PUERTO RICO,0.4200
+41,RHODE ISLAND,0.0000
+42,SOUTH CAROLINA,0.8184
+43,SOUTH DAKOTA,0.8177
+44,TENNESSEE,0.7239
+45,TEXAS,0.8400
+46,UTAH,0.8969
+47,VERMONT,0.8848
+48,VIRGIN ISLANDS,0.6088
+49,VIRGINIA,0.8339
+50,WASHINGTON,0.9712
+51,WEST VIRGINIA,0.7156
+52,WISCONSIN,0.8513
+53,WYOMING,0.9845
+65,GUAM,0.9611
+10180,"Abilene, TX",0.9287
+10380,"Aguadilla, PR",0.2909
+10420,"Akron, OH",0.8254
+10500,"Albany, GA",0.9504
+10540,"Albany, OR",1.0449
+10580,"Albany-Schenectady-Troy, NY",0.8551
+10740,"Albuquerque, NM",0.9306
+10780,"Alexandria, LA",0.8816
+10900,"Allentown-Bethlehem-Easton, PA-NJ",0.9978
+11020,"Altoona, PA",0.8641
+11100,"Amarillo, TX",0.8434
+11180,"Ames, IA",0.8665
+11200,"Amherst Town-Northampton, MA",0.9814
+11244,"Anaheim-Santa Ana-Irvine, CA",1.2445
+11260,"Anchorage, AK",1.1328
+11460,"Ann Arbor, MI",0.9869
+11500,"Anniston-Oxford, AL",0.6958
+11540,"Appleton, WI",0.9498
+11640,"Arecibo, PR",0.3134
+11694,"Arlington-Alexandria-Reston, VA-WV",1.0449
+11700,"Asheville, NC",0.8847
+12020,"Athens-Clarke County, GA",0.8652
+12054,"Atlanta-Sandy Springs-Roswell, GA",0.9986
+12100,"Atlantic City-Hammonton, NJ",0.9869
+12220,"Auburn-Opelika, AL",0.6797
+12260,"Augusta-Richmond County, GA-SC",0.7916
+12420,"Austin-Round Rock-San Marcos, TX",0.9660
+12540,"Bakersfield-Delano, CA",1.1840
+12580,"Baltimore-Columbia-Towson, MD",0.9508
+12620,"Bangor, ME",0.9102
+12700,"Barnstable Town, MA",1.2554
+12940,"Baton Rouge, LA",0.8046
+12980,"Battle Creek, MI",0.8879
+13020,"Bay City, MI",0.8667
+13140,"Beaumont-Port Arthur, TX",0.8793
+13220,"Beckley, WV",0.8674
+13380,"Bellingham, WA",1.2111
+13460,"Bend, OR",1.1925
+13740,"Billings, MT",0.8974
+13780,"Binghamton, NY",0.8313
+13820,"Birmingham, AL",0.8596
+13900,"Bismarck, ND",0.8919
+13980,"Blacksburg-Christiansburg-Radford, VA",0.8488
+14010,"Bloomington, IL",0.8945
+14020,"Bloomington, IN",0.9943
+14260,"Boise City, ID",0.9689
+14454,"Boston, MA",1.1519
+14500,"Boulder, CO",1.1215
+14540,"Bowling Green, KY",0.8657
+14580,"Bozeman, MT",0.9655
+14740,"Bremerton-Silverdale-Port Orchard, WA",1.2385
+14860,"Bridgeport-Stamford-Danbury, CT",1.1504
+15180,"Brownsville-Harlingen, TX",0.7845
+15260,"Brunswick-St. Simons, GA",0.9534
+15380,"Buffalo-Cheektowaga, NY",1.0646
+15500,"Burlington, NC",0.8719
+15540,"Burlington-South Burlington, VT",0.9839
+15764,"Cambridge-Newton-Framingham, MA",1.0673
+15804,"Camden, NJ",1.0925
+15940,"Canton-Massillon, OH",0.8021
+15980,"Cape Coral-Fort Myers, FL",0.9189
+16020,"Cape Girardeau, MO-IL",0.7794
+16180,"Carson City, NV",0.9567
+16220,"Casper, WY",0.9470
+16300,"Cedar Rapids, IA",0.8695
+16540,"Chambersburg, PA",1.0154
+16580,"Champaign-Urbana, IL",0.8719
+16620,"Charleston, WV",0.7576
+16700,"Charleston-North Charleston, SC",0.8747
+16740,"Charlotte-Concord-Gastonia, NC-SC",0.9404
+16820,"Charlottesville, VA",0.9610
+16860,"Chattanooga, TN-GA",0.8531
+16940,"Cheyenne, WY",0.9504
+16984,"Chicago-Naperville-Schaumburg, IL",1.0228
+17020,"Chico, CA",1.0202
+17140,"Cincinnati, OH-KY-IN",0.9523
+17300,"Clarksville, TN-KY",0.8317
+17410,"Cleveland, OH",0.8776
+17420,"Cleveland, TN",0.8119
+17660,"Coeur d'Alene, ID",0.9905
+17780,"College Station-Bryan, TX",0.8726
+17820,"Colorado Springs, CO",0.9568
+17860,"Columbia, MO",0.8548
+17900,"Columbia, SC",0.9208
+17980,"Columbus, GA-AL",0.7796
+18020,"Columbus, IN",1.1271
+18140,"Columbus, OH",0.9358
+18580,"Corpus Christi, TX",0.9287
+18700,"Corvallis, OR",1.0963
+18880,"Crestview-Fort Walton Beach-Destin, FL",0.8723
+19124,"Dallas-Plano-Irving, TX",0.9639
+19140,"Dalton, GA",0.8885
+19300,"Daphne-Fairhope-Foley, AL",0.8087
+19340,"Davenport-Moline-Rock Island, IA-IL",0.7828
+19430,"Dayton-Kettering-Beavercreek, OH",0.9646
+19460,"Decatur, AL",0.7153
+19500,"Decatur, IL",0.8414
+19660,"Deltona-Daytona Beach-Ormond Beach, FL",0.8772
+19740,"Denver-Aurora-Centennial, CO",1.0079
+19780,"Des Moines-West Des Moines, IA",0.9156
+19804,"Detroit-Dearborn-Livonia, MI",0.8805
+20020,"Dothan, AL",0.7099
+20100,"Dover, DE",1.1673
+20220,"Dubuque, IA",0.8532
+20260,"Duluth, MN-WI",0.9382
+20500,"Durham-Chapel Hill, NC",0.9758
+20580,"Eagle Pass, TX",0.8078
+20740,"Eau Claire, WI",0.9891
+20940,"El Centro, CA",0.8612
+20994,"Elgin, IL",0.9833
+21060,"Elizabethtown, KY",0.8551
+21140,"Elkhart-Goshen, IN",1.0026
+21300,"Elmira, NY",0.8462
+21340,"El Paso, TX",0.8310
+21420,"Enid, OK",0.8425
+21500,"Erie, PA",0.8450
+21660,"Eugene-Springfield, OR",1.1999
+21780,"Evansville, IN",0.9727
+21794,"Everett, WA",1.1663
+21820,"Fairbanks-College, AK",0.9800
+22020,"Fargo, ND-MN",0.8911
+22140,"Farmington, NM",0.8816
+22180,"Fayetteville, NC",0.9465
+22220,"Fayetteville-Springdale-Rogers, AR",0.8802
+22380,"Flagstaff, AZ",1.0740
+22420,"Flint, MI",0.9858
+22500,"Florence, SC",0.8311
+22520,"Florence-Muscle Shoals, AL",0.6816
+22540,"Fond du Lac, WI",0.8767
+22660,"Fort Collins-Loveland, CO",0.9523
+22744,"Fort Lauderdale-Pompano Beach-Sunrise, FL",0.9693
+22900,"Fort Smith, AR-OK",0.9214
+23060,"Fort Wayne, IN",1.0326
+23104,"Fort Worth-Arlington-Grapevine, TX",0.9691
+23224,"Frederick-Gaithersburg-Bethesda, MD",0.9736
+23420,"Fresno, CA",1.1541
+23460,"Gadsden, AL",0.7243
+23540,"Gainesville, FL",0.8991
+23580,"Gainesville, GA",0.9368
+23900,"Gettysburg, PA",1.0071
+24020,"Glens Falls, NY",0.9299
+24140,"Goldsboro, NC",0.9120
+24220,"Grand Forks, ND-MN",0.7440
+24260,"Grand Island, NE",0.9769
+24300,"Grand Junction, CO",1.0630
+24340,"Grand Rapids-Wyoming-Kentwood, MI",0.8291
+24420,"Grants Pass, OR",1.2904
+24500,"Great Falls, MT",0.8698
+24540,"Greeley, CO",0.9859
+24580,"Green Bay, WI",0.8930
+24660,"Greensboro-High Point, NC",0.9168
+24780,"Greenville, NC",0.8242
+24860,"Greenville-Anderson-Greer, SC",0.9137
+25020,"Guayama, PR",0.3819
+25060,"Gulfport-Biloxi, MS",0.7667
+25180,"Hagerstown-Martinsburg, MD-WV",0.9109
+25220,"Hammond, LA",0.7346
+25260,"Hanford-Corcoran, CA",1.1706
+25420,"Harrisburg-Carlisle, PA",1.0055
+25500,"Harrisonburg, VA",0.9814
+25540,"Hartford-West Hartford-East Hartford, CT",1.0547
+25620,"Hattiesburg, MS",0.6992
+25740,"Helena, MT",0.7705
+25860,"Hickory-Lenoir-Morganton, NC",0.8531
+25940,"Hilton Head Island-Bluffton-Port Royal, SC",0.7642
+25980,"Hinesville, GA",0.8877
+26140,"Homosassa Springs, FL",0.8569
+26300,"Hot Springs, AR",0.8608
+26380,"Houma-Bayou Cane-Thibodaux, LA",0.6960
+26420,"Houston-Pasadena-The Woodlands, TX",0.9729
+26580,"Huntington-Ashland, WV-KY-OH",0.8981
+26620,"Huntsville, AL",0.8106
+26820,"Idaho Falls, ID",0.8009
+26900,"Indianapolis-Carmel-Greenwood, IN",1.0022
+26980,"Iowa City, IA",0.8757
+27060,"Ithaca, NY",0.9277
+27100,"Jackson, MI",0.8349
+27140,"Jackson, MS",0.8493
+27180,"Jackson, TN",0.7033
+27260,"Jacksonville, FL",0.8753
+27340,"Jacksonville, NC",0.7424
+27500,"Janesville-Beloit, WI",0.8802
+27620,"Jefferson City, MO",0.8018
+27740,"Johnson City, TN",0.8080
+27780,"Johnstown, PA",0.7921
+27860,"Jonesboro, AR",0.8199
+27900,"Joplin, MO-KS",0.7358
+27980,"Kahului-Wailuku, HI",1.0277
+28020,"Kalamazoo-Portage, MI",0.8683
+28100,"Kankakee, IL",0.8798
+28140,"Kansas City, MO-KS",0.9054
+28420,"Kennewick-Richland, WA",0.9518
+28450,"Kenosha, WI",0.8905
+28660,"Killeen-Temple, TX",0.9463
+28700,"Kingsport-Bristol, TN-VA",0.8108
+28740,"Kingston, NY",1.0532
+28880,"Kiryas Joel-Poughkeepsie-Newburgh, NY",1.1720
+28940,"Knoxville, TN",0.7364
+29020,"Kokomo, IN",0.9774
+29100,"La Crosse-Onalaska, WI-MN",0.9746
+29180,"Lafayette, LA",0.8153
+29200,"Lafayette-West Lafayette, IN",1.0090
+29340,"Lake Charles, LA",0.8177
+29404,"Lake County, IL",0.9978
+29414,"Lake County-Porter County-Jasper County, IN",0.8933
+29420,"Lake Havasu City-Kingman, AZ",0.9044
+29460,"Lakeland-Winter Haven, FL",0.8715
+29484,"Lakewood-New Brunswick, NJ",1.1274
+29540,"Lancaster, PA",0.8644
+29620,"Lansing-East Lansing, MI",0.9002
+29700,"Laredo, TX",0.8111
+29740,"Las Cruces, NM",0.8548
+29820,"Las Vegas-Henderson-North Las Vegas, NV",1.0884
+29940,"Lawrence, KS",0.8785
+30020,"Lawton, OK",0.7601
+30140,"Lebanon, PA",1.0038
+30300,"Lewiston, ID-WA",0.8985
+30340,"Lewiston-Auburn, ME",0.8638
+30460,"Lexington-Fayette, KY",0.9449
+30500,"Lexington Park, MD",0.9270
+30620,"Lima, OH",0.8954
+30700,"Lincoln, NE",1.0231
+30780,"Little Rock-North Little Rock-Conway, AR",0.8807
+30860,"Logan, UT-ID",0.9470
+30980,"Longview, TX",0.9072
+31020,"Longview-Kelso, WA",1.1397
+31084,"Los Angeles-Long Beach-Glendale, CA",1.2699
+31140,"Louisville/Jefferson County, KY-IN",0.9145
+31180,"Lubbock, TX",0.8593
+31340,"Lynchburg, VA",0.8969
+31420,"Macon-Bibb County, GA",0.8256
+31540,"Madison, WI",0.9437
+31700,"Manchester-Nashua, NH",0.9831
+31740,"Manhattan, KS",0.8194
+31860,"Mankato, MN",1.1112
+31900,"Mansfield, OH",0.9632
+31924,"Marietta, GA",1.0154
+32420,"MayagÅez, PR",0.3408
+32580,"McAllen-Edinburg-Mission, TX",0.7661
+32780,"Medford, OR",1.2446
+32820,"Memphis, TN-MS-AR",0.8676
+32900,"Merced, CA",1.2866
+33124,"Miami-Miami Beach-Kendall, FL",0.9669
+33140,"Michigan City-La Porte, IN",0.9278
+33220,"Midland, MI",0.9233
+33260,"Midland, TX",0.9018
+33340,"Milwaukee-Waukesha, WI",0.9679
+33460,"Minneapolis-St. Paul-Bloomington, MN-WI",1.0849
+33500,"Minot, ND",0.8047
+33540,"Missoula, MT",0.9325
+33660,"Mobile, AL",0.8153
+33700,"Modesto, CA",1.2476
+33740,"Monroe, LA",0.7955
+33780,"Monroe, MI",0.9435
+33860,"Montgomery, AL",0.8051
+33874,"Montgomery County-Bucks County-Chester County, PA",0.9618
+34060,"Morgantown, WV",0.8094
+34100,"Morristown, TN",0.6922
+34580,"Mount Vernon-Anacortes, WA",0.9453
+34620,"Muncie, IN",0.9820
+34740,"Muskegon-Norton Shores, MI",0.8632
+34820,"Myrtle Beach-Conway-North Myrtle Beach, SC",0.8008
+34900,"Napa, CA",1.4679
+34940,"Naples-Marco Island, FL",0.9223
+34980,"Nashville-Davidson--Murfreesboro--Franklin, TN",0.9080
+35004,"Nassau County-Suffolk County, NY",1.2365
+35084,"Newark, NJ",1.1000
+35300,"New Haven, CT",1.1148
+35380,"New Orleans-Metairie, LA",0.8545
+35614,"New York-Jersey City-White Plains, NY-NJ",1.2951
+35660,"Niles, MI",0.8907
+35840,"North Port-Bradenton-Sarasota, FL",0.9439
+35980,"Norwich-New London-Willimantic, CT",1.0563
+36084,"Oakland-Fremont-Berkeley, CA",1.7434
+36100,"Ocala, FL",0.8715
+36220,"Odessa, TX",0.8702
+36260,"Ogden, UT",0.9270
+36420,"Oklahoma City, OK",0.8721
+36500,"Olympia-Lacey-Tumwater, WA",1.1329
+36540,"Omaha, NE-IA",1.0402
+36740,"Orlando-Kissimmee-Sanford, FL",0.9674
+36780,"Oshkosh-Neenah, WI",0.9411
+36980,"Owensboro, KY",0.9018
+37100,"Oxnard-Thousand Oaks-Ventura, CA",1.2548
+37140,"Paducah, KY-IL",0.8638
+37340,"Palm Bay-Melbourne-Titusville, FL",0.9484
+37460,"Panama City-Panama City Beach, FL",0.8568
+37620,"Parkersburg-Vienna, WV",0.8027
+37860,"Pensacola-Ferry Pass-Brent, FL",0.8065
+37900,"Peoria, IL",0.8900
+37964,"Philadelphia, PA",1.0364
+38060,"Phoenix-Mesa-Chandler, AZ",1.0117
+38240,"Pinehurst-Southern Pines, NC",0.8222
+38300,"Pittsburgh, PA",0.8463
+38340,"Pittsfield, MA",0.9948
+38540,"Pocatello, ID",0.8799
+38660,"Ponce, PR",0.3287
+38860,"Portland-South Portland, ME",0.9983
+38900,"Portland-Vancouver-Hillsboro, OR-WA",1.1783
+38940,"Port St. Lucie, FL",0.9145
+39150,"Prescott Valley-Prescott, AZ",0.9986
+39300,"Providence-Warwick, RI-MA",1.0040
+39340,"Provo-Orem-Lehi, UT",0.9617
+39380,"Pueblo, CO",0.9580
+39460,"Punta Gorda, FL",0.8793
+39540,"Racine-Mount Pleasant, WI",0.9708
+39580,"Raleigh-Cary, NC",0.9855
+39660,"Rapid City, SD",0.8843
+39740,"Reading, PA",1.0205
+39820,"Redding, CA",1.3850
+39900,"Reno, NV",0.9373
+40060,"Richmond, VA",0.8995
+40140,"Riverside-San Bernardino-Ontario, CA",1.1740
+40220,"Roanoke, VA",0.8569
+40340,"Rochester, MN",1.1304
+40380,"Rochester, NY",0.9499
+40420,"Rockford, IL",0.9202
+40484,"Rockingham County-Strafford County, NH",1.0021
+40580,"Rocky Mount, NC",0.8712
+40660,"Rome, GA",1.0373
+40900,"Sacramento-Roseville-Folsom, CA",1.5630
+40980,"Saginaw, MI",0.8579
+41060,"St. Cloud, MN",0.9221
+41100,"St. George, UT",0.9998
+41140,"St. Joseph, MO-KS",0.8247
+41180,"St. Louis, MO-IL",0.9734
+41304,"St. Petersburg-Clearwater-Largo, FL",0.8805
+41420,"Salem, OR",1.1119
+41500,"Salinas, CA",1.7074
+41540,"Salisbury, MD",0.8319
+41620,"Salt Lake City-Murray, UT",0.9598
+41660,"San Angelo, TX",0.8774
+41700,"San Antonio-New Braunfels, TX",0.8526
+41740,"San Diego-Chula Vista-Carlsbad, CA",1.2301
+41780,"Sandusky, OH",0.7940
+41884,"San Francisco-San Mateo-Redwood City, CA",1.7522
+41940,"San Jose-Sunnyvale-Santa Clara, CA",1.8317
+41980,"San Juan-Bayam¢n-Caguas, PR",0.3589
+42020,"San Luis Obispo-Paso Robles, CA",1.2790
+42034,"San Rafael, CA",1.6942
+42100,"Santa Cruz-Watsonville, CA",1.7061
+42140,"Santa Fe, NM",1.0201
+42200,"Santa Maria-Santa Barbara, CA",1.3137
+42220,"Santa Rosa-Petaluma, CA",1.6480
+42340,"Savannah, GA",0.8220
+42540,"Scranton--Wilkes-Barre, PA",0.8797
+42644,"Seattle-Bellevue-Kent, WA",1.2566
+42680,"Sebastian-Vero Beach-West Vero Corridor, FL",1.0152
+42700,"Sebring, FL",0.9382
+43100,"Sheboygan, WI",0.9382
+43300,"Sherman-Denison, TX",0.8258
+43340,"Shreveport-Bossier City, LA",0.8149
+43420,"Sierra Vista-Douglas, AZ",0.8294
+43580,"Sioux City, IA-NE-SD",0.8657
+43620,"Sioux Falls, SD-MN",0.7942
+43640,"Slidell-Mandeville-Covington, LA",0.8210
+43780,"South Bend-Mishawaka, IN-MI",0.9670
+43900,"Spartanburg, SC",0.8368
+44060,"Spokane-Spokane Valley, WA",1.1032
+44100,"Springfield, IL",0.9599
+44140,"Springfield, MA",0.9905
+44180,"Springfield, MO",0.7952
+44220,"Springfield, OH",0.9114
+44300,"State College, PA",1.1283
+44420,"Staunton-Stuarts Draft, VA",0.8633
+44700,"Stockton-Lodi, CA",1.5112
+44940,"Sumter, SC",0.8921
+45060,"Syracuse, NY",1.0186
+45104,"Tacoma-Lakewood, WA",1.2721
+45220,"Tallahassee, FL",0.7398
+45294,"Tampa, FL",0.8981
+45460,"Terre Haute, IN",0.9159
+45500,"Texarkana, TX-AR",0.9474
+45780,"Toledo, OH",0.8907
+45820,"Topeka, KS",0.8196
+45900,"Traverse City, MI",0.8413
+45940,"Trenton-Princeton, NJ",1.0307
+46060,"Tucson, AZ",0.8886
+46140,"Tulsa, OK",0.8448
+46220,"Tuscaloosa, AL",0.9162
+46300,"Twin Falls, ID",0.9347
+46340,"Tyler, TX",0.9099
+46520,"Urban Honolulu, HI",1.1821
+46540,"Utica-Rome, NY",0.9113
+46660,"Valdosta, GA",0.7031
+46700,"Vallejo, CA",1.8147
+47020,"Victoria, TX",0.8505
+47220,"Vineland, NJ",1.0810
+47260,"Virginia Beach-Chesapeake-Norfolk, VA-NC",0.8942
+47300,"Visalia, CA",0.9591
+47380,"Waco, TX",0.9448
+47460,"Walla Walla, WA",0.9758
+47580,"Warner Robins, GA",0.7476
+47664,"Warren-Troy-Farmington Hills, MI",0.8862
+47764,"Washington, DC-MD",1.0737
+47930,"Waterbury-Shelton, CT",0.9992
+47940,"Waterloo-Cedar Falls, IA",0.8080
+48060,"Watertown-Fort Drum, NY",0.8520
+48140,"Wausau, WI",0.8798
+48260,"Weirton-Steubenville, WV-OH",0.7286
+48300,"Wenatchee-East Wenatchee, WA",1.0076
+48424,"West Palm Beach-Boca Raton-Delray Beach, FL",0.9189
+48540,"Wheeling, WV-OH",0.7479
+48620,"Wichita, KS",0.8348
+48660,"Wichita Falls, TX",0.9080
+48680,"Wildwood-The Villages, FL",0.9601
+48700,"Williamsport, PA",0.8077
+48864,"Wilmington, DE-MD-NJ",1.0868
+48900,"Wilmington, NC",0.9865
+49020,"Winchester, VA-WV",0.9496
+49180,"Winston-Salem, NC",0.9296
+49340,"Worcester, MA",1.0415
+49420,"Yakima, WA",0.9201
+49620,"York-Hanover, PA",0.9375
+49660,"Youngstown-Warren, OH",0.8631
+49700,"Yuba City, CA",1.3595
+49740,"Yuma, AZ",0.9517
+50001,Washington County,0.6800
+50002,Lamar County,0.9083
+50003,Kalwao County,1.0397
+50004,Power County,0.8518
+50006,Putnam County,0.8649
+50007,Henderson County,0.8270
+50013,Rock County,0.8174
+50014,Lyon County,0.9666
+50015,Franklin County,0.7496
+50017,Granville County,0.8614
+50020,Pike County,1.0188
+50021,Madison County,0.9244
+50023,Mineral County,0.7739
+50024,Rural Charleston,0.7198
+50025,San German-Cabo Rojo,0.3571
+50030,Northeastern CT,0.9687

@@ -103,23 +103,26 @@ class TestAscReferenceData(unittest.TestCase):
         # Setup: Q2 2025 has rates but NO wage index in quarter dir
         q2_2025 = os.path.join(self.asc_data_dir, "2025", "20250401")
         os.makedirs(q2_2025)
-        
-        self._create_csv(os.path.join(q2_2025, "AA.csv"), ["HCPCS Code", "10001"]) # Min valid
+
+        self._create_csv(
+            os.path.join(q2_2025, "AA.csv"), ["HCPCS Code", "10001"]
+        )  # Min valid
         self._create_csv(os.path.join(q2_2025, "BB.csv"), [])
         self._create_csv(os.path.join(q2_2025, "FF.csv"), [])
-        
+
         # Place Wage Index in Year Dir (2025/)
         year_dir = os.path.join(self.asc_data_dir, "2025")
         self._create_csv(
             os.path.join(year_dir, "cbsa-wage-index-2025.csv"),
-            ["CBSA,Wage Index", "99999,2.0"]
+            ["CBSA,Wage Index", "99999,2.0"],
         )
-        
+
         loader = AscReferenceData(self.asc_data_dir)
-        data = loader.get_data(datetime(2025, 5, 1)) # Q2
-        
+        data = loader.get_data(datetime(2025, 5, 1))  # Q2
+
         self.assertIn("99999", data["wage_indices"])
         self.assertEqual(data["wage_indices"]["99999"], 2.0)
+
 
 if __name__ == "__main__":
     unittest.main()

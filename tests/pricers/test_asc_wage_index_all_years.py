@@ -4,18 +4,21 @@ import unittest
 from datetime import datetime
 
 # Add project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from myelin.pricers.asc.data_loader import AscReferenceData
 
+
 class TestAscWageIndexAllYears(unittest.TestCase):
     def setUp(self):
-        self.data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../myelin/pricers/asc/data'))
+        self.data_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "../../myelin/pricers/asc/data")
+        )
         self.loader = AscReferenceData(self.data_dir)
 
     def test_2021_wage_index(self):
         # 2021 has wage_index.txt
-        # Expecting WI21 column. 
+        # Expecting WI21 column.
         # CBSA 01 (ALABAMA) -> 0.6724
         data = self.loader.get_data(datetime(2021, 1, 15))
         self.assertIn("wage_indices", data)
@@ -56,5 +59,6 @@ class TestAscWageIndexAllYears(unittest.TestCase):
         self.assertIn("02", data["wage_indices"])
         self.assertAlmostEqual(data["wage_indices"]["02"], 1.1274, places=4)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

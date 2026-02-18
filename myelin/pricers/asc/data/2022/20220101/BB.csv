@@ -1,0 +1,1974 @@
+Addendum BB -- ASC Covered Ancillary Services Integral to Covered Surgical Procedures for CY 2022 (Including Ancillary Services for Which Payment is Packaged),,,,,,
+"CPT codes and descriptions only are copyright 2021 American Medical Association.  All Rights Reserved.  Applicable FARS/DFARS Apply.  Dental codes (D codes) are copyright 2021 American Dental Association.  All Rights Reserved. The existence or absence of a HCPCS code does not mean that an item or service is covered or non-covered. As a reminder, the fact that a drug, device, procedure, or service is assigned a HCPCS code and a payment rate under the OPPS does not imply coverage by the Medicare program, but indicates only how the product, procedure, or service may be paid if covered by the program. Medicare Administrative Contractors (MACs) determine whether a drug, device, procedure, or other service meets all program requirements for coverage. For example, MACs determine that it is reasonable and necessary to treat the beneficiary’s condition and whether it is excluded from payment.",,,,,,
+,,,,,,
+HCPCS Code,,Short Descriptor,Drug Pass-Through Expiration during Calendar Year,Jan 2022 Payment Indicator,Jan 2022 Payment Weight  ,Jan 2022 Payment Rate 
+0331T,,Heart symp image plnr,,Z2,13.5464,$676.18
+0332T,,Heart symp image plnr spect,,Z2,13.5464,$676.18
+0394T,,Hdr elctrnc skn surf brchytx,,Z2,2.5058,$125.08
+0395T,,Hdr elctr ntrst/ntrcv brchtx,,Z2,7.3537,$367.07
+0422T,,Tactile breast img uni/bi,,Z2,0.8385,$41.85
+0508T,,Pls echo us b1 dns meas tib,,Z2,1.1286,$56.34
+0558T,,Ct scan f/biomchn ct alys,,Z2,0.8385,$41.85
+0598T,,Ncntc r-t fluor wnd img 1st,,Z2,2.7435,$136.94
+0599T,,Ncntc r-t fluor wnd img ea,,N1,,
+0609T,,Mrs disc pain acquisj data,,Z2,2.3852,$119.06
+0611T,,Mrs disc pain alg alys data,,Z2,2.3852,$119.06
+0633T,,Ct breast w/3d uni c-,,Z2,1.1286,$56.34
+0634T,,Ct breast w/3d uni c+,,Z2,1.8517,$92.43
+0635T,,Ct breast w/3d uni c-/c+,,Z2,1.8517,$92.43
+0636T,,Ct breast w/3d bi c-,,Z2,2.3852,$119.06
+0637T,,Ct breast w/3d bi c+,,Z2,3.8173,$190.54
+0638T,,Ct breast w/3d bi c-/c+,,Z2,3.8173,$190.54
+0648T,,Quan mr tis wo mri 1orgn,,Z2,9.6476,$481.57
+0689T,,Quan us tis charac w/o dx us,,Z2,0.8385,$41.85
+0697T,,Quan mr tis wo mri mlt orgn,,Z2,2.3852,$119.06
+70010,,Contrast x-ray of brain,,N1,,
+70015,,Contrast x-ray of brain,,N1,,
+70030,,X-ray eye for foreign body,,N1,,
+70100,,X-ray exam of jaw <4views,,N1,,
+70110,,X-ray exam of jaw 4/> views,,N1,,
+70120,,X-ray exam of mastoids,,N1,,
+70130,,X-ray exam of mastoids,,N1,,
+70134,,X-ray exam of middle ear,,N1,,
+70140,,X-ray exam of facial bones,,N1,,
+70150,,X-ray exam of facial bones,,N1,,
+70160,,X-ray exam of nasal bones,,N1,,
+70170,,X-ray exam of tear duct,,N1,,
+70190,,X-ray exam of eye sockets,,N1,,
+70200,,X-ray exam of eye sockets,,N1,,
+70210,,X-ray exam of sinuses,,N1,,
+70220,,X-ray exam of sinuses,,N1,,
+70240,,X-ray exam pituitary saddle,,N1,,
+70250,,X-ray exam of skull,,N1,,
+70260,,X-ray exam of skull,,N1,,
+70300,,X-ray exam of teeth,,N1,,
+70310,,X-ray exam of teeth,,N1,,
+70320,,Full mouth x-ray of teeth,,N1,,
+70328,,X-ray exam of jaw joint,,N1,,
+70330,,X-ray exam of jaw joints,,N1,,
+70332,,X-ray exam of jaw joint,,N1,,
+70336,,Magnetic image jaw joint,,Z2,2.3852,$119.06
+70350,,X-ray head for orthodontia,,N1,,
+70355,,Panoramic x-ray of jaws,,N1,,
+70360,,X-ray exam of neck,,N1,,
+70370,,Throat x-ray & fluoroscopy,,N1,,
+70371,,Speech evaluation complex,,N1,,
+70380,,X-ray exam of salivary gland,,N1,,
+70390,,X-ray exam of salivary duct,,N1,,
+70450,,Ct head/brain w/o dye,,Z2,1.1286,$56.34
+70460,,Ct head/brain w/dye,,Z2,1.8517,$92.43
+70470,,Ct head/brain w/o & w/dye,,Z2,1.8517,$92.43
+70480,,Ct orbit/ear/fossa w/o dye,,Z2,1.1286,$56.34
+70481,,Ct orbit/ear/fossa w/dye,,Z2,1.8517,$92.43
+70482,,Ct orbit/ear/fossa w/o&w/dye,,Z2,1.8517,$92.43
+70486,,Ct maxillofacial w/o dye,,Z2,1.1286,$56.34
+70487,,Ct maxillofacial w/dye,,Z2,1.8517,$92.43
+70488,,Ct maxillofacial w/o & w/dye,,Z2,1.8517,$92.43
+70490,,Ct soft tissue neck w/o dye,,Z2,1.1286,$56.34
+70491,,Ct soft tissue neck w/dye,,Z2,1.8517,$92.43
+70492,,Ct sft tsue nck w/o & w/dye,,Z2,1.8517,$92.43
+70496,,Ct angiography head,,Z2,1.8517,$92.43
+70498,,Ct angiography neck,,Z2,1.8517,$92.43
+70540,,Mri orbit/face/neck w/o dye,,Z2,2.3852,$119.06
+70542,,Mri orbit/face/neck w/dye,,Z2,3.8173,$190.54
+70543,,Mri orbt/fac/nck w/o &w/dye,,Z2,3.8173,$190.54
+70544,,Mr angiography head w/o dye,,Z2,2.3852,$119.06
+70545,,Mr angiography head w/dye,,Z3,,$187.22
+70546,,Mr angiograph head w/o&w/dye,,Z2,3.8173,$190.54
+70547,,Mr angiography neck w/o dye,,Z2,2.3852,$119.06
+70548,,Mr angiography neck w/dye,,Z2,3.8173,$190.54
+70549,,Mr angiograph neck w/o&w/dye,,Z2,3.8173,$190.54
+70551,,Mri brain stem w/o dye,,Z2,2.3852,$119.06
+70552,,Mri brain stem w/dye,,Z2,3.8173,$190.54
+70553,,Mri brain stem w/o & w/dye,,Z2,3.8173,$190.54
+70554,,Fmri brain by tech,,Z2,2.3852,$119.06
+70555,,Fmri brain by phys/psych,,Z2,2.3852,$119.06
+70557,,Mri brain w/o dye,,Z2,5.0088,$250.02
+70558,,Mri brain w/dye,,Z2,1.8517,$92.43
+70559,,Mri brain w/o & w/dye,,Z2,1.8517,$92.43
+71045,,X-ray exam chest 1 view,,Z3,,$17.30
+71046,,X-ray exam chest 2 views,,Z3,,$23.53
+71047,,X-ray exam chest 3 views,,N1,,
+71048,,X-ray exam chest 4+ views,,N1,,
+71100,,X-ray exam ribs uni 2 views,,N1,,
+71101,,X-ray exam unilat ribs/chest,,N1,,
+71110,,X-ray exam ribs bil 3 views,,N1,,
+71111,,X-ray exam ribs/chest4/> vws,,N1,,
+71120,,X-ray exam breastbone 2/>vws,,N1,,
+71130,,X-ray strenoclavic jt 3/>vws,,N1,,
+71250,,Ct thorax dx c-,,Z2,1.1286,$56.34
+71260,,Ct thorax dx c+,,Z2,1.8517,$92.43
+71270,,Ct thorax dx c-/c+,,Z2,1.8517,$92.43
+71275,,Ct angiography chest,,Z2,1.8517,$92.43
+71550,,Mri chest w/o dye,,Z2,2.3852,$119.06
+71551,,Mri chest w/dye,,Z3,,$326.68
+71552,,Mri chest w/o & w/dye,,Z2,3.8173,$190.54
+72020,,X-ray exam of spine 1 view,,N1,,
+72040,,X-ray exam neck spine 2-3 vw,,N1,,
+72050,,X-ray exam neck spine 4/5vws,,N1,,
+72052,,X-ray exam neck spine 6/>vws,,N1,,
+72070,,X-ray exam thorac spine 2vws,,N1,,
+72072,,X-ray exam thorac spine 3vws,,N1,,
+72074,,X-ray exam thorac spine4/>vw,,N1,,
+72080,,X-ray exam thoracolmb 2/> vw,,N1,,
+72081,,X-ray exam entire spi 1 vw,,N1,,
+72082,,X-ray exam entire spi 2/3 vw,,N1,,
+72083,,X-ray exam entire spi 4/5 vw,,Z2,1.1286,$56.34
+72084,,X-ray exam entire spi 6/> vw,,Z2,1.1286,$56.34
+72100,,X-ray exam l-s spine 2/3 vws,,N1,,
+72110,,X-ray exam l-2 spine 4/>vws,,N1,,
+72114,,X-ray exam l-s spine bending,,N1,,
+72120,,X-ray bend only l-s spine,,N1,,
+72125,,Ct neck spine w/o dye,,Z2,1.1286,$56.34
+72126,,Ct neck spine w/dye,,Z3,,$121.81
+72127,,Ct neck spine w/o & w/dye,,Z2,1.8517,$92.43
+72128,,Ct chest spine w/o dye,,Z2,1.1286,$56.34
+72129,,Ct chest spine w/dye,,Z2,1.8517,$92.43
+72130,,Ct chest spine w/o & w/dye,,Z2,1.8517,$92.43
+72131,,Ct lumbar spine w/o dye,,Z2,1.1286,$56.34
+72132,,Ct lumbar spine w/dye,,Z3,,$121.81
+72133,,Ct lumbar spine w/o & w/dye,,Z2,1.8517,$92.43
+72141,,Mri neck spine w/o dye,,Z2,2.3852,$119.06
+72142,,Mri neck spine w/dye,,Z2,3.8173,$190.54
+72146,,Mri chest spine w/o dye,,Z2,2.3852,$119.06
+72147,,Mri chest spine w/dye,,Z2,3.8173,$190.54
+72148,,Mri lumbar spine w/o dye,,Z2,2.3852,$119.06
+72149,,Mri lumbar spine w/dye,,Z2,3.8173,$190.54
+72156,,Mri neck spine w/o & w/dye,,Z2,3.8173,$190.54
+72157,,Mri chest spine w/o & w/dye,,Z2,3.8173,$190.54
+72158,,Mri lumbar spine w/o & w/dye,,Z2,3.8173,$190.54
+72170,,X-ray exam of pelvis,,N1,,
+72190,,X-ray exam of pelvis,,N1,,
+72191,,Ct angiograph pelv w/o&w/dye,,Z2,1.8517,$92.43
+72192,,Ct pelvis w/o dye,,Z2,1.1286,$56.34
+72193,,Ct pelvis w/dye,,Z2,1.8517,$92.43
+72194,,Ct pelvis w/o & w/dye,,Z2,1.8517,$92.43
+72195,,Mri pelvis w/o dye,,Z2,2.3852,$119.06
+72196,,Mri pelvis w/dye,,Z2,3.8173,$190.54
+72197,,Mri pelvis w/o & w/dye,,Z2,3.8173,$190.54
+72200,,X-ray exam si joints,,N1,,
+72202,,X-ray exam si joints 3/> vws,,N1,,
+72220,,X-ray exam sacrum tailbone,,N1,,
+72240,,Myelography neck spine,,N1,,
+72255,,Myelography thoracic spine,,N1,,
+72265,,Myelography l-s spine,,N1,,
+72270,,Myelogphy 2/> spine regions,,N1,,
+72285,,Discography cerv/thor spine,,N1,,
+72295,,X-ray of lower spine disk,,N1,,
+73000,,X-ray exam of collar bone,,N1,,
+73010,,X-ray exam of shoulder blade,,N1,,
+73020,,X-ray exam of shoulder,,N1,,
+73030,,X-ray exam of shoulder,,N1,,
+73040,,Contrast x-ray of shoulder,,N1,,
+73050,,X-ray exam of shoulders,,N1,,
+73060,,X-ray exam of humerus,,N1,,
+73070,,X-ray exam of elbow,,N1,,
+73080,,X-ray exam of elbow,,N1,,
+73085,,Contrast x-ray of elbow,,N1,,
+73090,,X-ray exam of forearm,,N1,,
+73092,,X-ray exam of arm infant,,N1,,
+73100,,X-ray exam of wrist,,N1,,
+73110,,X-ray exam of wrist,,N1,,
+73115,,Contrast x-ray of wrist,,N1,,
+73120,,X-ray exam of hand,,N1,,
+73130,,X-ray exam of hand,,N1,,
+73140,,X-ray exam of finger(s),,N1,,
+73200,,Ct upper extremity w/o dye,,Z2,1.1286,$56.34
+73201,,Ct upper extremity w/dye,,Z3,,$161.26
+73202,,Ct uppr extremity w/o&w/dye,,Z2,1.8517,$92.43
+73206,,Ct angio upr extrm w/o&w/dye,,Z2,1.8517,$92.43
+73218,,Mri upper extremity w/o dye,,Z2,2.3852,$119.06
+73219,,Mri upper extremity w/dye,,Z2,3.8173,$190.54
+73220,,Mri uppr extremity w/o&w/dye,,Z2,3.8173,$190.54
+73221,,Mri joint upr extrem w/o dye,,Z2,2.3852,$119.06
+73222,,Mri joint upr extrem w/dye,,Z3,,$264.39
+73223,,Mri joint upr extr w/o&w/dye,,Z2,3.8173,$190.54
+73501,,X-ray exam hip uni 1 view,,N1,,
+73502,,X-ray exam hip uni 2-3 views,,N1,,
+73503,,X-ray exam hip uni 4/> views,,N1,,
+73521,,X-ray exam hips bi 2 views,,N1,,
+73522,,X-ray exam hips bi 3-4 views,,N1,,
+73523,,X-ray exam hips bi 5/> views,,N1,,
+73525,,Contrast x-ray of hip,,N1,,
+73551,,X-ray exam of femur 1,,N1,,
+73552,,X-ray exam of femur 2/>,,N1,,
+73560,,X-ray exam of knee 1 or 2,,N1,,
+73562,,X-ray exam of knee 3,,N1,,
+73564,,X-ray exam knee 4 or more,,N1,,
+73565,,X-ray exam of knees,,N1,,
+73580,,Contrast x-ray of knee joint,,N1,,
+73590,,X-ray exam of lower leg,,N1,,
+73592,,X-ray exam of leg infant,,N1,,
+73600,,X-ray exam of ankle,,N1,,
+73610,,X-ray exam of ankle,,N1,,
+73615,,Contrast x-ray of ankle,,N1,,
+73620,,X-ray exam of foot,,N1,,
+73630,,X-ray exam of foot,,N1,,
+73650,,X-ray exam of heel,,N1,,
+73660,,X-ray exam of toe(s),,N1,,
+73700,,Ct lower extremity w/o dye,,Z2,1.1286,$56.34
+73701,,Ct lower extremity w/dye,,Z2,1.8517,$92.43
+73702,,Ct lwr extremity w/o&w/dye,,Z2,1.8517,$92.43
+73706,,Ct angio lwr extr w/o&w/dye,,Z2,1.8517,$92.43
+73718,,Mri lower extremity w/o dye,,Z2,2.3852,$119.06
+73719,,Mri lower extremity w/dye,,Z2,3.8173,$190.54
+73720,,Mri lwr extremity w/o&w/dye,,Z2,3.8173,$190.54
+73721,,Mri jnt of lwr extre w/o dye,,Z2,2.3852,$119.06
+73722,,Mri joint of lwr extr w/dye,,Z3,,$265.08
+73723,,Mri joint lwr extr w/o&w/dye,,Z2,3.8173,$190.54
+74018,,X-ray exam abdomen 1 view,,N1,,
+74019,,X-ray exam abdomen 2 views,,N1,,
+74021,,X-ray exam abdomen 3+ views,,N1,,
+74022,,X-ray exam complete abdomen,,N1,,
+74150,,Ct abdomen w/o dye,,Z2,1.1286,$56.34
+74160,,Ct abdomen w/dye,,Z2,1.8517,$92.43
+74170,,Ct abdomen w/o & w/dye,,Z2,1.8517,$92.43
+74174,,Ct angio abd&pelv w/o&w/dye,,Z2,3.8173,$190.54
+74175,,Ct angio abdom w/o & w/dye,,Z2,1.8517,$92.43
+74176,,Ct abd & pelvis w/o contrast,,Z3,,$110.74
+74177,,Ct abd & pelv w/contrast,,Z2,3.8173,$190.54
+74178,,Ct abd & pelv 1/> regns,,Z2,3.8173,$190.54
+74181,,Mri abdomen w/o dye,,Z2,2.3852,$119.06
+74182,,Mri abdomen w/dye,,Z2,3.8173,$190.54
+74183,,Mri abdomen w/o & w/dye,,Z2,3.8173,$190.54
+74190,,X-ray exam of peritoneum,,N1,,
+74210,,X-ray xm phrnx&/crv esoph c+,,N1,,
+74220,,X-ray xm esophagus 1cntrst,,N1,,
+74230,,X-ray xm swlng funcj c+,,Z2,1.8517,$92.43
+74235,,Remove esophagus obstruction,,N1,,
+74240,,X-ray xm upr gi trc 1cntrst,,Z3,,$91.01
+74246,,X-ray xm upr gi trc 2cntrst,,Z2,1.8517,$92.43
+74250,,X-ray xm sm int 1cntrst std,,Z3,,$90.32
+74251,,X-ray xm sm int 2cntrst std,,Z2,1.8517,$92.43
+74261,,Ct colonography dx,,Z2,1.1286,$56.34
+74262,,Ct colonography dx w/dye,,Z2,1.8517,$92.43
+74270,,X-ray xm colon 1cntrst std,,N1,,
+74280,,X-ray xm colon 2cntrst std,,N1,,
+74283,,Ther nma rdctj intus/obstrcj,,Z2,1.8517,$92.43
+74290,,Contrast x-ray gallbladder,,N1,,
+74300,,X-ray bile ducts/pancreas,,N1,,
+74301,,X-rays at surgery add-on,,N1,,
+74328,,X-ray bile duct endoscopy,,N1,,
+74329,,X-ray for pancreas endoscopy,,N1,,
+74330,,X-ray bile/panc endoscopy,,N1,,
+74340,,X-ray guide for gi tube,,N1,,
+74355,,X-ray guide intestinal tube,,N1,,
+74360,,X-ray guide gi dilation,,N1,,
+74363,,X-ray bile duct dilation,,N1,,
+74400,,Urography iv +-kub tomog,,Z2,1.8517,$92.43
+74410,,Urography nfs drip&/bolus,,Z2,1.8517,$92.43
+74415,,Urography nfs drip&/bls w/nf,,Z2,1.8517,$92.43
+74420,,Urography rtrgr +-kub,,Z2,3.8173,$190.54
+74425,,Urography antegrade rs&i,,N1,,
+74430,,Contrast x-ray bladder,,N1,,
+74440,,X-ray male genital tract,,N1,,
+74445,,X-ray exam of penis,,N1,,
+74450,,X-ray urethra/bladder,,N1,,
+74455,,X-ray urethra/bladder,,N1,,
+74470,,X-ray exam of kidney lesion,,N1,,
+74485,,Dilation urtr/urt rs&i,,N1,,
+74710,,X-ray measurement of pelvis,,N1,,
+74712,,Mri fetal sngl/1st gestation,,Z2,2.3852,$119.06
+74713,,Mri fetal ea addl gestation,,N1,,
+74740,,X-ray female genital tract,,N1,,
+74742,,X-ray fallopian tube,,N1,,
+74775,,X-ray exam of perineum,,Z2,2.3852,$119.06
+75557,,Cardiac mri for morph,,Z2,2.3852,$119.06
+75559,,Cardiac mri w/stress img,,Z2,5.0088,$250.02
+75561,,Cardiac mri for morph w/dye,,Z2,3.8173,$190.54
+75563,,Card mri w/stress img & dye,,Z3,,$325.64
+75565,,Card mri veloc flow mapping,,N1,,
+75571,,Ct hrt w/o dye w/ca test,,N1,,
+75572,,Ct hrt w/3d image,,Z2,1.8517,$92.43
+75573,,Ct hrt c+ strux cgen hrt ds,,Z2,1.8517,$92.43
+75574,,Ct angio hrt w/3d image,,Z2,1.8517,$92.43
+75600,,Contrast exam thoracic aorta,,N1,,
+75605,,Contrast exam thoracic aorta,,N1,,
+75625,,Contrast exam abdominl aorta,,N1,,
+75630,,X-ray aorta leg arteries,,N1,,
+75635,,Ct angio abdominal arteries,,N1,,
+75705,,Artery x-rays spine,,N1,,
+75710,,Artery x-rays arm/leg,,N1,,
+75716,,Artery x-rays arms/legs,,N1,,
+75726,,Artery x-rays abdomen,,N1,,
+75731,,Artery x-rays adrenal gland,,Z3,,$99.67
+75733,,Artery x-rays adrenals,,N1,,
+75736,,Artery x-rays pelvis,,N1,,
+75741,,Artery x-rays lung,,N1,,
+75743,,Artery x-rays lungs,,N1,,
+75746,,Artery x-rays lung,,Z3,,$83.05
+75756,,Artery x-rays chest,,N1,,
+75774,,Artery x-ray each vessel,,N1,,
+75801,,Lymph vessel x-ray arm/leg,,N1,,
+75803,,Lymph vessel x-ray arms/legs,,Z2,11.1755,$557.84
+75805,,Lymph vessel x-ray trunk,,Z2,28.0026,"$1,397.78"
+75807,,Lymph vessel x-ray trunk,,N1,,
+75809,,Nonvascular shunt x-ray,,N1,,
+75810,,Vein x-ray spleen/liver,,Z2,28.0026,"$1,397.78"
+75820,,Vein x-ray arm/leg,,N1,,
+75822,,Vein x-ray arms/legs,,Z3,,$67.83
+75825,,Vein x-ray trunk,,N1,,
+75827,,Vein x-ray chest,,N1,,
+75831,,Vein x-ray kidney,,N1,,
+75833,,Vein x-ray kidneys,,N1,,
+75840,,Vein x-ray adrenal gland,,N1,,
+75842,,Vein x-ray adrenal glands,,N1,,
+75860,,Vein x-ray neck,,N1,,
+75870,,Vein x-ray skull,,Z3,,$105.89
+75872,,Vein x-ray skull epidural,,N1,,
+75880,,Vein x-ray eye socket,,N1,,
+75885,,Vein x-ray liver w/hemodynam,,N1,,
+75887,,Vein x-ray liver w/o hemodyn,,Z3,,$75.10
+75889,,Vein x-ray liver w/hemodynam,,N1,,
+75891,,Vein x-ray liver,,N1,,
+75893,,Venous sampling by catheter,,N1,,
+75894,,X-rays transcath therapy,,N1,,
+75898,,Follow-up angiography,,Z2,28.0026,"$1,397.78"
+75901,,Remove cva device obstruct,,N1,,
+75902,,Remove cva lumen obstruct,,N1,,
+75970,,Vascular biopsy,,N1,,
+75984,,Xray control catheter change,,N1,,
+75989,,Abscess drainage under x-ray,,N1,,
+76000,,Fluoroscopy <1 hr phys/qhp,,Z3,,$28.38
+76010,,X-ray nose to rectum,,N1,,
+76080,,X-ray exam of fistula,,N1,,
+76098,,X-ray exam surgical specimen,,N1,,
+76100,,X-ray exam of body section,,N1,,
+76120,,Cine/video x-rays,,N1,,
+76125,,Cine/video x-rays add-on,,N1,,
+76145,,Med physic dos eval rad exps,,Z2,3.5104,$175.23
+76376,,3d render w/intrp postproces,,N1,,
+76377,,3d render w/intrp postproces,,N1,,
+76380,,Cat scan follow-up study,,N1,,
+76390,,Mr spectroscopy,,Z2,0.8385,$41.85
+76391,,Mr elastography,,Z2,2.3852,$119.06
+76496,,Fluoroscopic procedure,,N1,,
+76497,,Ct procedure,,N1,,
+76498,,Mri procedure,,Z2,0.8385,$41.85
+76499,,Radiographic procedure,,N1,,
+76506,,Echo exam of head,,N1,,
+76510,,Oph us dx b-scan&quan a-scan,,N1,,
+76511,,Oph us dx quan a-scan only,,N1,,
+76512,,Oph us dx b-scan,,N1,,
+76513,,Oph us dx ant sgm us uni/bi,,N1,,
+76514,,Echo exam of eye thickness,,N1,,
+76516,,Echo exam of eye,,N1,,
+76519,,Echo exam of eye,,N1,,
+76529,,Echo exam of eye,,N1,,
+76536,,Us exam of head and neck,,N1,,
+76604,,Us exam chest,,N1,,
+76641,,Ultrasound breast complete,,N1,,
+76642,,Ultrasound breast limited,,N1,,
+76700,,Us exam abdom complete,,Z2,1.1286,$56.34
+76705,,Echo exam of abdomen,,Z2,1.1286,$56.34
+76770,,Us exam abdo back wall comp,,Z2,1.1286,$56.34
+76775,,Us exam abdo back wall lim,,N1,,
+76776,,Us exam k transpl w/doppler,,Z2,1.1286,$56.34
+76800,,Us exam spinal canal,,N1,,
+76801,,Ob us < 14 wks single fetus,,Z2,1.1286,$56.34
+76802,,Ob us < 14 wks addl fetus,,N1,,
+76805,,Ob us >= 14 wks sngl fetus,,Z2,1.1286,$56.34
+76810,,Ob us >= 14 wks addl fetus,,N1,,
+76811,,Ob us detailed sngl fetus,,Z3,,$85.13
+76812,,Ob us detailed addl fetus,,N1,,
+76813,,Ob us nuchal meas 1 gest,,N1,,
+76814,,Ob us nuchal meas add-on,,N1,,
+76815,,Ob us limited fetus(s),,N1,,
+76816,,Ob us follow-up per fetus,,N1,,
+76817,,Transvaginal us obstetric,,N1,,
+76818,,Fetal biophys profile w/nst,,Z2,1.1286,$56.34
+76819,,Fetal biophys profil w/o nst,,Z3,,$48.10
+76820,,Umbilical artery echo,,N1,,
+76821,,Middle cerebral artery echo,,N1,,
+76825,,Echo exam of fetal heart,,Z3,,$191.72
+76826,,Echo exam of fetal heart,,Z2,2.3852,$119.06
+76827,,Echo exam of fetal heart,,N1,,
+76828,,Echo exam of fetal heart,,N1,,
+76830,,Transvaginal us non-ob,,Z2,1.1286,$56.34
+76831,,Echo exam uterus,,Z3,,$85.48
+76856,,Us exam pelvic complete,,Z2,1.1286,$56.34
+76857,,Us exam pelvic limited,,Z3,,$24.92
+76870,,Us exam scrotum,,N1,,
+76872,,Us transrectal,,Z2,1.1286,$56.34
+76873,,Echograp trans r pros study,,Z2,1.1286,$56.34
+76881,,Us compl joint r-t w/img,,Z3,,$29.07
+76882,,Us lmtd jt/nonvasc xtr strux,,N1,,
+76885,,Us exam infant hips dynamic,,N1,,
+76886,,Us exam infant hips static,,N1,,
+76932,,Echo guide for heart biopsy,,N1,,
+76936,,Echo guide for artery repair,,Z2,2.7435,$136.94
+76937,,Us guide vascular access,,N1,,
+76940,,Us guide tissue ablation,,N1,,
+76941,,Echo guide for transfusion,,N1,,
+76942,,Echo guide for biopsy,,N1,,
+76945,,Echo guide villus sampling,,N1,,
+76946,,Echo guide for amniocentesis,,N1,,
+76948,,Echo guide ova aspiration,,N1,,
+76965,,Echo guidance radiotherapy,,N1,,
+76975,,Gi endoscopic ultrasound,,N1,,
+76977,**,Us bone density measure,,Z3,,$4.15
+76978,,Us trgt dyn mbubb 1st les,,Z2,1.8517,$92.43
+76979,,Us trgt dyn mbubb ea addl,,N1,,
+76981,,Use parenchyma,,Z2,1.1286,$56.34
+76982,,Use 1st target lesion,,Z2,1.1286,$56.34
+76983,,Use ea addl target lesion,,N1,,
+76998,,Us guide intraop,,N1,,
+76999,,Echo examination procedure,,N1,,
+77001,,Fluoroguide for vein device,,N1,,
+77002,,Needle localization by xray,,N1,,
+77003,,Fluoroguide for spine inject,,N1,,
+77011,,Ct scan for localization,,N1,,
+77012,,Ct scan for needle biopsy,,N1,,
+77013,,Ct guide for tissue ablation,,N1,,
+77014,,Ct scan for therapy guide,,N1,,
+77021,,Mri guidance ndl plmt rs&i,,N1,,
+77022,,Mri gdn parnchyma tiss abltj,,N1,,
+77046,,Mri breast c- unilateral,,Z2,2.3852,$119.06
+77047,,Mri breast c- bilateral,,Z2,2.3852,$119.06
+77053,,X-ray of mammary duct,,N1,,
+77054,,X-ray of mammary ducts,,N1,,
+77071,,X-ray stress view,,N1,,
+77072,,X-rays for bone age,,N1,,
+77073,,X-rays bone length studies,,N1,,
+77074,,X-rays bone survey limited,,N1,,
+77075,,X-rays bone survey complete,,N1,,
+77076,,X-rays bone survey infant,,N1,,
+77077,,Joint survey single view,,N1,,
+77078,**,Ct bone density axial,,Z2,0.8385,$41.85
+77080,**,Dxa bone density axial,,Z3,,$28.03
+77081,**,Dxa bone density/peripheral,,Z3,,$21.46
+77084,,Magnetic image bone marrow,,Z2,2.3852,$119.06
+77085,**,Dxa bone density study,,N1,,
+77086,,Fracture assessment via dxa,,N1,,
+77280,,Set radiation therapy field,,Z2,1.3153,$65.65
+77285,,Set radiation therapy field,,Z2,3.5104,$175.23
+77290,,Set radiation therapy field,,Z2,3.5104,$175.23
+77293,,Respirator motion mgmt simul,,N1,,
+77295,,3-d radiotherapy plan,,Z3,,$252.63
+77299,,Radiation therapy planning,,Z2,1.3153,$65.65
+77300,,Radiation therapy dose plan,,Z3,,$32.88
+77301,,Radiotherapy dose plan imrt,,Z2,13.0902,$653.41
+77306,,Telethx isodose plan simple,,Z3,,$73.37
+77307,,Telethx isodose plan cplx,,Z3,,$132.89
+77316,,Brachytx isodose plan simple,,Z3,,$170.61
+77317,,Brachytx isodose intermed,,Z2,3.5104,$175.23
+77318,,Brachytx isodose complex,,Z2,3.5104,$175.23
+77321,,Special teletx port plan,,Z3,,$43.95
+77331,,Special radiation dosimetry,,Z3,,$18.69
+77332,,Radiation treatment aid(s),,Z3,,$14.53
+77333,,Radiation treatment aid(s),,Z2,1.3153,$65.65
+77334,,Radiation treatment aid(s),,Z3,,$64.71
+77336,,Radiation physics consult,,Z2,1.3153,$65.65
+77338,,Design mlc device for imrt,,Z2,3.5104,$175.23
+77370,,Radiation physics consult,,Z2,1.3153,$65.65
+77385,,Ntsty modul rad tx dlvr smpl,,Z2,5.6243,$280.74
+77386,,Ntsty modul rad tx dlvr cplx,,Z2,5.6243,$280.74
+77387,,Guidance for radj tx dlvr,,N1,,
+77399,,External radiation dosimetry,,Z2,1.3153,$65.65
+77401,,Radiation treatment delivery,,Z3,,$41.87
+77402,,Radiation treatment delivery,,Z2,1.2418,$61.99
+77407,,Radiation treatment delivery,,Z2,2.5058,$125.08
+77412,,Radiation treatment delivery,,Z2,2.5058,$125.08
+77417,,Radiology port images(s),,N1,,
+77423,,Neutron beam tx complex,,Z3,,$28.38
+77424,,Io rad tx delivery by x-ray,,Z2,39.4422,"$1,968.80"
+77425,,Io rad tx deliver by elctrns,,Z2,39.4422,"$1,968.80"
+77435,,Sbrt management,,N1,,
+77470,,Special radiation treatment,,Z3,,$29.07
+77520,,Proton trmt simple w/o comp,,Z2,5.6243,$280.74
+77522,,Proton trmt simple w/comp,,Z2,13.4095,$669.35
+77523,,Proton trmt intermediate,,Z2,13.4095,$669.35
+77525,,Proton treatment complex,,Z2,13.4095,$669.35
+77600,,Hyperthermia treatment,,Z2,2.5058,$125.08
+77605,,Hyperthermia treatment,,Z2,7.3537,$367.07
+77610,,Hyperthermia treatment,,Z2,5.6243,$280.74
+77615,,Hyperthermia treatment,,Z2,5.6243,$280.74
+77620,,Hyperthermia treatment,,Z2,5.6243,$280.74
+77750,,Infuse radioactive materials,,Z2,2.5058,$125.08
+77761,,Apply intrcav radiat simple,,Z3,,$212.83
+77762,,Apply intrcav radiat interm,,Z3,,$242.24
+77763,,Apply intrcav radiat compl,,Z3,,$312.49
+77767,,Hdr rdncl skn surf brachytx,,Z2,2.5058,$125.08
+77768,,Hdr rdncl skn surf brachytx,,Z2,2.5058,$125.08
+77770,,Hdr rdncl ntrstl/icav brchtx,,Z3,,$246.40
+77771,,Hdr rdncl ntrstl/icav brchtx,,Z2,7.3537,$367.07
+77772,,Hdr rdncl ntrstl/icav brchtx,,Z2,7.3537,$367.07
+77778,,Apply interstit radiat compl,,Z2,7.3537,$367.07
+77789,,Apply surf ldr radionuclide,,Z2,1.2418,$61.99
+77790,,Radiation handling,,N1,,
+77799,,Radium/radioisotope therapy,,Z2,1.2418,$61.99
+78012,,Thyroid uptake measurement,,Z2,3.9077,$195.06
+78013,,Thyroid imaging w/blood flow,,Z2,3.9077,$195.06
+78014,,Thyroid imaging w/blood flow,,Z2,3.9077,$195.06
+78015,,Thyroid met imaging,,Z2,3.9077,$195.06
+78016,,Thyroid met imaging/studies,,Z2,3.9077,$195.06
+78018,,Thyroid met imaging body,,Z2,5.0727,$253.21
+78020,,Thyroid met uptake,,N1,,
+78070,,Parathyroid planar imaging,,Z2,3.9077,$195.06
+78071,,Parathyrd planar w/wo subtrj,,Z2,3.9077,$195.06
+78072,,Parathyrd planar w/spect&ct,,Z2,5.0727,$253.21
+78075,,Adrenal cortex & medulla img,,Z2,13.5464,$676.18
+78099,,Endocrine nuclear procedure,,Z2,3.9077,$195.06
+78102,,Bone marrow imaging ltd,,Z2,3.9077,$195.06
+78103,,Bone marrow imaging mult,,Z2,3.9077,$195.06
+78104,,Bone marrow imaging body,,Z2,3.9077,$195.06
+78110,,Plasma volume single,,Z2,13.5464,$676.18
+78111,,Plasma volume multiple,,Z2,13.5464,$676.18
+78120,,Red cell mass single,,Z2,3.9077,$195.06
+78121,,Red cell mass multiple,,Z2,5.0727,$253.21
+78122,,Blood volume,,Z2,5.0727,$253.21
+78130,,Red cell survival study,,Z2,3.9077,$195.06
+78140,,Red cell sequestration,,Z2,3.9077,$195.06
+78185,,Spleen imaging,,Z2,3.9077,$195.06
+78191,,Platelet survival,,Z2,3.9077,$195.06
+78195,,Lymph system imaging,,Z2,5.0727,$253.21
+78199,,Blood/lymph nuclear exam,,Z2,3.9077,$195.06
+78201,,Liver imaging,,Z2,5.0727,$253.21
+78202,,Liver imaging with flow,,Z2,5.0727,$253.21
+78215,,Liver and spleen imaging,,Z2,3.9077,$195.06
+78216,,Liver & spleen image/flow,,Z2,3.9077,$195.06
+78226,,Hepatobiliary system imaging,,Z2,3.9077,$195.06
+78227,,Hepatobil syst image w/drug,,Z2,5.0727,$253.21
+78230,,Salivary gland imaging,,Z2,3.9077,$195.06
+78231,,Serial salivary imaging,,Z2,3.9077,$195.06
+78232,,Salivary gland function exam,,Z2,3.9077,$195.06
+78258,,Esophageal motility study,,Z2,3.9077,$195.06
+78261,,Gastric mucosa imaging,,Z2,3.9077,$195.06
+78262,,Gastroesophageal reflux exam,,Z2,3.9077,$195.06
+78264,,Gastric emptying imag study,,Z2,3.9077,$195.06
+78265,,Gastric emptying imag study,,Z2,3.9077,$195.06
+78266,,Gastric emptying imag study,,Z2,5.0727,$253.21
+78278,,Acute gi blood loss imaging,,Z2,3.9077,$195.06
+78282,,Gi protein loss exam,,Z2,3.9077,$195.06
+78290,,Meckels divert exam,,Z2,3.9077,$195.06
+78291,,Leveen/shunt patency exam,,Z2,3.9077,$195.06
+78299,,Gi nuclear procedure,,Z2,3.9077,$195.06
+78300,,Bone imaging limited area,,Z2,3.9077,$195.06
+78305,,Bone imaging multiple areas,,Z2,3.9077,$195.06
+78306,,Bone imaging whole body,,Z2,3.9077,$195.06
+78315,,Bone imaging 3 phase,,Z2,3.9077,$195.06
+78399,,Musculoskeletal nuclear exam,,Z2,3.9077,$195.06
+78414,,Non-imaging heart function,,Z2,5.0727,$253.21
+78428,,Cardiac shunt imaging,,Z2,3.9077,$195.06
+78429,,Myocrd img pet 1 std w/ct,,Z2,15.3424,$765.83
+78430,,Myocrd img pet rst/strs w/ct,,Z2,15.3424,$765.83
+78431,,Myocrd img pet rst&strs ct,,Z2,22.8426,"$1,140.21"
+78432,,Myocrd img pet 2rtracer,,Z2,27.9177,"$1,393.54"
+78433,,Myocrd img pet 2rtracer ct,,Z2,27.9177,"$1,393.54"
+78434,,Aqmbf pet rest & rx stress,,N1,,
+78445,,Vascular flow imaging,,Z2,3.9077,$195.06
+78451,,Ht muscle image spect sing,,Z2,13.5464,$676.18
+78452,,Ht muscle image spect mult,,Z2,13.5464,$676.18
+78453,,Ht muscle image planar sing,,Z2,13.5464,$676.18
+78454,,Ht musc image planar mult,,Z2,13.5464,$676.18
+78456,,Acute venous thrombus image,,Z2,13.5464,$676.18
+78457,,Venous thrombosis imaging,,Z2,5.0727,$253.21
+78458,,Ven thrombosis images bilat,,Z2,3.9077,$195.06
+78459,,Myocrd img pet single study,,Z2,13.5464,$676.18
+78466,,Heart infarct image,,Z2,3.9077,$195.06
+78468,,Heart infarct image (ef),,Z2,5.0727,$253.21
+78469,,Heart infarct image (3d),,Z2,5.0727,$253.21
+78472,,Gated heart planar single,,Z2,3.9077,$195.06
+78473,,Gated heart multiple,,Z2,3.9077,$195.06
+78481,,Heart first pass single,,Z2,5.0727,$253.21
+78483,,Heart first pass multiple,,Z2,5.0727,$253.21
+78491,,Myocrd img pet 1std rst/strs,,Z2,15.3424,$765.83
+78492,,Myocrd img pet mlt rst&strs,,Z2,15.3424,$765.83
+78494,,Heart image spect,,Z2,3.9077,$195.06
+78496,,Heart first pass add-on,,N1,,
+78499,,Cardiovascular nuclear exam,,Z2,3.9077,$195.06
+78579,,Lung ventilation imaging,,Z2,3.9077,$195.06
+78580,,Lung perfusion imaging,,Z2,3.9077,$195.06
+78582,,Lung ventilat&perfus imaging,,Z2,5.0727,$253.21
+78597,,Lung perfusion differential,,Z2,3.9077,$195.06
+78598,,Lung perf&ventilat diferentl,,Z2,5.0727,$253.21
+78599,,Respiratory nuclear exam,,Z2,3.9077,$195.06
+78600,,Brain image < 4 views,,Z2,3.9077,$195.06
+78601,,Brain image w/flow < 4 views,,Z2,3.9077,$195.06
+78605,,Brain image 4+ views,,Z2,5.0727,$253.21
+78606,,Brain image w/flow 4 + views,,Z2,5.0727,$253.21
+78608,,Brain imaging (pet),,Z2,15.3424,$765.83
+78610,,Brain flow imaging only,,Z2,5.0727,$253.21
+78630,,Cerebrospinal fluid scan,,Z2,5.0727,$253.21
+78635,,Csf ventriculography,,Z2,5.0727,$253.21
+78645,,Csf shunt evaluation,,Z2,5.0727,$253.21
+78650,,Csf leakage imaging,,Z2,13.5464,$676.18
+78660,,Nuclear exam of tear flow,,Z2,3.9077,$195.06
+78699,,Nervous system nuclear exam,,Z2,3.9077,$195.06
+78700,,Kidney imaging morphol,,Z2,3.9077,$195.06
+78701,,Kidney imaging with flow,,Z2,3.9077,$195.06
+78707,,K flow/funct image w/o drug,,Z2,5.0727,$253.21
+78708,,K flow/funct image w/drug,,Z2,5.0727,$253.21
+78709,,K flow/funct image multiple,,Z2,5.0727,$253.21
+78725,,Kidney function study,,Z2,3.9077,$195.06
+78730,,Urinary bladder retention,,N1,,
+78740,,Ureteral reflux study,,Z2,3.9077,$195.06
+78761,,Testicular imaging w/flow,,Z2,3.9077,$195.06
+78799,,Genitourinary nuclear exam,,Z2,3.9077,$195.06
+78800,,Rp loclzj tum 1 area 1 d img,,Z2,3.9077,$195.06
+78801,,Rp loclzj tum 2+area 1+d img,,Z2,3.9077,$195.06
+78802,,Rp loclzj tum whbdy 1 d img,,Z2,13.5464,$676.18
+78803,,Rp loclzj tum spect 1 area,,Z2,13.5464,$676.18
+78804,,Rp loclzj tum whbdy 2+d img,,Z2,13.5464,$676.18
+78808,,Iv inj ra drug dx study,,N1,,
+78811,,Pet image ltd area,,Z2,13.5464,$676.18
+78812,,Pet image skull-thigh,,Z2,15.3424,$765.83
+78813,,Pet image full body,,Z2,15.3424,$765.83
+78814,,Pet image w/ct lmtd,,Z2,15.3424,$765.83
+78815,,Pet image w/ct skull-thigh,,Z2,15.3424,$765.83
+78816,,Pet image w/ct full body,,Z2,15.3424,$765.83
+78830,,Rp loclzj tum spect w/ct 1,,Z2,13.5464,$676.18
+78831,,Rp loclzj tum spect 2 areas,,Z2,13.5464,$676.18
+78832,,Rp loclzj tum spect w/ct 2,,Z2,15.3424,$765.83
+78999,,Nuclear diagnostic exam,,Z2,3.9077,$195.06
+79005,,Nuclear rx oral admin,,Z3,,$51.56
+79101,,Nuclear rx iv admin,,Z3,,$53.64
+79200,,Nuclear rx intracav admin,,Z3,,$54.68
+79300,,Nuclr rx interstit colloid,,Z2,2.6230,$130.93
+79403,,Hematopoietic nuclear tx,,Z3,,$68.87
+79440,,Nuclear rx intra-articular,,Z3,,$41.18
+79445,,Nuclear rx intra-arterial,,Z2,2.6230,$130.93
+79999,,Nuclear medicine therapy,,Z2,2.6230,$130.93
+90371,,Hep b ig im,,K2,,$135.59
+90375,,Rabies ig im/sc,,K2,,$308.67
+90376,,Rabies ig heat treated,,K2,,$356.33
+90377,,Rabies ig ht&sol human im/sc,,K5,,
+90378,,Rsv mab im 50mg,,K2,,"$1,185.67"
+90393,,Vaccina ig im,,K5,,
+90396,,Varicella-zoster ig im,,K2,,"$1,959.83"
+90476,,Adenovirus vaccine type 4,,N1,,
+90581,,Anthrax vaccine sc or im,,K5,,
+90630,**,Flu vacc iiv4 no preserv id,,L1,,
+90632,,Hepa vaccine adult im,,N1,,
+90633,,Hepa vacc ped/adol 2 dose im,,N1,,
+90634,,Hepa vacc ped/adol 3 dose,,N1,,
+90636,,Hep a/hep b vacc adult im,,N1,,
+90647,,Hib prp-omp vacc 3 dose im,,N1,,
+90648,,Hib prp-t vaccine 4 dose im,,N1,,
+90653,**,Iiv adjuvant vaccine im,,L1,,
+90654,**,Flu vacc iiv3 no preserv id,,L1,,
+90655,**,Iiv3 vacc no prsv 0.25 ml im,,L1,,
+90656,**,Iiv3 vacc no prsv 0.5 ml im,,L1,,
+90657,**,Iiv3 vaccine splt 0.25 ml im,,L1,,
+90660,**,Laiv3 vaccine intranasal,,L1,,
+90661,**,Cciiv3 vac no prsv 0.5 ml im,,L1,,
+90662,**,Iiv no prsv increased ag im,,L1,,
+90670,**,Pcv13 vaccine im,,L1,,
+90672,**,Laiv4 vaccine intranasal,,L1,,
+90673,**,Riv3 vaccine no preserv im,,L1,,
+90674,**,Cciiv4 vac no prsv 0.5 ml im,,L1,,
+90675,,Rabies vaccine im,,K2,,$341.95
+90676,,Rabies vaccine id,,K2,,$189.63
+90680,,Rv5 vacc 3 dose live oral,,N1,,
+90682,**,Riv4 vacc recombinant dna im,,L1,,
+90685,**,Iiv4 vacc no prsv 0.25 ml im,,L1,,
+90686,**,Iiv4 vacc no prsv 0.5 ml im,,L1,,
+90687,**,Iiv4 vaccine splt 0.25 ml im,,L1,,
+90688,**,Iiv4 vaccine splt 0.5 ml im,,L1,,
+90689,**,Vacc iiv4 no prsrv 0.25ml im,,L1,,
+90690,,Typhoid vaccine oral,,N1,,
+90691,,Typhoid vaccine im,,N1,,
+90694,,Vacc aiiv4 no prsrv 0.5ml im,,L1,,
+90696,,Dtap-ipv vaccine 4-6 yrs im,,N1,,
+90698,,Dtap-ipv/hib vaccine im,,N1,,
+90717,,Yellow fever vaccine subq,,N1,,
+90732,**,Ppsv23 vacc 2 yrs+ subq/im,,L1,,
+90740,**,Hepb vacc 3 dose immunsup im,,F4,,
+90743,**,Hepb vacc 2 dose adolesc im,,F4,,
+90744,**,Hepb vacc 3 dose ped/adol im,,F4,,
+90746,**,Hepb vaccine 3 dose adult im,,F4,,
+90747,**,Hepb vacc 4 dose immunsup im,,F4,,
+90749,,Vaccine toxoid,,N1,,
+90756,**,Cciiv4 vacc abx free im,,L1,,
+91035,,G-esoph reflx tst w/electrod,,Z2,5.0601,$252.58
+91300,,Sarscov2 vac 30mcg/0.3ml im,,L1,,
+91301,,Sarscov2 vac 100mcg/0.5ml im,,L1,,
+91303,,Sarscov2 vac ad26 .5ml im,,L1,,
+A9500,,Tc99m sestamibi,,N1,,
+A9501,,Technetium tc-99m teboroxime,,N1,,
+A9502,,Tc99m tetrofosmin,,N1,,
+A9503,,Tc99m medronate,,N1,,
+A9504,,Tc99m apcitide,,N1,,
+A9505,,Tl201 thallium,,N1,,
+A9507,,In111 capromab,,N1,,
+A9508,,"I131 iodobenguate, dx",,N1,,
+A9509,,Iodine i-123 sod iodide mil,,N1,,
+A9510,,Tc99m disofenin,,N1,,
+A9512,,Tc99m pertechnetate,,N1,,
+A9515,,Choline c-11,,N1,,
+A9516,,Iodine i-123 sod iodide mic,,N1,,
+A9520,,Tc99 tilmanocept diag 0.5mci,,N1,,
+A9521,,Tc99m exametazime,,N1,,
+A9524,,"I131 serum albumin, dx",,N1,,
+A9526,,Nitrogen n-13 ammonia,,N1,,
+A9527,,Iodine i-125 sodium iodide,,H2,,$40.37
+A9528,,"Iodine i-131 iodide cap, dx",,N1,,
+A9529,,"I131 iodide sol, dx",,N1,,
+A9531,,I131 max 100uci,,N1,,
+A9532,,"I125 serum albumin, dx",,N1,,
+A9536,,Tc99m depreotide,,N1,,
+A9537,,Tc99m mebrofenin,,N1,,
+A9538,,Tc99m pyrophosphate,,N1,,
+A9539,,Tc99m pentetate,,N1,,
+A9540,,Tc99m maa,,N1,,
+A9541,,Tc99m sulfur colloid,,N1,,
+A9542,,"In111 ibritumomab, dx",,N1,,
+A9546,,Co57/58,,N1,,
+A9547,,In111 oxyquinoline,,N1,,
+A9548,,In111 pentetate,,N1,,
+A9550,,Tc99m gluceptate,,N1,,
+A9551,,Tc99m succimer,,N1,,
+A9552,,F18 fdg,,N1,,
+A9553,,Cr51 chromate,,N1,,
+A9554,,"I125 iothalamate, dx",,N1,,
+A9555,,Rb82 rubidium,,N1,,
+A9556,,Ga67 gallium,,N1,,
+A9557,,Tc99m bicisate,,N1,,
+A9558,,Xe133 xenon 10mci,,N1,,
+A9559,,Co57 cyano,,N1,,
+A9560,,Tc99m labeled rbc,,N1,,
+A9561,,Tc99m oxidronate,,N1,,
+A9562,,Tc99m mertiatide,,N1,,
+A9566,,Tc99m fanolesomab,,N1,,
+A9567,,Technetium tc-99m aerosol,,N1,,
+A9568,,Technetium tc99m arcitumomab,,N1,,
+A9569,,Technetium tc-99m auto wbc,,N1,,
+A9570,,Indium in-111 auto wbc,,N1,,
+A9571,,Indium in-111 auto platelet,,N1,,
+A9572,,Indium in-111 pentetreotide,,N1,,
+A9575,,Inj gadoterate meglumi 0.1ml,,N1,,
+A9576,,Inj prohance multipack,,N1,,
+A9577,,Inj multihance,,N1,,
+A9578,,Inj multihance multipack,,N1,,
+A9579,,"Gad-base mr contrast nos,1ml",,N1,,
+A9580,,Sodium fluoride f-18,,N1,,
+A9581,,Gadoxetate disodium inj,,N1,,
+A9582,,Iodine i-123 iobenguane,,N1,,
+A9583,,Gadofosveset trisodium inj,,N1,,
+A9584,,Iodine i-123 ioflupane,,N1,,
+A9585,,Gadobutrol injection,,N1,,
+A9586,,Florbetapir f18,,N1,,
+A9587,,Gallium ga-68,,N1,,
+A9588,,Fluciclovine f-18,,N1,,
+A9590,,Iodine i-131 iobenguane 1mci,,K2,,$320.12
+A9591,,Fluoroestradiol f 18,,K2,,$644.83
+A9592,,Copper cu 64 dotatate diag,,K2,,$918.52
+A9593,,Gallium ga-68 psma-11 ucsf,,K2,,$732.86
+A9594,,"Gallium ga-68 psma-11, ucla",,K2,,$717.55
+A9595,,"Piflu f-18, dia 1 millicurie",,K2,,$541.78
+A9597,,"Pet, dx, for tumor id, noc",,N1,,
+A9598,,"Pet dx for non-tumor id, noc",,N1,,
+A9698,,Non-rad contrast materialnoc,,N1,,
+A9700,,Echocardiography contrast,,N1,,
+C1052,,"Hemostatic agent, gi, topic",,J7,,
+C1062,,Intravertebral fx aug impl,,J7,,
+C1713,,"Anchor/screw bn/bn,tis/bn",,N1,,
+C1714,,"Cath, trans atherectomy, dir",,N1,,
+C1715,,Brachytherapy needle,,N1,,
+C1716,,"Brachytx, non-str, gold-198",,H2,,$616.61
+C1717,,"Brachytx, non-str,hdr ir-192",,H2,,$341.72
+C1719,,"Brachytx, ns, non-hdrir-192",,H2,,$205.82
+C1721,,"Aicd, dual chamber",,N1,,
+C1722,,"Aicd, single chamber",,N1,,
+C1724,,"Cath, trans atherec,rotation",,N1,,
+C1725,,"Cath, translumin non-laser",,N1,,
+C1726,,"Cath, bal dil, non-vascular",,N1,,
+C1727,,"Cath, bal tis dis, non-vas",,N1,,
+C1728,,"Cath, brachytx seed adm",,N1,,
+C1729,,"Cath, drainage",,N1,,
+C1730,,"Cath, ep, 19 or few elect",,N1,,
+C1731,,"Cath, ep, 20 or more elec",,N1,,
+C1732,,"Cath, ep, diag/abl, 3d/vect",,N1,,
+C1733,,"Cath, ep, othr than cool-tip",,N1,,
+C1734,,"Orth/devic/drug bn/bn,tis/bn",,J7,,
+C1748,,"Endoscope, single, ugi",,J7,,
+C1749,,"Endo, colon, retro imaging",,N1,,
+C1750,,"Cath, hemodialysis,long-term",,N1,,
+C1751,,"Cath, inf, per/cent/midline",,N1,,
+C1752,,"Cath,hemodialysis,short-term",,N1,,
+C1753,,"Cath, intravas ultrasound",,N1,,
+C1754,,"Catheter, intradiscal",,N1,,
+C1755,,"Catheter, intraspinal",,N1,,
+C1756,,"Cath, pacing, transesoph",,N1,,
+C1757,,"Cath, thrombectomy/embolect",,N1,,
+C1758,,"Catheter, ureteral",,N1,,
+C1759,,"Cath, intra echocardiography",,N1,,
+C1760,,"Closure dev, vasc",,N1,,
+C1761,,"Cath, trans intra litho/coro",,J7,,
+C1762,,"Conn tiss, human(inc fascia)",,N1,,
+C1763,,"Conn tiss, non-human",,N1,,
+C1764,,"Event recorder, cardiac",,N1,,
+C1765,,Adhesion barrier,,N1,,
+C1766,,"Intro/sheath,strble,non-peel",,N1,,
+C1767,,"Generator, neuro non-recharg",,N1,,
+C1768,,"Graft, vascular",,N1,,
+C1769,,Guide wire,,N1,,
+C1770,,"Imaging coil, mr, insertable",,N1,,
+C1771,,"Rep dev, urinary, w/sling",,N1,,
+C1772,,"Infusion pump, programmable",,N1,,
+C1773,,"Ret dev, insertable",,N1,,
+C1776,,Joint device (implantable),,N1,,
+C1777,,"Lead, aicd, endo single coil",,N1,,
+C1778,,"Lead, neurostimulator",,N1,,
+C1779,,"Lead, pmkr, transvenous vdd",,N1,,
+C1780,,"Lens, intraocular (new tech)",,N1,,
+C1781,,Mesh (implantable),,N1,,
+C1782,,Morcellator,,N1,,
+C1783,,"Ocular imp, aqueous drain de",,N1,,
+C1784,,"Ocular dev, intraop, det ret",,N1,,
+C1785,,"Pmkr, dual, rate-resp",,N1,,
+C1786,,"Pmkr, single, rate-resp",,N1,,
+C1787,,"Patient progr, neurostim",,N1,,
+C1788,,"Port, indwelling, imp",,N1,,
+C1789,,"Prosthesis, breast, imp",,N1,,
+C1813,,"Prosthesis, penile, inflatab",,N1,,
+C1814,,"Retinal tamp, silicone oil",,N1,,
+C1815,,"Pros, urinary sph, imp",,N1,,
+C1816,,"Receiver/transmitter, neuro",,N1,,
+C1817,,Septal defect imp sys,,N1,,
+C1818,,Integrated keratoprosthesis,,N1,,
+C1819,,Tissue localization-excision,,N1,,
+C1820,,Generator neuro rechg bat sy,,N1,,
+C1821,,Interspinous implant,,N1,,
+C1822,,"Gen, neuro, hf, rechg bat",,N1,,
+C1823,,"Gen, neuro, trans sen/stim",,J7,,
+C1824,,"Generator, ccm, implant",,J7,,
+C1825,,"Gen, neuro, carot sinus baro",,J7,,
+C1830,,Power bone marrow bx needle,,N1,,
+C1831,,Personalized interbody cage,,J7,,
+C1832,,Auto cell process sys,,J7,,
+C1833,,Cardiac monitor sys,,J7,,
+C1839,,Iris prosthesis,,J7,,
+C1840,,Telescopic intraocular lens,,N1,,
+C1841,,Retinal prosth int/ext comp,,J7,,"$72,811.37"
+C1842,,"Retinal prosth, add-on",,J7,,"$72,811.36"
+C1849,,"Skin substitute, synthetic",,N1,,
+C1874,,"Stent, coated/cov w/del sys",,N1,,
+C1875,,"Stent, coated/cov w/o del sy",,N1,,
+C1876,,"Stent, non-coa/non-cov w/del",,N1,,
+C1877,,"Stent, non-coat/cov w/o del",,N1,,
+C1878,,Matrl for vocal cord,,N1,,
+C1880,,Vena cava filter,,N1,,
+C1881,,Dialysis access system,,N1,,
+C1882,,"Aicd, other than sing/dual",,N1,,
+C1883,,"Adapt/ext, pacing/neuro lead",,N1,,
+C1884,,Embolization protect syst,,N1,,
+C1885,,"Cath, translumin angio laser",,N1,,
+C1886,,"Catheter, ablation",,N1,,
+C1887,,"Catheter, guiding",,N1,,
+C1888,,Endovas non-cardiac abl cath,,N1,,
+C1889,,"Implant/insert device, noc",,N1,,
+C1890,,No device w/dev-intensive px,,J7,,
+C1891,,"Infusion pump,non-prog, perm",,N1,,
+C1892,,"Intro/sheath,fixed,peel-away",,N1,,
+C1893,,"Intro/sheath, fixed,non-peel",,N1,,
+C1894,,"Intro/sheath, non-laser",,N1,,
+C1895,,"Lead, aicd, endo dual coil",,N1,,
+C1896,,"Lead, aicd, non sing/dual",,N1,,
+C1897,,"Lead, neurostim test kit",,N1,,
+C1898,,"Lead, pmkr, other than trans",,N1,,
+C1899,,"Lead, pmkr/aicd combination",,N1,,
+C1900,,"Lead, coronary venous",,N1,,
+C1982,,"Cath, pressure,valve-occlu",,J7,,
+C2596,,"Probe, robotic, water-jet",,J7,,
+C2613,,Lung bx plug w/del sys,,N1,,
+C2614,,"Probe, perc lumb disc",,N1,,
+C2615,,"Sealant, pulmonary, liquid",,N1,,
+C2616,,"Brachytx, non-str,yttrium-90",,H2,,"$17,763.21"
+C2617,,"Stent, non-cor, tem w/o del",,N1,,
+C2618,,"Probe/needle, cryo",,N1,,
+C2619,,"Pmkr, dual, non rate-resp",,N1,,
+C2620,,"Pmkr, single, non rate-resp",,N1,,
+C2621,,"Pmkr, other than sing/dual",,N1,,
+C2622,,"Prosthesis, penile, non-inf",,N1,,
+C2623,,"Cath, translumin, drug-coat",,N1,,
+C2624,,Wireless pressure sensor,,N1,,
+C2625,,"Stent, non-cor, tem w/del sy",,N1,,
+C2626,,"Infusion pump, non-prog,temp",,N1,,
+C2627,,"Cath, suprapubic/cystoscopic",,N1,,
+C2628,,"Catheter, occlusion",,N1,,
+C2629,,"Intro/sheath, laser",,N1,,
+C2630,,"Cath, ep, cool-tip",,N1,,
+C2631,,"Rep dev, urinary, w/o sling",,N1,,
+C2634,,"Brachytx, non-str, ha, i-125",,H2,,$151.20
+C2635,,"Brachytx, non-str, ha, p-103",,H2,,$45.62
+C2636,,"Brachy linear, non-str,p-103",,H2,,$52.57
+C2638,,"Brachytx, stranded, i-125",,H2,,$38.19
+C2639,,"Brachytx, non-stranded,i-125",,H2,,$34.82
+C2640,,"Brachytx, stranded, p-103",,H2,,$89.59
+C2641,,"Brachytx, non-stranded,p-103",,H2,,$70.95
+C2642,,"Brachytx, stranded, c-131",,H2,,$73.37
+C2643,,"Brachytx, non-stranded,c-131",,H2,,$82.03
+C2644,,Brachytx cesium-131 chloride,,K5,,
+C2645,,"Brachytx planar, p-103",,H2,,$4.69
+C2698,,"Brachytx, stranded, nos",,H2,,$38.19
+C2699,,"Brachytx, non-stranded, nos",,H2,,$34.82
+C8900,,"Mra w/cont, abd",,Z2,3.8173,$190.54
+C8901,,"Mra w/o cont, abd",,Z2,2.3852,$119.06
+C8902,,"Mra w/o fol w/cont, abd",,Z2,3.8173,$190.54
+C8903,,"Mri w/cont, breast,  uni",,Z2,1.8517,$92.43
+C8905,,"Mri w/o fol w/cont, brst, un",,Z2,3.8173,$190.54
+C8906,,"Mri w/cont, breast,  bi",,Z2,3.8173,$190.54
+C8908,,"Mri w/o fol w/cont, breast,",,Z2,3.8173,$190.54
+C8909,,"Mra w/cont, chest",,Z2,3.8173,$190.54
+C8910,,"Mra w/o cont, chest",,Z2,2.3852,$119.06
+C8911,,"Mra w/o fol w/cont, chest",,Z2,3.8173,$190.54
+C8912,,"Mra w/cont, lwr ext",,Z2,3.8173,$190.54
+C8913,,"Mra w/o cont, lwr ext",,Z2,2.3852,$119.06
+C8914,,"Mra w/o fol w/cont, lwr ext",,Z2,3.8173,$190.54
+C8918,,"Mra w/cont, pelvis",,Z2,3.8173,$190.54
+C8919,,"Mra w/o cont, pelvis",,Z2,2.3852,$119.06
+C8920,,"Mra w/o fol w/cont, pelvis",,Z2,3.8173,$190.54
+C8931,,"Mra, w/dye, spinal canal",,Z2,3.8173,$190.54
+C8932,,"Mra, w/o dye, spinal canal",,Z2,2.3852,$119.06
+C8933,,"Mra, w/o&w/dye, spinal canal",,Z2,3.8173,$190.54
+C8934,,"Mra, w/dye, upper extremity",,Z2,3.8173,$190.54
+C8935,,"Mra, w/o dye, upper extr",,Z2,2.3852,$119.06
+C8936,,"Mra, w/o&w/dye, upper extr",,Z2,3.8173,$190.54
+C9046,,Cocaine hcl nasal solution,*,K2,,$1.30
+C9047,,"Injection, caplacizumab-yhdp",*,K2,,$691.43
+C9067,,Gallium ga-68 dotatoc,,K2,,$8.64
+C9084,,"loncastuximab-lpyl, 0.1 mg",,K2,,$249.10
+C9085,,Inj avalglucosid alfa-ngpt,,K2,,$70.65
+C9086,,"Inj, anifrolumab-fnia",,K2,,$15.80
+C9087,,Inj cyclophosphamd auromedic,,K2,,$7.52
+C9088,,"Instill, bupivac and meloxic",,K2,,$0.69
+C9089,,"Bupivacaine implant, 1 mg",,K2,,$0.83
+C9113,,"Inj pantoprazole sodium, via",,N1,,
+C9248,,"Inj, clevidipine butyrate",,N1,,
+C9250,,Artiss fibrin sealant,,K2,,$156.84
+C9254,,"Injection, lacosamide",,N1,,
+C9257,,Bevacizumab injection,,K2,,$1.70
+C9285,,"Patch, lidocaine/tetracaine",,N1,,
+C9290,,"Inj, bupivacaine liposome",,K2,,$1.34
+C9293,,"Injection, glucarpidase",,K5,,
+C9352,,"Neuragen nerve guide, per cm",,N1,,
+C9353,,"Neurawrap nerve protector,cm",,N1,,
+C9354,,"Veritas collagen matrix, cm2",,N1,,
+C9355,,"Neuromatrix nerve cuff, cm",,N1,,
+C9356,,"Tenoglide tendon prot, cm2",,N1,,
+C9358,,"Surgimend, fetal",,N1,,
+C9359,,"Implnt,bon void filler-putty",,N1,,
+C9360,,"Surgimend, neonatal",,N1,,
+C9361,,Neuromend nerve wrap,,N1,,
+C9362,,"Implnt,bon void filler-strip",,N1,,
+C9363,,Integra meshed bil wound mat,,N1,,
+C9364,,"Porcine implant, permacol",,N1,,
+C9399,,Unclassified drugs or biolog,,K7,,
+C9460,,"Injection, cangrelor",,K2,,$16.24
+C9462,,"Injection, delafloxacin",,N1,,
+C9482,,Sotalol hydrochloride iv,,K2,,$17.58
+C9488,,Conivaptan hcl,,K2,,$43.69
+C9738,,Blue light cysto imag agent,,N1,,
+C9762,,Cardiac mri seg dys strain,,Z2,5.0088,$250.02
+C9763,,Cardiac mri seg dys stress,,Z2,5.0088,$250.02
+C9776,,Fluo bile duct imaging w/icg,,N1,,
+C9803,,Hopd covid-19 spec collect,,N1,,
+G0130,**,Single energy x-ray study,,Z3,,$25.61
+G0235,,Pet not otherwise specified,,Z2,3.9077,$195.06
+J0120,,Tetracyclin injection,,N1,,
+J0121,,"Inj., omadacycline, 1 mg",*,K2,,$3.33
+J0122,,"Inj., eravacycline, 1 mg",,N1,,
+J0129,,Abatacept injection,,K2,,$44.52
+J0130,,Abciximab injection,,N1,,
+J0131,,Acetaminophen injection,,N1,,
+J0132,,Acetylcysteine injection,,N1,,
+J0133,,Acyclovir injection,,N1,,
+J0135,,Adalimumab injection,,K2,,"$1,581.57"
+J0153,,Adenosine inj 1mg,,N1,,
+J0171,,Adrenalin epinephrine inject,,N1,,
+J0172,,"Inj, aducanumab-avwa, 2 mg",,K2,,$11.87
+J0178,,Aflibercept injection,,K2,,$915.75
+J0179,,"Inj, brolucizumab-dbll, 1 mg",,K2,,$311.93
+J0180,,Agalsidase beta injection,,K2,,$198.75
+J0185,,"Inj., aprepitant, 1 mg",,K2,,$1.72
+J0190,,Inj biperiden lactate/5 mg,,K5,,
+J0200,,Alatrofloxacin mesylate,,K5,,
+J0202,,"Injection, alemtuzumab",,K2,,"$2,129.15"
+J0205,,Alglucerase injection,,K5,,
+J0207,,Amifostine,,K2,,"$1,135.69"
+J0210,,Methyldopate hcl injection,,K5,,
+J0215,,Alefacept,,K5,,
+J0220,,Alglucosidase alfa injection,,K2,,$117.07
+J0221,,Lumizyme injection,,K2,,$181.42
+J0222,,"Inj., patisiran, 0.1 mg",,K2,,$97.78
+J0223,,Inj givosiran 0.5 mg,,K2,,$106.67
+J0223,,Inj givosiran 0.5 mg,,K2,,$106.67
+J0224,,"Inj. lumasiran, 0.5 mg",,K2,,$302.27
+J0256,,Alpha 1 proteinase inhibitor,,K2,,$4.55
+J0257,,Glassia injection,,K2,,$4.98
+J0278,,Amikacin sulfate injection,,N1,,
+J0280,,Aminophyllin 250 mg inj,,N1,,
+J0282,,Amiodarone hcl,,N1,,
+J0285,,Amphotericin b,,N1,,
+J0287,,Amphotericin b lipid complex,,K2,,$9.60
+J0288,,Ampho b cholesteryl sulfate,,K5,,
+J0289,,Amphotericin b liposome inj,,K2,,$29.47
+J0290,,Ampicillin 500 mg inj,,N1,,
+J0291,,"Inj., plazomicin, 5 mg",,K2,,$3.10
+J0295,,Ampicillin sulbactam 1.5 gm,,N1,,
+J0300,,Amobarbital 125 mg inj,,K2,,$125.22
+J0330,,Succinycholine chloride inj,,N1,,
+J0348,,Anidulafungin injection,,N1,,
+J0350,,Injection anistreplase 30 u,,K5,,
+J0360,,Hydralazine hcl injection,,N1,,
+J0364,,Apomorphine hydrochloride,,K5,,
+J0365,,"Aprotonin, 10,000 kiu",,K5,,
+J0380,,Inj metaraminol bitartrate,,K5,,
+J0390,,Chloroquine injection,,K2,,$165.22
+J0395,,Arbutamine hcl injection,,K5,,
+J0400,,Aripiprazole injection,,N1,,
+J0401,,Inj aripiprazole ext rel 1mg,,K2,,$5.99
+J0456,,Azithromycin,,N1,,
+J0461,,Atropine sulfate injection,,N1,,
+J0470,,Dimecaprol injection,,N1,,
+J0475,,Baclofen 10 mg injection,,K2,,$181.57
+J0476,,Baclofen intrathecal trial,,N1,,
+J0480,,Basiliximab,,K2,,"$4,037.65"
+J0485,,Belatacept injection,,K2,,$3.79
+J0490,,Belimumab injection,,K2,,$48.23
+J0500,,Dicyclomine injection,,N1,,
+J0515,,Inj benztropine mesylate,,N1,,
+J0517,,"Inj., benralizumab, 1 mg",,K2,,$167.44
+J0520,,Bethanechol chloride inject,,K5,,
+J0558,,Peng benzathine/procaine inj,,K2,,$11.78
+J0561,,Penicillin g benzathine inj,,K2,,$15.04
+J0565,,"Inj, bezlotoxumab, 10 mg",,K2,,$39.79
+J0567,,"Inj., cerliponase alfa 1 mg",,K5,,
+J0570,,Buprenorphine implant 74.2mg,,K2,,"$1,311.75"
+J0583,,Bivalirudin,,N1,,
+J0584,,"Injection, burosumab-twza 1m",,K2,,$380.15
+J0585,,"Injection,onabotulinumtoxina",,K2,,$6.19
+J0586,,Abobotulinumtoxina,,K2,,$8.31
+J0587,,"Inj, rimabotulinumtoxinb",,K2,,$12.12
+J0588,,Incobotulinumtoxin a,,K2,,$5.06
+J0592,,Buprenorphine hydrochloride,,N1,,
+J0593,,"Inj., lanadelumab-flyo, 1 mg",,K5,,
+J0594,,Busulfan injection,,K2,,$1.45
+J0595,,Butorphanol tartrate 1 mg,,N1,,
+J0596,,"Injection, ruconest",,K2,,$30.02
+J0597,,"C-1 esterase, berinert",,K2,,$57.40
+J0598,,"C-1 esterase, cinryze",,K2,,$58.96
+J0599,,"Inj., haegarda 10 units",,N1,,
+J0600,,Edetate calcium disodium inj,,K2,,"$5,708.59"
+J0606,,"Inj, etelcalcetide, 0.1 mg",,N1,,
+J0610,,Calcium gluconate injection,,N1,,
+J0620,,Calcium glycer & lact/10 ml,,N1,,
+J0630,,Calcitonin salmon injection,,K2,,"$2,841.59"
+J0636,,Inj calcitriol per 0.1 mcg,,N1,,
+J0637,,Caspofungin acetate,,N1,,
+J0638,,Canakinumab injection,,K2,,$115.89
+J0640,,Leucovorin calcium injection,,N1,,
+J0641,,Inj levoleucovorin nos 0.5mg,,N1,,
+J0642,,"Injection, khapzory, 0.5 mg",*,K2,,$1.83
+J0670,,Inj mepivacaine hcl/10 ml,,N1,,
+J0690,,Cefazolin sodium injection,,N1,,
+J0691,,Inj lefamulin 1 mg,,K2,,$0.72
+J0692,,Cefepime hcl for injection,,N1,,
+J0694,,Cefoxitin sodium injection,,N1,,
+J0695,,Inj ceftolozane tazobactam,,K2,,$6.64
+J0696,,Ceftriaxone sodium injection,,N1,,
+J0697,,Sterile cefuroxime injection,,N1,,
+J0698,,Cefotaxime sodium injection,,N1,,
+J0699,,"Inj, cefiderocol, 10 mg",,K2,,$2.01
+J0702,,Betamethasone acet&sod phosp,,N1,,
+J0706,,Caffeine citrate injection,,N1,,
+J0710,,Cephapirin sodium injection,,K5,,
+J0712,,Ceftaroline fosamil inj,,K2,,$3.57
+J0713,,Inj ceftazidime per 500 mg,,N1,,
+J0714,,Ceftazidime and avibactam,,K2,,$92.37
+J0715,,Ceftizoxime sodium / 500 mg,,N1,,
+J0716,,Centruroides immune f(ab),,K2,,"$5,190.15"
+J0717,,Certolizumab pegol inj 1mg,,K2,,$6.28
+J0720,,Chloramphenicol sodium injec,,N1,,
+J0725,,Chorionic gonadotropin/1000u,,N1,,
+J0735,,Clonidine hydrochloride,,N1,,
+J0740,,Cidofovir injection,,K2,,$567.92
+J0741,,"Inj, cabote rilpivir 2mg 3mg",,K2,,$20.56
+J0742,,Inj imip 4 cilas 4 releb 2mg,,K2,,$2.31
+J0743,,Cilastatin sodium injection,,N1,,
+J0744,,Ciprofloxacin iv,,N1,,
+J0745,,Inj codeine phosphate /30 mg,,K2,,$135.64
+J0770,,Colistimethate sodium inj,,N1,,
+J0775,,"Collagenase, clost hist inj",,K2,,$56.60
+J0780,,Prochlorperazine injection,,N1,,
+J0791,,Inj crizanlizumab-tmca 5mg,,K2,,$124.12
+J0791,,Inj crizanlizumab-tmca 5mg,,K2,,$124.12
+J0795,,Corticorelin ovine triflutal,,K2,,$9.67
+J0800,,Corticotropin injection,,N1,,
+J0834,,"Inj., cosyntropin, 0.25 mg",,N1,,
+J0840,,Crotalidae poly immune fab,,K2,,"$2,636.69"
+J0841,,Inj crotalidae im f(ab')2 eq,,K2,,"$1,022.45"
+J0850,,Cytomegalovirus imm iv /vial,,K2,,"$1,525.46"
+J0875,,"Injection, dalbavancin",,K2,,$15.89
+J0878,,Daptomycin injection,,N1,,
+J0881,,"Darbepoetin alfa, non-esrd",,K2,,$3.09
+J0882,,"Darbepoetin alfa, esrd use",,K2,,$3.09
+J0883,,Argatroban nonesrd use 1mg,,K2,,$1.24
+J0884,,Argatroban esrd dialysis 1mg,,K2,,$1.24
+J0885,,"Epoetin alfa, non-esrd",,K2,,$8.22
+J0887,,Epoetin beta esrd use,,N1,,
+J0888,,Epoetin beta non esrd,,K2,,$1.51
+J0894,,Decitabine injection,,K2,,$2.88
+J0895,,Deferoxamine mesylate inj,,N1,,
+J0896,,Inj luspatercept-aamt 0.25mg,,K2,,$37.40
+J0897,,Denosumab injection,,K2,,$21.21
+J0945,,Brompheniramine maleate inj,,N1,,
+J1000,,Depo-estradiol cypionate inj,,N1,,
+J1020,,Methylprednisolone 20 mg inj,,N1,,
+J1030,,Methylprednisolone 40 mg inj,,N1,,
+J1040,,Methylprednisolone 80 mg inj,,N1,,
+J1050,,Medroxyprogesterone acetate,,N1,,
+J1071,,Inj testosterone cypionate,,N1,,
+J1094,,Inj dexamethasone acetate,,N1,,
+J1095,,"Injection, dexamethasone 9%",*,K2,,$0.96
+J1096,,Dexametha opth insert 0.1 mg,*,K2,,$134.20
+J1097,,Phenylep ketorolac opth soln,,K2,,$98.53
+J1100,,Dexamethasone sodium phos,,N1,,
+J1110,,Inj dihydroergotamine mesylt,,N1,,
+J1120,,Acetazolamid sodium injectio,,N1,,
+J1130,,Inj diclofenac sodium 0.5mg,,N1,,
+J1160,,Digoxin injection,,N1,,
+J1162,,Digoxin immune fab (ovine),,K2,,"$4,128.19"
+J1165,,Phenytoin sodium injection,,N1,,
+J1170,,Hydromorphone injection,,N1,,
+J1180,,Dyphylline injection,,K5,,
+J1190,,Dexrazoxane hcl injection,,K2,,$189.84
+J1200,,Diphenhydramine hcl injectio,,N1,,
+J1201,,Inj. cetirizine hcl 0.5mg,,K2,,$15.29
+J1201,,Inj. cetirizine hcl 0.5mg,,K2,,$15.29
+J1205,,Chlorothiazide sodium inj,,N1,,
+J1212,,Dimethyl sulfoxide 50% 50 ml,,K2,,$636.56
+J1230,,Methadone injection,,N1,,
+J1240,,Dimenhydrinate injection,,N1,,
+J1245,,Dipyridamole injection,,N1,,
+J1250,,Inj dobutamine hcl/250 mg,,N1,,
+J1260,,Dolasetron mesylate,,N1,,
+J1265,,Dopamine injection,,N1,,
+J1267,,Doripenem injection,,N1,,
+J1270,,"Injection, doxercalciferol",,N1,,
+J1290,,Ecallantide injection,,K2,,$504.13
+J1300,,Eculizumab injection,,K2,,$228.94
+J1301,,"Injection, edaravone, 1 mg",,K2,,$20.49
+J1303,,"Inj., ravulizumab-cwvz 10 mg",*,K2,,$224.63
+J1305,,"Inj, evinacumab-dgnb, 5mg",,K2,,$165.63
+J1320,,Amitriptyline injection,,N1,,
+J1322,,"Elosulfase alfa, injection",,K2,,$250.30
+J1324,,Enfuvirtide injection,,K5,,
+J1325,,Epoprostenol injection,,N1,,
+J1327,,Eptifibatide injection,,K2,,$2.11
+J1330,,Ergonovine maleate injection,,K5,,
+J1335,,Ertapenem injection,,N1,,
+J1364,,Erythro lactobionate /500 mg,,N1,,
+J1380,,Estradiol valerate 10 mg inj,,N1,,
+J1410,,Inj estrogen conjugate 25 mg,,K2,,$341.50
+J1426,,"Injection, casimersen, 10 mg",,K2,,$166.49
+J1427,,Inj. viltolarsen,,K2,,$58.95
+J1428,,"Inj, eteplirsen, 10 mg",,K5,,
+J1429,,Inj golodirsen 10 mg,,K2,,$166.19
+J1430,,Ethanolamine oleate 100 mg,,K2,,$444.10
+J1435,,Injection estrone per 1 mg,,K5,,
+J1438,,Etanercept injection,,K2,,$790.78
+J1439,,Inj ferric carboxymaltos 1mg,,K2,,$1.12
+J1442,,Inj filgrastim excl biosimil,,K2,,$0.98
+J1443,,Inj ferric pyrophosphate cit,,K5,,
+J1444,,Fe pyro cit pow 0.1 mg iron,,K5,,
+J1445,,Inj triferic avnu 0.1mg iron,,K5,,
+J1447,,Inj tbo filgrastim 1 microg,,K2,,$0.45
+J1448,,"Injection, trilaciclib, 1mg",,K2,,$4.95
+J1450,,Fluconazole,,N1,,
+J1451,,"Fomepizole, 15 mg",,K2,,$5.38
+J1452,,Intraocular fomivirsen na,,K5,,
+J1453,,Fosaprepitant injection,,N1,,
+J1454,,"Inj fosnetupitant, palonoset",,K2,,$503.98
+J1455,,Foscarnet sodium injection,,K2,,$71.69
+J1457,,Gallium nitrate injection,,K5,,
+J1458,,Galsulfase injection,,K2,,$411.91
+J1459,,Inj ivig privigen 500 mg,,K2,,$45.01
+J1460,,Gamma globulin 1 cc inj,,K2,,$45.42
+J1554,,Inj. asceniv,,K2,,$481.77
+J1555,,"Inj cuvitru, 100 mg",,K2,,$14.75
+J1556,,"Inj, imm glob bivigam, 500mg",,K2,,$70.49
+J1557,,Gammaplex injection,,K2,,$50.80
+J1558,,"Inj. xembify, 100 mg",,K2,,$13.30
+J1559,,Hizentra injection,,K2,,$11.79
+J1560,,Gamma globulin > 10 cc inj,,K2,,$454.19
+J1561,,Gamunex-c/gammaked,,K2,,$46.51
+J1562,,"Vivaglobin, inj",,K5,,
+J1566,,"Immune globulin, powder",,K2,,$69.59
+J1568,,Octagam injection,,K2,,$41.61
+J1569,,Gammagard liquid injection,,K2,,$46.67
+J1570,,Ganciclovir sodium injection,,N1,,
+J1571,,Hepagam b im injection,,K2,,$73.60
+J1572,,Flebogamma injection,,K2,,$35.89
+J1573,,"Hepagam b intravenous, inj",,K2,,$73.60
+J1575,,Hyqvia 100mg immuneglobulin,,K2,,$15.42
+J1580,,Garamycin gentamicin inj,,N1,,
+J1595,,Injection glatiramer acetate,,K2,,$141.04
+J1599,,"Ivig non-lyophilized, nos",,N1,,
+J1600,,Gold sodium thiomaleate inj,,K5,,
+J1602,,Golimumab for iv use 1mg,,K2,,$16.10
+J1610,,Glucagon hydrochloride/1 mg,,K2,,$166.77
+J1620,,Gonadorelin hydroch/ 100 mcg,,K5,,
+J1626,,Granisetron hcl injection,,N1,,
+J1627,,"Inj, granisetron, xr, 0.1 mg",,K2,,$6.71
+J1628,,"Inj., guselkumab, 1 mg",,K2,,$79.48
+J1630,,Haloperidol injection,,N1,,
+J1631,,Haloperidol decanoate inj,,N1,,
+J1632,,"Inj., brexanolone, 1 mg",,K2,,$72.96
+J1640,,"Hemin, 1 mg",,K2,,$26.63
+J1642,,Inj heparin sodium per 10 u,,N1,,
+J1644,,Inj heparin sodium per 1000u,,N1,,
+J1645,,Dalteparin sodium,,N1,,
+J1650,,Inj enoxaparin sodium,,N1,,
+J1652,,Fondaparinux sodium,,N1,,
+J1655,,Tinzaparin sodium injection,,N1,,
+J1670,,Tetanus immune globulin inj,,K2,,$482.08
+J1700,,Hydrocortisone acetate inj,,N1,,
+J1710,,Hydrocortisone sodium ph inj,,N1,,
+J1720,,Hydrocortisone sodium succ i,,N1,,
+J1726,,"Makena, 10 mg",,K2,,$14.76
+J1729,,Inj hydroxyprogst capoat nos,,K2,,$21.54
+J1730,,Diazoxide injection,,K5,,
+J1738,,Inj. meloxicam 1 mg,,K2,,$3.06
+J1740,,Ibandronate sodium injection,,N1,,
+J1741,,Ibuprofen injection,,N1,,
+J1742,,Ibutilide fumarate injection,,K2,,$316.20
+J1743,,Idursulfase injection,,N1,,
+J1744,,Icatibant injection,,K2,,$200.47
+J1745,,Infliximab not biosimil 10mg,,K2,,$37.88
+J1746,,"Inj., ibalizumab-uiyk, 10 mg",,K2,,$66.25
+J1750,,Inj iron dextran,,K2,,$15.83
+J1756,,Iron sucrose injection,,N1,,
+J1786,,Imuglucerase injection,,K2,,$43.97
+J1790,,Droperidol injection,,N1,,
+J1800,,Propranolol injection,,N1,,
+J1815,,Insulin injection,,N1,,
+J1817,,Insulin for insulin pump use,,N1,,
+J1823,,"Inj. inebilizumab-cdon, 1 mg",,K2,,$462.62
+J1826,,Interferon beta-1a inj,,K2,,"$2,293.85"
+J1830,,Interferon beta-1b / .25 mg,,K2,,$398.00
+J1833,,"Injection, isavuconazonium",,K2,,$0.83
+J1835,,Itraconazole injection,,K5,,
+J1840,,Kanamycin sulfate 500 mg inj,,N1,,
+J1850,,Kanamycin sulfate 75 mg inj,,K5,,
+J1885,,Ketorolac tromethamine inj,,N1,,
+J1890,,Cephalothin sodium injection,,N1,,
+J1930,,Lanreotide injection,,K2,,$66.18
+J1931,,Laronidase injection,,K2,,$34.78
+J1940,,Furosemide injection,,N1,,
+J1943,,"Inj., aristada initio, 1 mg",,K2,,$3.00
+J1944,,Aripirazole lauroxil 1 mg,,K2,,$2.95
+J1945,,Lepirudin,,K5,,
+J1950,,Leuprolide acetate /3.75 mg,,K2,,"$1,366.01"
+J1951,,Inj fensolvi 0.25 mg,,K2,,$127.05
+J1952,,"Leuprolide inj, camcevi, 1mg",,K5,,
+J1953,,Levetiracetam injection,,N1,,
+J1956,,Levofloxacin injection,,N1,,
+J1960,,Levorphanol tartrate inj,,N1,,
+J1980,,Hyoscyamine sulfate inj,,N1,,
+J1990,,Chlordiazepoxide injection,,N1,,
+J2001,,Lidocaine injection,,N1,,
+J2010,,Lincomycin injection,,N1,,
+J2020,,Linezolid injection,,N1,,
+J2060,,Lorazepam injection,,N1,,
+J2062,,Loxapine for inhalation 1 mg,,K5,,
+J2150,,Mannitol injection,,N1,,
+J2170,,Mecasermin injection,,N1,,
+J2175,,Meperidine hydrochl /100 mg,,N1,,
+J2180,,Meperidine/promethazine inj,,N1,,
+J2182,,"Injection, mepolizumab, 1mg",,K2,,$28.69
+J2185,,Meropenem,,N1,,
+J2186,,"Inj., meropenem, vaborbactam",,K2,,$1.84
+J2210,,Methylergonovin maleate inj,,N1,,
+J2212,,Methylnaltrexone injection,,N1,,
+J2248,,Micafungin sodium injection,,N1,,
+J2250,,Inj midazolam hydrochloride,,N1,,
+J2260,,Inj milrinone lactate / 5 mg,,N1,,
+J2265,,Minocycline hydrochloride,,K2,,$2.14
+J2270,,Morphine sulfate injection,,N1,,
+J2274,,Inj morphine pf epid ithc,,N1,,
+J2278,,Ziconotide injection,,K2,,$9.05
+J2280,,"Inj, moxifloxacin 100 mg",,N1,,
+J2300,,Inj nalbuphine hydrochloride,,N1,,
+J2310,,Inj naloxone hydrochloride,,N1,,
+J2315,,"Naltrexone, depot form",,K2,,$3.52
+J2320,,Nandrolone decanoate 50 mg,,N1,,
+J2323,,Natalizumab injection,,K2,,$23.25
+J2326,,"Inj, nusinersen, 0.1mg",,K2,,"$1,122.27"
+J2350,,"Injection, ocrelizumab, 1 mg",,K2,,$58.91
+J2353,,"Octreotide injection, depot",,K2,,$206.56
+J2354,,"Octreotide inj, non-depot",,N1,,
+J2355,,Oprelvekin injection,,K5,,
+J2357,,Omalizumab injection,,K2,,$37.51
+J2358,,Olanzapine long-acting inj,,K2,,$2.92
+J2360,,Orphenadrine injection,,N1,,
+J2370,,Phenylephrine hcl injection,,N1,,
+J2400,,Chloroprocaine hcl injection,,N1,,
+J2405,,Ondansetron hcl injection,,N1,,
+J2406,,"Injection, oritavancin 10 mg",,K2,,$41.92
+J2407,,"Injection, oritavancin",,K2,,$24.40
+J2410,,Oxymorphone hcl injection,,N1,,
+J2425,,Palifermin injection,,K2,,$23.93
+J2426,,Paliperidone palmitate inj,,K2,,$12.65
+J2430,,Pamidronate disodium /30 mg,,N1,,
+J2440,,Papaverin hcl injection,,N1,,
+J2460,,Oxytetracycline injection,,K5,,
+J2469,,Palonosetron hcl,,N1,,
+J2501,,Paricalcitol,,N1,,
+J2502,,"Inj, pasireotide long acting",,K2,,$319.35
+J2503,,Pegaptanib sodium injection,,N1,,
+J2504,,"Pegademase bovine, 25 iu",,N1,,
+J2506,,Inj pegfilgrast ex bio 0.5mg,,K2,,$182.03
+J2507,,Pegloticase injection,,K2,,"$2,968.61"
+J2510,,Penicillin g procaine inj,,N1,,
+J2513,,Pentastarch 10% solution,,K5,,
+J2515,,Pentobarbital sodium inj,,N1,,
+J2540,,Penicillin g potassium inj,,N1,,
+J2543,,Piperacillin/tazobactam,,N1,,
+J2547,,"Injection, peramivir",,K2,,$1.68
+J2550,,Promethazine hcl injection,,N1,,
+J2560,,Phenobarbital sodium inj,,K2,,$42.24
+J2562,,Plerixafor injection,,K2,,$382.78
+J2590,,Oxytocin injection,,N1,,
+J2597,,Inj desmopressin acetate,,K2,,$9.29
+J2650,,Prednisolone acetate inj,,N1,,
+J2670,,Totazoline hcl injection,,K5,,
+J2675,,Inj progesterone per 50 mg,,N1,,
+J2680,,Fluphenazine decanoate 25 mg,,N1,,
+J2690,,Procainamide hcl injection,,N1,,
+J2700,,Oxacillin sodium injeciton,,N1,,
+J2704,,"Inj, propofol, 10 mg",,N1,,
+J2710,,Neostigmine methylslfte inj,,N1,,
+J2720,,Inj protamine sulfate/10 mg,,N1,,
+J2724,,Protein c concentrate,,K2,,$15.09
+J2725,,Inj protirelin per 250 mcg,,K5,,
+J2730,,Pralidoxime chloride inj,,N1,,
+J2760,,Phentolaine mesylate inj,,K2,,$414.12
+J2765,,Metoclopramide hcl injection,,N1,,
+J2770,,Quinupristin/dalfopristin,,K2,,$428.19
+J2778,,Ranibizumab injection,,K2,,$307.20
+J2780,,Ranitidine hydrochloride inj,,N1,,
+J2783,,Rasburicase,,K2,,$321.67
+J2785,,Regadenoson injection,,N1,,
+J2786,,"Injection, reslizumab, 1mg",,K2,,$10.13
+J2788,,Rho d immune globulin 50 mcg,,N1,,
+J2790,,Rho d immune globulin inj,,N1,,
+J2791,,Rhophylac injection,,N1,,
+J2792,,"Rho(d) immune globulin h, sd",,K2,,$31.52
+J2793,,Rilonacept injection,,K5,,
+J2794,,"Inj risperdal consta, 0.5 mg",,K2,,$11.04
+J2795,,Ropivacaine hcl injection,,N1,,
+J2796,,Romiplostim injection,,K2,,$83.62
+J2798,,"Inj., perseris, 0.5 mg",,K2,,$10.68
+J2800,,Methocarbamol injection,,N1,,
+J2805,,Sincalide injection,,N1,,
+J2810,,Inj theophylline per 40 mg,,N1,,
+J2820,,Sargramostim injection,,K2,,$53.56
+J2840,,Inj sebelipase alfa 1 mg,,K2,,$539.87
+J2850,,Inj secretin synthetic human,,K2,,$34.78
+J2860,,"Injection, siltuximab",,K2,,$125.16
+J2910,,Aurothioglucose injeciton,,K5,,
+J2916,,Na ferric gluconate complex,,N1,,
+J2920,,Methylprednisolone injection,,N1,,
+J2930,,Methylprednisolone injection,,N1,,
+J2940,,Somatrem injection,,K5,,
+J2941,,Somatropin injection,,N1,,
+J2950,,Promazine hcl injection,,N1,,
+J2993,,Reteplase injection,,K2,,"$1,851.83"
+J2995,,Inj streptokinase /250000 iu,,K5,,
+J2997,,Alteplase recombinant,,K2,,$87.67
+J3000,,Streptomycin injection,,N1,,
+J3010,,Fentanyl citrate injection,,N1,,
+J3030,,Sumatriptan succinate / 6 mg,,N1,,
+J3031,,"Inj., fremanezumab-vfrm 1 mg",*,K2,,$2.31
+J3032,,Inj. eptinezumab-jjmr 1 mg,,K2,,$16.01
+J3060,,"Inj, taliglucerase alfa 10 u",,K2,,$41.23
+J3070,,Pentazocine injection,,N1,,
+J3090,,Inj tedizolid phosphate,,K2,,$1.66
+J3095,,Telavancin injection,,K2,,$6.40
+J3101,,Tenecteplase injection,,K2,,$134.62
+J3105,,Terbutaline sulfate inj,,N1,,
+J3111,,Inj. romosozumab-aqqg 1 mg,*,K2,,$9.33
+J3121,,Inj testostero enanthate 1mg,,N1,,
+J3145,,Testosterone undecanoate 1mg,,K2,,$1.61
+J3230,,Chlorpromazine hcl injection,,N1,,
+J3240,,Thyrotropin injection,,K2,,"$1,858.04"
+J3241,,Inj. teprotumumab-trbw 10 mg,,K2,,$315.88
+J3243,,Tigecycline injection,,N1,,
+J3245,,"Inj., tildrakizumab, 1 mg",*,K2,,$133.59
+J3246,,Tirofiban hcl,,K2,,$3.61
+J3250,,Trimethobenzamide hcl inj,,N1,,
+J3260,,Tobramycin sulfate injection,,N1,,
+J3262,,Tocilizumab injection,,K2,,$5.73
+J3265,,Injection torsemide 10 mg/ml,,N1,,
+J3280,,Thiethylperazine maleate inj,,K5,,
+J3285,,Treprostinil injection,,K2,,$57.47
+J3300,,Triamcinolone a inj prs-free,,N1,,
+J3301,,Triamcinolone acet inj nos,,N1,,
+J3302,,Triamcinolone diacetate inj,,N1,,
+J3303,,Triamcinolone hexacetonl inj,,N1,,
+J3304,,Inj triamcinolone ace xr 1mg,,K2,,$17.63
+J3305,,Inj trimetrexate glucoronate,,K5,,
+J3310,,Perphenazine injeciton,,N1,,
+J3315,,Triptorelin pamoate,,K2,,$337.01
+J3316,,"Inj., triptorelin xr 3.75 mg",,K2,,"$3,067.25"
+J3320,,Spectinomycn di-hcl inj,,K5,,
+J3350,,Urea injection,,K5,,
+J3355,,"Urofollitropin, 75 iu",,K5,,
+J3357,,"Ustekinumab sub cu inj, 1 mg",,K2,,$170.82
+J3358,,"Ustekinumab, iv inject, 1 mg",,K2,,$11.62
+J3360,,Diazepam injection,,N1,,
+J3364,,Urokinase 5000 iu injection,,N1,,
+J3365,,"Urokinase 250,000 iu inj",,K5,,
+J3370,,Vancomycin hcl injection,,N1,,
+J3380,,"Injection, vedolizumab",,K2,,$21.29
+J3385,,Velaglucerase alfa,,K2,,$359.80
+J3396,,Verteporfin injection,,K2,,$11.24
+J3397,,"Inj., vestronidase alfa-vjbk",,K5,,
+J3398,,Inj luxturna 1 billion vec g,,K2,,"$2,932.00"
+J3400,,Triflupromazine hcl inj,,K5,,
+J3410,,Hydroxyzine hcl injection,,N1,,
+J3411,,Thiamine hcl 100 mg,,N1,,
+J3415,,Pyridoxine hcl 100 mg,,N1,,
+J3420,,Vitamin b12 injection,,N1,,
+J3430,,Vitamin k phytonadione inj,,N1,,
+J3465,,"Injection, voriconazole",,N1,,
+J3470,,Hyaluronidase injection,,N1,,
+J3471,,"Ovine, up to 999 usp units",,N1,,
+J3472,,"Ovine, 1000 usp units",,N1,,
+J3473,,Hyaluronidase recombinant,,N1,,
+J3475,,Inj magnesium sulfate,,N1,,
+J3480,,Inj potassium chloride,,N1,,
+J3485,,Zidovudine,,N1,,
+J3486,,Ziprasidone mesylate,,N1,,
+J3489,,Zoledronic acid 1mg,,N1,,
+J3490,,Drugs unclassified injection,,N1,,
+J3530,,Nasal vaccine inhalation,,N1,,
+J3590,,Unclassified biologics,,N1,,
+J7030,,Normal saline solution infus,,N1,,
+J7040,,Normal saline solution infus,,N1,,
+J7042,,5% dextrose/normal saline,,N1,,
+J7050,,Normal saline solution infus,,N1,,
+J7060,,5% dextrose/water,,N1,,
+J7070,,D5w infusion,,N1,,
+J7100,,Dextran 40 infusion,,N1,,
+J7110,,Dextran 75 infusion,,N1,,
+J7120,,Ringers lactate infusion,,N1,,
+J7121,,5% dextrose in lac ringers,,N1,,
+J7131,,Hypertonic saline sol,,N1,,
+J7168,,Prothrombin complex kcentra,,K2,,$1.99
+J7169,,"Inj andexxa, 10 mg",*,K2,,$288.47
+J7170,,"Inj., emicizumab-kxwh 0.5 mg",,K2,,$48.75
+J7175,,"Inj, factor x, (human), 1iu",,K2,,$8.20
+J7177,,"Inj., fibryga, 1 mg",,N1,,
+J7178,,Inj human fibrinogen con nos,,K2,,$1.30
+J7179,,Vonvendi inj 1 iu vwf:rco,,K2,,$1.84
+J7180,,Factor xiii anti-hem factor,,K2,,$9.14
+J7181,,Factor xiii recomb a-subunit,,K2,,$16.12
+J7182,,Factor viii recomb novoeight,,K2,,$1.53
+J7183,,Wilate injection,,K2,,$1.14
+J7185,,Xyntha inj,,K2,,$1.27
+J7186,,Antihemophilic viii/vwf comp,,K2,,$1.13
+J7187,,"Humate-p, inj",,K2,,$1.26
+J7188,,Factor viii recomb obizur,,K2,,$3.20
+J7189,,Factor viia recomb novoseven,,K2,,$2.31
+J7190,,Factor viii,,K2,,$1.11
+J7191,,Factor viii (porcine),,K5,,
+J7192,,Factor viii recombinant nos,,K2,,$1.43
+J7193,,Factor ix non-recombinant,,K2,,$1.17
+J7194,,Factor ix complex,,K2,,$1.53
+J7195,,Factor ix recombinant nos,,K2,,$1.59
+J7196,,Antithrombin recombinant,,N1,,
+J7197,,Antithrombin iii injection,,K2,,$3.55
+J7198,,Anti-inhibitor,,K2,,$2.20
+J7200,,Factor ix recombinan rixubis,,K2,,$1.45
+J7201,,Factor ix alprolix recomb,,K2,,$3.15
+J7202,,Factor ix idelvion inj,,K2,,$4.61
+J7203,,Factor ix recomb gly rebinyn,,K2,,$4.27
+J7204,,Inj recombin esperoct per iu,,K2,,$2.18
+J7205,,Factor viii fc fusion recomb,,K2,,$2.12
+J7207,,Factor viii pegylated recomb,,K2,,$1.94
+J7208,,Inj. jivi 1 iu,*,K2,,$2.11
+J7209,,Factor viii nuwiq recomb 1iu,,K2,,$1.30
+J7210,,"Inj, afstyla, 1 i.u.",,K2,,$1.35
+J7211,,"Inj, kovaltry, 1 i.u.",,K2,,$1.23
+J7212,,Factor viia recomb sevenfact,,K2,,$2.20
+J7308,,Aminolevulinic acid hcl top,,K2,,$391.43
+J7309,,"Methyl aminolevulinate, top",,K5,,
+J7310,,Ganciclovir long act implant,,K5,,
+J7311,,"Inj., retisert, 0.01 mg",,K2,,$324.09
+J7312,,Dexamethasone intra implant,,K2,,$200.00
+J7313,,"Inj., iluvien, 0.01 mg",,K2,,$490.95
+J7314,,"Inj., yutiq, 0.01 mg",,K2,,$518.47
+J7315,,Ophthalmic mitomycin,,N1,,
+J7316,,"Inj, ocriplasmin, 0.125 mg",,K2,,"$1,046.93"
+J7318,,"Inj, durolane 1 mg",,K2,,$17.74
+J7320,,"Genvisc 850, inj, 1mg",,K2,,$16.92
+J7321,,Hyalgan or supartz inj dose,,N1,,
+J7322,,Hymovis injection 1 mg,,K2,,$31.67
+J7323,,Euflexxa inj per dose,,K2,,$135.24
+J7324,,Orthovisc inj per dose,,K2,,$147.75
+J7325,,Synvisc or synvisc-one,,K2,,$10.43
+J7326,,Gel-one,,K2,,"$1,219.00"
+J7327,,Monovisc inj per dose,,K2,,$790.78
+J7328,,Gelsyn-3 injection 0.1 mg,,K2,,$2.24
+J7329,,"Inj, trivisc 1 mg",,K2,,$19.12
+J7331,,"Synojoynt, inj., 1 mg",,K2,,$18.02
+J7332,,"Inj., triluron, 1 mg",,K5,,
+J7336,,Capsaicin 8% patch,,K2,,$3.24
+J7340,,Carbidopa levodopa ent 100ml,,K2,,$211.26
+J7342,,Ciprofloxacin otic susp 6 mg,,K2,,$29.99
+J7345,,"Aminolevulinic acid, 10% gel",,K2,,$1.59
+J7351,,Inj bimatoprost itc imp1mcg,,K2,,$205.72
+J7352,,"Afamelanotide implant, 1 mg",,K2,,"$3,218.90"
+J7402,,Mometasone sinus sinuva,,K2,,$10.56
+J7500,,Azathioprine oral 50mg,,N1,,
+J7501,,Azathioprine parenteral,,K2,,$232.34
+J7502,,Cyclosporine oral 100 mg,,N1,,
+J7503,,Tacrol envarsus ex rel oral,,N1,,
+J7504,,Lymphocyte immune globulin,,K2,,"$2,355.36"
+J7505,,Monoclonal antibodies,,N1,,
+J7507,,Tacrolimus imme rel oral 1mg,,N1,,
+J7508,,Tacrol astagraf ex rel oral,,N1,,
+J7509,,Methylprednisolone oral,,N1,,
+J7510,,Prednisolone oral per 5 mg,,N1,,
+J7511,,Antithymocyte globuln rabbit,,K2,,$838.33
+J7512,,Prednisone ir or dr oral 1mg,,N1,,
+J7513,,"Daclizumab, parenteral",,K5,,
+J7515,,Cyclosporine oral 25 mg,,N1,,
+J7516,,Cyclosporin parenteral 250mg,,N1,,
+J7517,,Mycophenolate mofetil oral,,N1,,
+J7518,,Mycophenolic acid,,N1,,
+J7520,,"Sirolimus, oral",,N1,,
+J7525,,Tacrolimus injection,,K2,,$219.67
+J7527,,Oral everolimus,,N1,,
+J7599,,Immunosuppressive drug noc,,N1,,
+J7665,,Mannitol for inhaler,,N1,,
+J7674,,"Methacholine chloride, neb",,N1,,
+J7799,,Non-inhalation drug for dme,,N1,,
+J7999,,"Compounded drug, noc",,N1,,
+J8501,,Oral aprepitant,,N1,,
+J8510,,Oral busulfan,,N1,,
+J8520,,"Capecitabine, oral, 150 mg",,N1,,
+J8521,,"Capecitabine, oral, 500 mg",,N1,,
+J8530,,Cyclophosphamide oral 25 mg,,N1,,
+J8540,,Oral dexamethasone,,N1,,
+J8560,,Etoposide oral 50 mg,,K2,,$75.51
+J8562,,Oral fludarabine phosphate,,K5,,
+J8565,,Gefitinib oral,,K5,,
+J8597,,Antiemetic drug oral nos,,N1,,
+J8600,,Melphalan oral 2 mg,,N1,,
+J8610,,Methotrexate oral 2.5 mg,,N1,,
+J8650,,Nabilone oral,,K5,,
+J8655,,"Oral netupitant, palonosetro",,K2,,$322.71
+J8670,,"Rolapitant, oral, 1mg",,K2,,$1.77
+J8700,,Temozolomide,,N1,,
+J8705,,Topotecan oral,,N1,,
+J9000,,Doxorubicin hcl injection,,N1,,
+J9015,,Aldesleukin injection,,K2,,"$3,795.26"
+J9017,,Arsenic trioxide injection,,K2,,$12.81
+J9019,,Erwinaze injection,,K2,,$427.27
+J9020,,"Asparaginase, nos",,K5,,
+J9021,,"Inj, aspara, rylaze, 0.1 mg",,K2,,$45.22
+J9022,,"Inj, atezolizumab,10 mg",,K2,,$79.58
+J9023,,"Injection, avelumab, 10 mg",,K2,,$87.61
+J9025,,Azacitidine injection,,K2,,$0.89
+J9027,,Clofarabine injection,,K2,,$61.65
+J9030,,Bcg live intravesical 1mg,,N1,,
+J9032,,"Injection, belinostat, 10mg",,K2,,$43.42
+J9033,,"Inj., treanda 1 mg",,K2,,$20.69
+J9034,,"Inj., bendeka 1 mg",,K2,,$19.08
+J9034,,"Inj., bendeka 1 mg",,K2,,$19.08
+J9035,,Bevacizumab injection,,K2,,$67.86
+J9036,,Inj. belrapzo/bendamustine,*,K2,,$22.88
+J9037,,Inj belantamab mafodont blmf,,K2,,$43.29
+J9039,,"Injection, blinatumomab",,K2,,$124.11
+J9040,,Bleomycin sulfate injection,,N1,,
+J9041,,"Inj., velcade 0.1 mg",,K2,,$44.79
+J9042,,Brentuximab vedotin inj,,K2,,$196.55
+J9043,,Cabazitaxel injection,,K2,,$191.31
+J9044,,"Inj, bortezomib, nos, 0.1 mg",,K2,,$16.77
+J9045,,Carboplatin injection,,N1,,
+J9047,,"Injection, carfilzomib, 1 mg",,K2,,$41.11
+J9050,,Carmustine injection,,K2,,"$1,099.82"
+J9055,,Cetuximab injection,,K2,,$67.62
+J9057,,"Inj., copanlisib, 1 mg",,K2,,$81.04
+J9060,,Cisplatin 10 mg injection,,N1,,
+J9061,,"Inj, amivantamab-vmjw",,K2,,$17.91
+J9065,,Inj cladribine per 1 mg,,K2,,$15.08
+J9070,,Cyclophosphamide 100 mg inj,,K2,,$27.47
+J9098,,Cytarabine liposome inj,,K5,,
+J9100,,Cytarabine hcl 100 mg inj,,N1,,
+J9118,,Inj. calaspargase pegol-mknl,,K5,,
+J9119,,"Inj., cemiplimab-rwlc, 1 mg",*,K2,,$27.67
+J9120,,Dactinomycin injection,,K2,,$838.88
+J9130,,Dacarbazine 100 mg inj,,N1,,
+J9144,,"Daratumumab, hyaluronidase",,K2,,$45.03
+J9145,,"Injection, daratumumab 10 mg",,K2,,$57.22
+J9150,,Daunorubicin injection,,K2,,$41.24
+J9151,,Daunorubicin citrate inj,,K5,,
+J9153,,"Inj daunorubicin, cytarabine",,K2,,$207.63
+J9155,,Degarelix injection,,K2,,$4.06
+J9160,,Denileukin diftitox inj,,K5,,
+J9165,,Diethylstilbestrol injection,,K5,,
+J9171,,Docetaxel injection,,N1,,
+J9173,,"Inj., durvalumab, 10 mg",,K2,,$76.86
+J9175,,Elliotts b solution per ml,,N1,,
+J9176,,"Injection, elotuzumab, 1mg",,K2,,$6.86
+J9177,,Inj enfort vedo-ejfv 0.25mg,,K2,,$30.19
+J9178,,"Inj, epirubicin hcl, 2 mg",,N1,,
+J9179,,Eribulin mesylate injection,,K2,,$127.44
+J9181,,Etoposide injection,,N1,,
+J9185,,Fludarabine phosphate inj,,N1,,
+J9190,,Fluorouracil injection,,N1,,
+J9198,,"Inj. infugem, 100 mg",,K2,,$25.08
+J9200,,Floxuridine injection,,N1,,
+J9201,,In gemcitabine hcl nos 200mg,,N1,,
+J9202,,Goserelin acetate implant,,K2,,$543.16
+J9203,,Gemtuzumab ozogamicin 0.1 mg,,K2,,$211.11
+J9204,,"Inj mogamulizumab-kpkc, 1 mg",,K2,,$212.64
+J9205,,Inj irinotecan liposome 1 mg,,K2,,$57.37
+J9206,,Irinotecan injection,,N1,,
+J9207,,Ixabepilone injection,,K2,,$114.19
+J9208,,Ifosfamide injection,,N1,,
+J9209,,Mesna injection,,N1,,
+J9210,,"Inj., emapalumab-lzsg, 1 mg",*,K2,,$362.31
+J9211,,Idarubicin hcl injection,,N1,,
+J9212,,Interferon alfacon-1 inj,,K5,,
+J9213,,Interferon alfa-2a inj,,K5,,
+J9214,,Interferon alfa-2b inj,,K2,,$32.74
+J9215,,Interferon alfa-n3 inj,,K5,,
+J9216,,Interferon gamma 1-b inj,,K5,,
+J9217,,Leuprolide acetate suspnsion,,K2,,$200.73
+J9218,,Leuprolide acetate injeciton,,N1,,
+J9219,,Leuprolide acetate implant,,K5,,
+J9223,,"Inj. lurbinectedin, 0.1 mg",,K2,,$180.23
+J9225,,Vantas implant,,K2,,"$5,166.29"
+J9226,,Supprelin la implant,,K2,,"$43,442.33"
+J9227,,Inj. isatuximab-irfc 10 mg,,K2,,$69.02
+J9228,,Ipilimumab injection,,K2,,$160.70
+J9229,,Inj inotuzumab ozogam 0.1 mg,,K2,,"$2,407.20"
+J9230,,Mechlorethamine hcl inj,,K2,,$11.74
+J9245,,Inj melpha hydroch nos 50 mg,,K2,,$197.46
+J9246,,"Inj., evomela, 1 mg",,K2,,$18.20
+J9247,,"Inj, melphalan flufenami 1mg",,K2,,$497.44
+J9250,,Methotrexate sodium inj,,N1,,
+J9260,,Methotrexate sodium inj,,N1,,
+J9261,,Nelarabine injection,,K2,,$155.90
+J9262,,"Inj, omacetaxine mep, 0.01mg",,K2,,$3.30
+J9263,,Oxaliplatin,,N1,,
+J9264,,Paclitaxel protein bound,,K2,,$14.04
+J9266,,Pegaspargase injection,,K2,,"$21,561.05"
+J9267,,Paclitaxel injection,,N1,,
+J9268,,Pentostatin injection,,K2,,"$1,934.45"
+J9269,,Inj. tagraxofusp-erzs 10 mcg,*,K2,,$296.34
+J9270,,Plicamycin (mithramycin) inj,,K2,,$115.40
+J9271,,Inj pembrolizumab,,K2,,$52.30
+J9272,,"Inj, dostarlimab-gxly, 10 mg",,K2,,$215.12
+J9280,,Mitomycin injection,,K2,,$50.66
+J9281,,Mitomycin instillation,,K2,,$281.79
+J9285,,"Inj, olaratumab, 10 mg",,K2,,$52.07
+J9293,,Mitoxantrone hydrochl / 5 mg,,K2,,$29.40
+J9295,,"Injection, necitumumab, 1 mg",,K2,,$5.74
+J9299,,"Injection, nivolumab",,K2,,$29.25
+J9301,,Obinutuzumab inj,,K2,,$64.11
+J9302,,Ofatumumab injection,,K2,,$63.96
+J9303,,Panitumumab injection,,K2,,$130.41
+J9304,,"Inj. pemetrexed, 10 mg",,K5,,
+J9305,,Inj. pemetrexed nos 10mg,,K2,,$76.04
+J9306,,"Injection, pertuzumab, 1 mg",,K2,,$13.56
+J9307,,Pralatrexate injection,,K2,,$319.73
+J9308,,"Injection, ramucirumab",,K2,,$63.56
+J9309,,"Inj, polatuzumab vedotin 1mg",,K2,,$113.57
+J9311,,"Inj rituximab, hyaluronidase",,K2,,$38.21
+J9312,,"Inj., rituximab, 10 mg",,K2,,$85.63
+J9313,,"Inj., lumoxiti, 0.01 mg",*,K2,,$23.39
+J9316,,"Pertuzu, trastuzu, 10 mg",,K2,,$71.65
+J9317,,Sacituzumab govitecan-hziy,,K2,,$31.26
+J9318,,Inj romidepsin non-lyo 0.1mg,,K2,,$33.91
+J9319,,Inj romidepsin lyophil 0.1mg,,K2,,$33.23
+J9320,,Streptozocin injection,,K2,,$347.88
+J9325,,Inj talimogene laherparepvec,,K2,,$57.22
+J9328,,Temozolomide injection,,K2,,$10.41
+J9330,,Temsirolimus injection,,K2,,$34.75
+J9340,,Thiotepa injection,,K2,,$305.45
+J9348,,"Inj. naxitamab-gqgk, 1 mg",,K2,,$538.88
+J9349,,"Inj., tafasitamab-cxix",,K2,,$12.80
+J9351,,Topotecan injection,,N1,,
+J9352,,Injection trabectedin 0.1mg,,K2,,$325.03
+J9353,,"Inj. margetuximab-cmkb, 5 mg",,K2,,$43.76
+J9354,,"Inj, ado-trastuzumab emt 1mg",,K2,,$34.15
+J9355,,Inj trastuzumab excl biosimi,,K2,,$86.41
+J9356,,"Inj. herceptin hylecta, 10mg",*,K2,,$71.49
+J9357,,Valrubicin injection,,K2,,"$1,435.66"
+J9358,,Inj fam-trastu deru-nxki 1mg,,K2,,$24.60
+J9360,,Vinblastine sulfate inj,,N1,,
+J9370,,Vincristine sulfate 1 mg inj,,N1,,
+J9371,,"Inj, vincristine sul lip 1mg",,K2,,"$3,420.78"
+J9390,,Vinorelbine tartrate inj,,N1,,
+J9395,,"Injection, fulvestrant",,K2,,$15.65
+J9400,,"Inj, ziv-aflibercept, 1mg",,K2,,$7.66
+J9600,,Porfimer sodium injection,,K2,,"$21,856.35"
+J9999,,Chemotherapy drug,,N1,,
+L8600,,Implant breast silicone/eq,,N1,,
+L8603,,Collagen imp urinary 2.5 ml,,N1,,
+L8604,,Dextranomer/hyaluronic acid,,N1,,
+L8605,,Inj bulking agent anal canal,,N1,,
+L8606,,Synthetic implnt urinary 1ml,,N1,,
+L8607,,Inj vocal cord bulking agent,,N1,,
+L8609,,Artificial cornea,,N1,,
+L8610,,Ocular implant,,N1,,
+L8612,,Aqueous shunt prosthesis,,N1,,
+L8613,,Ossicular implant,,N1,,
+L8614,,Cochlear device,,N1,,
+L8630,,Metacarpophalangeal implant,,N1,,
+L8631,,Mcp joint repl 2 pc or more,,N1,,
+L8641,,Metatarsal joint implant,,N1,,
+L8642,,Hallux implant,,N1,,
+L8658,,Interphalangeal joint spacer,,N1,,
+L8659,,Interphalangeal joint repl,,N1,,
+L8670,,"Vascular graft, synthetic",,N1,,
+L8679,,Imp neurosti pls gn any type,,N1,,
+L8682,,Implt neurostim radiofq rec,,N1,,
+L8690,,"Aud osseo dev, int/ext comp",,N1,,
+L8699,,Prosthetic implant nos,,N1,,
+L9900,,O&p supply/accessory/service,,N1,,
+P9041,,"Albumin (human),5%, 50ml",,K2,,$10.49
+P9045,,"Albumin (human), 5%, 250 ml",,K2,,$52.45
+P9046,,"Albumin (human), 25%, 20 ml",,K2,,$20.98
+P9047,,"Albumin (human), 25%, 50ml",,K2,,$52.45
+P9050,,"Granulocytes, pheresis unit",,K5,,
+Q0138,,"Ferumoxytol, non-esrd",,K2,,$1.09
+Q0139,,"Ferumoxytol, esrd use",,K2,,$1.00
+Q0161,,Chlorpromazine hcl 5mg oral,,N1,,
+Q0162,,Ondansetron oral,,N1,,
+Q0163,,Diphenhydramine hcl 50mg,,N1,,
+Q0164,,Prochlorperazine maleate 5mg,,N1,,
+Q0166,,Granisetron hcl 1 mg oral,,N1,,
+Q0167,,Dronabinol 2.5mg oral,,N1,,
+Q0169,,Promethazine hcl 12.5mg oral,,N1,,
+Q0173,,Trimethobenzamide hcl 250mg,,N1,,
+Q0174,,Thiethylperazine maleate10mg,,K5,,
+Q0175,,Perphenazine 4mg oral,,N1,,
+Q0177,,Hydroxyzine pamoate 25mg,,N1,,
+Q0180,,Dolasetron mesylate oral,,N1,,
+Q0181,,Unspecified oral anti-emetic,,N1,,
+Q0240,,Casirivi and imdevi 600 mg,,L1,,
+Q0243,,Casirivimab and imdevimab,,L1,,
+Q0244,,Casirivi and imdevi 1200 mg,,L1,,
+Q0245,,Bamlanivimab and etesevima,,L1,,
+Q0247,,Sotrovimab,,L1,,
+Q0249,,Tocilizumab for covid-19,,L1,,
+Q0515,,Sermorelin acetate injection,,K5,,
+Q2004,,Bladder calculi irrig sol,,N1,,
+Q2009,,Fosphenytoin inj pe,,N1,,
+Q2017,,"Teniposide, 50 mg",,K2,,"$2,645.71"
+Q2026,,Radiesse injection,,K2,,$257.37
+Q2028,,"Inj, sculptra, 0.5mg",,K2,,$2.49
+Q2034,**,Agriflu vaccine,,L1,,
+Q2035,**,"Afluria vacc, 3 yrs & >, im",,L1,,
+Q2036,**,"Flulaval vacc, 3 yrs & >, im",,L1,,
+Q2037,**,"Fluvirin vacc, 3 yrs & >, im",,L1,,
+Q2038,**,"Fluzone vacc, 3 yrs & >, im",,L1,,
+Q2039,**,"Influenza virus vaccine, nos",,L1,,
+Q2043,,Sipuleucel-t auto cd54+,,K2,,"$52,421.58"
+Q2049,,Imported lipodox inj,,K2,,$311.04
+Q2050,,Doxorubicin inj 10mg,,K2,,$200.52
+Q3027,,Inj beta interferon im 1 mcg,,K2,,$54.84
+Q3031,,Collagen skin test,,N1,,
+Q4100,,"Skin substitute, nos",,N1,,
+Q4101,,Apligraf,,N1,,
+Q4102,,Oasis wound matrix,,N1,,
+Q4103,,Oasis burn matrix,,N1,,
+Q4104,,Integra bmwd,,N1,,
+Q4105,,Integra drt or omnigraft,,N1,,
+Q4106,,Dermagraft,,N1,,
+Q4107,,Graftjacket,,N1,,
+Q4108,,Integra matrix,,N1,,
+Q4110,,Primatrix,,N1,,
+Q4111,,Gammagraft,,N1,,
+Q4112,,Cymetra injectable,,N1,,
+Q4113,,Graftjacket xpress,,N1,,
+Q4114,,Integra flowable wound matri,,N1,,
+Q4115,,Alloskin,,N1,,
+Q4116,,Alloderm,,N1,,
+Q4117,,Hyalomatrix,,N1,,
+Q4118,,Matristem micromatrix,,N1,,
+Q4121,,Theraskin,,N1,,
+Q4122,,"Dermacell, awm, porous sq cm",,N1,,
+Q4123,,Alloskin,,N1,,
+Q4124,,Oasis tri-layer wound matrix,,N1,,
+Q4125,,Arthroflex,,N1,,
+Q4126,,Memoderm/derma/tranz/integup,,N1,,
+Q4127,,Talymed,,N1,,
+Q4128,,Flexhd/allopatchhd/matrixhd,,N1,,
+Q4130,,Strattice tm,,N1,,
+Q4132,,"Grafix core, grafixpl core",,N1,,
+Q4133,,Grafix stravix prime pl sqcm,,N1,,
+Q4134,,Hmatrix,,N1,,
+Q4135,,Mediskin,,N1,,
+Q4136,,Ezderm,,N1,,
+Q4137,,Amnioexcel biodexcel 1sq cm,,N1,,
+Q4138,,"Biodfence dryflex, 1cm",,N1,,
+Q4139,,"Amnio or biodmatrix, inj 1cc",,N1,,
+Q4140,,Biodfence 1cm,,N1,,
+Q4141,,"Alloskin ac, 1 cm",,N1,,
+Q4142,,Xcm biologic tiss matrix 1cm,,N1,,
+Q4143,,"Repriza, 1cm",,N1,,
+Q4145,,"Epifix, inj, 1mg",,N1,,
+Q4146,,"Tensix, 1cm",,N1,,
+Q4147,,Architect ecm px fx 1 sq cm,,N1,,
+Q4148,,Neox neox rt or clarix cord,,N1,,
+Q4149,,"Excellagen, 0.1 cc",,N1,,
+Q4150,,Allowrap ds or dry 1 sq cm,,N1,,
+Q4151,,"Amnioband, guardian 1 sq cm",,N1,,
+Q4152,,Dermapure 1 square cm,,N1,,
+Q4153,,"Dermavest, plurivest sq cm",,N1,,
+Q4154,,Biovance 1 square cm,,N1,,
+Q4155,,Neoxflo or clarixflo 1 mg,,N1,,
+Q4156,,Neox 100 or clarix 100,,N1,,
+Q4157,,Revitalon 1 square cm,,N1,,
+Q4158,,"Kerecis omega3, per sq cm",,N1,,
+Q4159,,Affinity1 square cm,,N1,,
+Q4160,,Nushield 1 square cm,,N1,,
+Q4161,,Bio-connekt per square cm,,N1,,
+Q4162,,"Wndex flw, bioskn flw, 0.5cc",,N1,,
+Q4163,,"Woundex, bioskin, per sq cm",,N1,,
+Q4164,,"Helicoll, per square cm",,N1,,
+Q4165,,"Keramatrix, kerasorb sq cm",,N1,,
+Q4166,,"Cytal, per square centimeter",,N1,,
+Q4167,,"Truskin, per sq centimeter",,N1,,
+Q4168,,"Amnioband, 1 mg",,N1,,
+Q4169,,"Artacent wound, per sq cm",,N1,,
+Q4170,,"Cygnus, per sq cm",,N1,,
+Q4171,,"Interfyl, 1 mg",,N1,,
+Q4173,,Palingen or palingen xplus,,N1,,
+Q4174,,Palingen or promatrx,,N1,,
+Q4175,,Miroderm,,N1,,
+Q4176,,"Neopatch or therion, 1 sq cm",,N1,,
+Q4177,,"Floweramnioflo, 0.1 cc",,N1,,
+Q4178,,"Floweramniopatch, per sq cm",,N1,,
+Q4179,,"Flowerderm, per sq cm",,N1,,
+Q4180,,"Revita, per sq cm",,N1,,
+Q4181,,"Amnio wound, per square cm",,N1,,
+Q4182,,"Transcyte, per sq centimeter",,N1,,
+Q4183,,"Surgigraft, 1 sq cm",,N1,,
+Q4184,,Cellesta or duo per sq cm,,N1,,
+Q4185,,Cellesta flowab amnion 0.5cc,,N1,,
+Q4186,,Epifix 1 sq cm,,N1,,
+Q4187,,Epicord 1 sq cm,,N1,,
+Q4188,,Amnioarmor 1 sq cm,,N1,,
+Q4189,,"Artacent ac, 1 mg",,N1,,
+Q4190,,Artacent ac 1 sq cm,,N1,,
+Q4191,,Restorigin 1 sq cm,,N1,,
+Q4192,,"Restorigin, 1 cc",,N1,,
+Q4193,,Coll-e-derm 1 sq cm,,N1,,
+Q4194,,Novachor 1 sq cm,,N1,,
+Q4195,,Puraply 1 sq cm,,N1,,
+Q4196,,Puraply am 1 sq cm,,N1,,
+Q4197,,Puraply xt 1 sq cm,,N1,,
+Q4198,,Genesis amnio membrane 1sqcm,,N1,,
+Q4199,,"Cygnus matrix, per sq cm",,N1,,
+Q4200,,Skin te 1 sq cm,,N1,,
+Q4201,,Matrion 1 sq cm,,N1,,
+Q4202,,"Keroxx (2.5g/cc), 1cc",,N1,,
+Q4203,,"Derma-gide, 1 sq cm",,N1,,
+Q4204,,Xwrap 1 sq cm,,N1,,
+Q4205,,Membrane graft or wrap sq cm,,N1,,
+Q4206,,Fluid flow or fluid gf 1 cc,,N1,,
+Q4208,,Novafix per sq cm,,N1,,
+Q4209,,Surgraft per sq cm,,N1,,
+Q4210,,Axolotl graf dualgraf sq cm,,N1,,
+Q4211,,Amnion bio or axobio sq cm,,N1,,
+Q4214,,Cellesta cord per sq cm,,N1,,
+Q4216,,Artacent cord per sq cm,,N1,,
+Q4217,,Woundfix biowound plus xplus,,N1,,
+Q4218,,Surgicord per sq cm,,N1,,
+Q4219,,Surgigraft dual per sq cm,,N1,,
+Q4220,,"Bellacell hd, surederm sq cm",,N1,,
+Q4221,,Amniowrap2 per sq cm,,N1,,
+Q4222,,"Progenamatrix, per sq cm",,N1,,
+Q4226,,Myown harv prep proc sq cm,,N1,,
+Q4227,,Amniocore per sq cm,,N1,,
+Q4229,,Cogenex amnio memb per sq cm,,N1,,
+Q4230,,Cogenex flow amnion 0.5 cc,,N1,,
+Q4231,,"Corplex p, per cc",,N1,,
+Q4232,,"Corplex, per sq cm",,N1,,
+Q4233,,Surfactor /nudyn per 0.5 cc,,N1,,
+Q4234,,"Xcellerate, per sq cm",,N1,,
+Q4235,,Amniorepair or altiply sq cm,,N1,,
+Q4237,,"Cryo-cord, per sq cm",,N1,,
+Q4238,,"Derm-maxx, per sq cm",,N1,,
+Q4239,,Amnio-maxx or lite per sq cm,,N1,,
+Q4240,,Corecyte topical only 0.5 cc,,N1,,
+Q4241,,"Polycyte, topical only 0.5cc",,N1,,
+Q4242,,"Amniocyte plus, per 0.5 cc",,N1,,
+Q4244,,"Procenta, per 200 mg",,N1,,
+Q4245,,"Amniotext, per cc",,N1,,
+Q4246,,"Coretext or protext, per cc",,N1,,
+Q4247,,"Amniotext patch, per sq cm",,N1,,
+Q4248,,Dermacyte amn mem allo sq cm,,N1,,
+Q4249,,"Amniply, per sq cm",,N1,,
+Q4250,,Amnioamp-mp per sq cm,,N1,,
+Q4251,,"Vim, per square centimeter",,N1,,
+Q4252,,"Vendaje, per square centimet",,N1,,
+Q4253,,Zenith amniotic membrane psc,,N1,,
+Q4254,,Novafix dl per sq cm,,N1,,
+Q4255,,"Reguard, topical use per sq",,N1,,
+Q5101,,"Injection, zarxio",,K2,,$0.31
+Q5103,,"Injection, inflectra",,K2,,$40.57
+Q5104,,"Injection, renflexis",,K2,,$39.58
+Q5105,,Inj retacrit esrd on dialysi,,N1,,
+Q5106,,Inj retacrit non-esrd use,,K2,,$8.13
+Q5107,,Inj mvasi 10 mg,,K2,,$39.77
+Q5108,,"Injection, fulphila",*,K2,,$204.14
+Q5109,,"Injection, ixifi, 10 mg",,K5,,
+Q5110,,Nivestym,*,K2,,$0.34
+Q5111,,"Injection, udenyca 0.5 mg",*,K2,,$202.10
+Q5112,,Inj ontruzant 10 mg,,K2,,$61.11
+Q5113,,Inj herzuma 10 mg,,K2,,$48.50
+Q5114,,Inj ogivri 10 mg,,K2,,$55.72
+Q5115,,Inj truxima 10 mg,,K2,,$57.35
+Q5116,,"Inj., trazimera, 10 mg",,K2,,$55.79
+Q5117,,"Inj., kanjinti, 10 mg",,K2,,$47.41
+Q5118,,"Inj., zirabev, 10 mg",,K2,,$50.59
+Q5119,,"Inj ruxience, 10 mg",,K2,,$56.37
+Q5120,,Inj pegfilgrastim-bmez 0.5mg,,K2,,$222.86
+Q5120,,Inj pegfilgrastim-bmez 0.5mg,,K2,,$222.86
+Q5121,,"Inj. avsola, 10 mg",,K2,,$45.30
+Q5122,,"Inj, nyvepria",,K2,,$269.14
+Q5123,,"Inj. riabni, 10 mg",,K2,,$64.33
+Q9950,,Inj sulf hexa lipid microsph,,N1,,
+Q9951,,"Locm >= 400 mg/ml iodine,1ml",,N1,,
+Q9953,,"Inj fe-based mr contrast,1ml",,N1,,
+Q9954,,"Oral mr contrast, 100 ml",,N1,,
+Q9955,,"Inj perflexane lip micros,ml",,N1,,
+Q9956,,"Inj octafluoropropane mic,ml",,N1,,
+Q9957,,"Inj perflutren lip micros,ml",,N1,,
+Q9958,,"Hocm <=149 mg/ml iodine, 1ml",,N1,,
+Q9959,,"Hocm 150-199mg/ml iodine,1ml",,N1,,
+Q9960,,"Hocm 200-249mg/ml iodine,1ml",,N1,,
+Q9961,,"Hocm 250-299mg/ml iodine,1ml",,N1,,
+Q9962,,"Hocm 300-349mg/ml iodine,1ml",,N1,,
+Q9963,,"Hocm 350-399mg/ml iodine,1ml",,N1,,
+Q9964,,"Hocm>= 400mg/ml iodine, 1ml",,N1,,
+Q9965,,"Locm 100-199mg/ml iodine,1ml",,N1,,
+Q9966,,"Locm 200-299mg/ml iodine,1ml",,N1,,
+Q9967,,"Locm 300-399mg/ml iodine,1ml",,N1,,
+Q9968,,Visualization adjunct,,K2,,$7.76
+Q9982,,Flutemetamol f18 diagnostic,,N1,,
+Q9983,,Florbetaben f18 diagnostic,,N1,,
+Q9991,,Buprenorph xr 100 mg or less,,K2,,"$1,787.03"
+Q9992,,Buprenorphine xr over 100 mg,,K2,,"$1,787.03"
+V2630,,Anter chamber intraocul lens,,N1,,
+V2631,,Iris support intraoclr lens,,N1,,
+V2632,,Post chmbr intraocular lens,,N1,,
+V2785,,Corneal tissue processing,,F4,,
+V2790,,Amniotic membrane,,N1,,
+,,,,,,
+NOTE 1:  The Medicare program payment is 80 percent of the total payment amount and beneficiary coinsurance is 20 percent of the total payment amount except for most preventive services.  Sections 4104 and 10406 of the Affordable Care Act (ACA) waive coinsurance and the Part B deductible for most preventive services.  These preventive services are identified with a double asterisk (**).,,,,,,
+,,,,,,
+,,,,,,
+"NOTE 2:  In general, payment indicators Z2 and Z3 (certain radiology or diagnostic services) are based on a comparison of the final rates according to the ASC standard ratesetting methodology and the MPFS final rates effective January 1, 2022. MPFS final rates include changes to the MPFS as enacted by Public Law 117-71 on December 10, 2021. For a discussion of the MPFS rates, we refer readers to the CY 2022 MPFS final rule.",,,,,,
+,,,,,,

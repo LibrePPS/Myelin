@@ -4,13 +4,16 @@ import unittest
 from datetime import datetime
 
 # Add project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from myelin.pricers.asc.data_loader import AscReferenceData
 
+
 class TestAscDataLoadingAllYears(unittest.TestCase):
     def setUp(self):
-        self.data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../myelin/pricers/asc/data'))
+        self.data_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "../../myelin/pricers/asc/data")
+        )
         self.loader = AscReferenceData(self.data_dir)
 
     def test_2021_loading(self):
@@ -20,7 +23,7 @@ class TestAscDataLoadingAllYears(unittest.TestCase):
         self.assertIn("rates", data)
         self.assertIn("0100T", data["rates"])
         self.assertEqual(data["rates"]["0100T"]["rate"], 3475.50)
-        
+
         # Wage Index for 2021 (from file list: cbsa-wage-index-2021.csv)
         self.assertIn("wage_indices", data)
         self.assertGreater(len(data["wage_indices"]), 0)
@@ -31,7 +34,7 @@ class TestAscDataLoadingAllYears(unittest.TestCase):
         self.assertIn("rates", data)
         self.assertIn("0101T", data["rates"])
         self.assertEqual(data["rates"]["0101T"]["rate"], 1360.34)
-        
+
         self.assertIn("wage_indices", data)
         self.assertGreater(len(data["wage_indices"]), 0)
 
@@ -67,5 +70,6 @@ class TestAscDataLoadingAllYears(unittest.TestCase):
         self.assertIn("01", data["wage_indices"])
         self.assertAlmostEqual(data["wage_indices"]["01"], 0.6367, places=4)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,6 @@
+﻿Addendum DD2 -- ASC Comment Indicators for CY 2023,
+CI,Comment Indicator Meanings
+CH,"Active HCPCS code in current year and next calendar year, payment indicator assignment has changed; or active HCPCS code that is newly recognized as payable in ASC; or active HCPCS code that is discontinued at the end of the current calendar year."
+NI,"New code for the next calendar year or existing code with substantial revision to its code descriptor in the next calendar year, interim payment indicator assignment; comments will be accepted on the interim payment indicator for the new code."
+NP,"New code for the next calendar year or existing code with substantial revision to its code descriptor in the next calendar year as compared to current calendar year, proposed ASC payment indicator; comments will be accepted on the proposed ASC payment indicator for the new code."
+NC,"New code for the next calendar year or existing code with substantial revision to its code descriptor in the next calendar year as compared to current calendar year for which we requested comments in the proposed rule, final APC assignment; comments will not be accepted on the final APC assignment for the new code. "

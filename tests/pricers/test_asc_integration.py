@@ -139,7 +139,6 @@ class TestAscIntegration(unittest.TestCase):
 
         self.assertAlmostEqual(result.asc.total_payment, 167.5)
 
-
         self.assertAlmostEqual(result.asc.total_payment, 167.5)
 
     @patch("myelin.core.DatabaseManager")
@@ -152,9 +151,9 @@ class TestAscIntegration(unittest.TestCase):
         myelin.ioce_client = MagicMock()
         myelin.ioce_client.process.return_value = (None, None)
         myelin.asc_client = AscClient(self.asc_data_dir, myelin.logger)
-        
+
         mock_opsf = MockOPSFProvider.return_value
-        mock_opsf.cbsa_wage_index_location = "10000" # WI = 1.5
+        mock_opsf.cbsa_wage_index_location = "10000"  # WI = 1.5
         mock_opsf.provider_type = "ASC"
 
         # Rate 10003 = $100. WI=1.5. Labor=50%.
@@ -164,44 +163,63 @@ class TestAscIntegration(unittest.TestCase):
         # 1. Test Modifier 73 (Terminated Pre-Anesthesia)
         # Rule: (Adj Rate - Full Offset) * 50%
         # (125 - 30) * 0.5 = 95 * 0.5 = 47.5
-        
+
         # 2. Test Modifier 52 (Reduced)
         # Rule: Adj Rate * 50%
         # 125 * 0.5 = 62.5
-        
+
         # 3. Test Modifier 74 (Terminated Post-Anesthesia)
         # Rule: Full Payment (125.0).
-        
+
         claim = Claim(
             bill_type="831",
             from_date=datetime(2025, 1, 15),
             thru_date=datetime(2025, 1, 15),
             modules=[Modules.AUTO],
             lines=[
-                LineItem(line_number=1, hcpcs="10003", units=1, modifiers=["73"], revenue_code="0490"),
-                LineItem(line_number=2, hcpcs="10003", units=1, modifiers=["52"], revenue_code="0490"),
-                LineItem(line_number=3, hcpcs="10003", units=1, modifiers=["74"], revenue_code="0490"),
-            ]
+                LineItem(
+                    line_number=1,
+                    hcpcs="10003",
+                    units=1,
+                    modifiers=["73"],
+                    revenue_code="0490",
+                ),
+                LineItem(
+                    line_number=2,
+                    hcpcs="10003",
+                    units=1,
+                    modifiers=["52"],
+                    revenue_code="0490",
+                ),
+                LineItem(
+                    line_number=3,
+                    hcpcs="10003",
+                    units=1,
+                    modifiers=["74"],
+                    revenue_code="0490",
+                ),
+            ],
         )
-        
+
         result = myelin.process(claim)
-        
+
         self.assertIsNotNone(result.asc)
-        l1 = result.asc.lines[0] # 73
-        l2 = result.asc.lines[1] # 52
-        l3 = result.asc.lines[2] # 74
-        
+        l1 = result.asc.lines[0]  # 73
+        l2 = result.asc.lines[1]  # 52
+        l3 = result.asc.lines[2]  # 74
+
         self.assertAlmostEqual(l1.adjusted_rate, 47.5)
         self.assertFalse(l1.subject_to_discount, "Mod 73 should be exempt from MPR")
-        
+
         self.assertAlmostEqual(l2.adjusted_rate, 62.5)
         self.assertFalse(l2.subject_to_discount, "Mod 52 should be exempt from MPR")
-        
+
         self.assertAlmostEqual(l3.adjusted_rate, 125.0)
         # 74 is subject to discount? 10003 has "Y" ind.
         # But it's the only one left in the discount pool (others are exempt).
         # So it pays 100%.
-        self.assertAlmostEqual(result.asc.total_payment, 47.5 + 62.5 + 125.0) 
+        self.assertAlmostEqual(result.asc.total_payment, 47.5 + 62.5 + 125.0)
+
 
 if __name__ == "__main__":
     unittest.main()
