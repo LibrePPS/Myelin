@@ -268,6 +268,9 @@ class Myelin:
         self.hhag_client = HhagClient()
         self.irfg_client = IrfgClient()
         self.irfg_client = IrfgClient()
+        self.asc_client = AscClient(
+            "./pricers/asc/data", self.logger, preload_data=True
+        )
 
         # Initialize Custom Pricers
         try:
@@ -385,8 +388,7 @@ class Myelin:
             elif bill_type.startswith("72"):  # ESRD
                 claim.modules.append(Modules.IOCE)
                 claim.modules.append(Modules.ESRD)
-            elif bill_type.startswith("83"):  # ASC
-                claim.modules.append(Modules.IOCE)
+            elif bill_type.startswith("83"):  # ASCs
                 claim.modules.append(Modules.ASC)
             elif bill_type_facility == "2":  # SNF, secondary to rev code lookup above
                 if bill_type_type_of_care in ("2", "3"):

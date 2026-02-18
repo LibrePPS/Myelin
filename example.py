@@ -1,3 +1,4 @@
+import _pytest._code.source
 from myelin import OPSFProvider
 from myelin import IPSFProvider
 import os
@@ -351,28 +352,30 @@ def run_pricers(myelin: Myelin):
         asc_claim = claim_example()
         asc_claim.claimid = "ASC_CLAIM_001"
         asc_claim.bill_type = "831"
-        asc_claim.from_date = datetime(2025, 7, 15)
-        asc_claim.thru_date = datetime(2025, 7, 15)
+        asc_claim.from_date = datetime(2026, 7, 15)
+        asc_claim.thru_date = datetime(2026, 7, 15)
         if asc_claim.billing_provider is None:
             asc_claim.billing_provider = Provider()
         asc_claim.billing_provider.other_id = "010001"
+        asc_claim.additional_data["cbsa"] = "35660"
 
         asc_claim.lines.clear()
         asc_claim.lines.append(
             LineItem(
-                hcpcs="67105",
-                service_date=datetime(2025, 7, 15),
+                hcpcs="70460",
+                service_date=datetime(2026, 7, 15),
                 units=1,
-                charges=1500.0,
+                charges=10000.0,
                 revenue_code="0490",
+                modifiers=["50"],
             )
         )
         asc_claim.lines.append(
             LineItem(
-                hcpcs="J0666",
-                service_date=datetime(2025, 7, 15),
-                units=1,
-                charges=1500.0,
+                hcpcs="31020",
+                service_date=datetime(2026, 7, 15),
+                units=2,
+                charges=10000.0,
                 revenue_code="0490",
             )
         )
@@ -380,11 +383,17 @@ def run_pricers(myelin: Myelin):
         provider = OPSFProvider()
         provider.cbsa_wage_index_location = "19124"  # Example CBSA
         provider.provider_type = "ASC"
+        asc_claim.opps_flag = 2
         asc_claim.modules = [Modules.IOCE, Modules.ASC]
-
-        asc_output = myelin.process(asc_claim)
-        assert asc_output.asc is not None
+        from myelin.pricers import AscMueLimit
+        mues = dict()
+        mues["31020"] = AscMueLimit(hcpcs="31020", mue_limit=1.0, up_to_limit=True)
+        asc_output = myelin.asc_client.process(asc_claim, provider, mues=mues)
+        assert asc_output is not None
         print(asc_output.model_dump_json(indent=2))
+        myelin_out = MyelinOutput()
+        myelin_out.asc = asc_output
+        myelin_out.to_excel("asc_pricer_output.xlsx", asc_claim)
 
 
 def run_myelin_process(myelin: Myelin):

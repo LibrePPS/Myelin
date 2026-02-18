@@ -488,6 +488,7 @@ def _create_summary_sheet(
         ("HHA", output.hha, _get_generic_summary),
         ("ESRD", output.esrd, _get_generic_summary),
         ("FQHC", output.fqhc, _get_fqhc_summary),
+        ("ASC", output.asc, _get_asc_summary),
         ("IPSF", output.ipsf, _get_ipsf_summary),
         ("OPSF", output.opsf, _get_opsf_summary),
     ]
@@ -621,6 +622,17 @@ def _get_fqhc_summary(output: Any) -> str:
         parts.append(f"Coinsurance: ${output.coinsurance_amount:,.2f}")
     return ", ".join(parts) if parts else "Processed"
 
+def _get_asc_summary(output: Any) -> str:
+    """Get summary info for ASC output."""
+    if not output:
+        return ""
+    parts = []
+    if hasattr(output, "total_payment") and output.total:
+        parts.append(f"Total Payment: ${output.total:,.2f}")
+    if hasattr(output, "lines") and output.lines:
+        parts.append(f"Lines: {len(output.lines)}")
+    return ", ".join(parts) if parts else "Processed"
+
 
 def _get_ipsf_summary(output: Any) -> str:
     """Get summary info for IPSF output."""
@@ -736,6 +748,7 @@ class ExcelExporter:
             ("hha", "HHA", self.output.hha),
             ("esrd", "ESRD", self.output.esrd),
             ("fqhc", "FQHC", self.output.fqhc),
+            ("asc", "ASC", self.output.asc),
             ("ipsf", "IPSF", self.output.ipsf),
             ("opsf", "OPSF", self.output.opsf),
         ]

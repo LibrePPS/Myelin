@@ -6,12 +6,18 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 
+# Bump this version whenever the structure of AscRefData changes to
+# automatically invalidate stale .pkl cache files.
+_CACHE_VERSION = 2
+
+
 class RateInfo(TypedDict):
     """Per-HCPCS rate entry from Addendum AA/BB."""
 
     rate: float
     indicator: str
     subject_to_discount: bool
+    addendum: str  # "AA" (surgical procedure) or "BB" (covered ancillary service)
 
 
 class CodePairEntry(TypedDict):
@@ -31,6 +37,7 @@ class AscRefData(TypedDict):
     device_offsets: Dict[str, float]
     wage_indices: Dict[str, float]
     code_pairs: Dict[Tuple[str, str], List[CodePairEntry]]
+    _cache_version: int
 
 
 class AscReferenceData:
@@ -41,6 +48,33 @@ class AscReferenceData:
     def __init__(self, data_dir: str):
         self.data_dir = data_dir
         self._cache: Dict[str, AscRefData] = {}
+        self._available_quarters: Optional[List[Tuple[datetime, str]]] = None
+
+    def preload_all_data(self):
+        """
+        Preloads all available ASC reference data into memory.
+        This builds an in-memory index of available quarters and populates the cache.
+        """
+        all_quarters = []
+        for y_dir in glob.glob(os.path.join(self.data_dir, "*")):
+            if os.path.isdir(y_dir):
+                for q_dir in glob.glob(os.path.join(y_dir, "*")):
+                    if os.path.isdir(q_dir):
+                        try:
+                            # Verify folder name pattern YYYYMMDD
+                            dirname = os.path.basename(q_dir)
+                            q_date = datetime.strptime(dirname, "%Y%m%d")
+                            all_quarters.append((q_date, q_dir))
+                        except ValueError:
+                            continue
+
+        # Sort descending by date
+        all_quarters.sort(key=lambda x: x[0], reverse=True)
+        self._available_quarters = all_quarters
+
+        # Load data for each quarter
+        for _, path in all_quarters:
+            self._cache[path] = self._load_quarter_data(path)
 
     def get_data(self, date: datetime) -> AscRefData:
         """
@@ -50,6 +84,8 @@ class AscReferenceData:
         """
         target_path = self._find_quarter_directory(date)
         if not target_path:
+            # Try to force a preload/re-scan if we haven't found anything and preloading wasn't done?
+            # Or just raise error. Existing behavior raises error.
             raise FileNotFoundError(f"No ASC data found for {date} or prior quarters.")
 
         if target_path in self._cache:
@@ -62,12 +98,29 @@ class AscReferenceData:
     def _find_quarter_directory(self, date: datetime) -> Optional[str]:
         """
         Finds the specific data directory for the date's quarter.
-        If not found, checks if date is past our latest data, and returns latest if so.
+        Uses in-memory index if available, otherwise checks filesystem.
         """
-        # Format: YYYYMMDD (e.g., 20250101)
-        # Quarters start on 0101, 0401, 0701, 1001
+        # Calculate target quarter start date
         year = date.year
         quarter_month = ((date.month - 1) // 3) * 3 + 1
+        target_date = datetime(year, quarter_month, 1)
+
+        # FAST PATH: Use preloaded index
+        if self._available_quarters is not None:
+            # 1. Look for exact match
+            for q_date, q_path in self._available_quarters:
+                if q_date == target_date:
+                    return q_path
+
+            # 2. Check if requested date is AFTER the latest available data
+            if self._available_quarters:
+                latest_date, latest_path = self._available_quarters[0]
+                if date > latest_date:
+                    return latest_path
+
+            return None
+
+        # SLOW PATH: Filesystem check (Legacy/On-demand)
         target_folder_name = f"{year}{quarter_month:02d}01"
 
         # Check specific path first
@@ -128,11 +181,13 @@ class AscReferenceData:
             "device_offsets": {},
             "wage_indices": {},
             "code_pairs": {},
+            "_cache_version": _CACHE_VERSION,
         }
 
-        # Load Rates (AA and BB)
-        self._load_rates(self._find_file(path, "AA"), data["rates"])
-        self._load_rates(self._find_file(path, "BB"), data["rates"])
+        # Load Rates (AA = surgical procedures, BB = covered ancillary services)
+        # BB is loaded second so that if a code appears in both, BB wins.
+        self._load_rates(self._find_file(path, "AA"), data["rates"], addendum="AA")
+        self._load_rates(self._find_file(path, "BB"), data["rates"], addendum="BB")
 
         # Load Device Offsets (FF)
         self._load_device_offsets(self._find_file(path, "FF"), data["device_offsets"])
@@ -175,10 +230,22 @@ class AscReferenceData:
 
     def _is_cache_valid(self, dir_path: str, cache_path: str) -> bool:
         """
-        Returns True if cache file exists and is newer than all CSV/TXT files in the directory
-        and the normalized code pairs directory.
+        Returns True if cache file exists, matches the current cache version,
+        and is newer than all CSV/TXT files in the directory and the normalized
+        code pairs directory.
         """
         if not os.path.exists(cache_path):
+            return False
+
+        # Check cache version before checking mtimes
+        try:
+            with open(cache_path, "rb") as f:
+                import pickle as _pickle
+
+                cached = _pickle.load(f)
+            if cached.get("_cache_version") != _CACHE_VERSION:
+                return False
+        except Exception:
             return False
 
         cache_mtime = os.path.getmtime(cache_path)
@@ -218,7 +285,9 @@ class AscReferenceData:
                 return path
         return os.path.join(directory, f"{basename}.csv")  # Default fallback
 
-    def _load_rates(self, filepath: str, rates_dict: Dict[str, Any]):
+    def _load_rates(
+        self, filepath: str, rates_dict: Dict[str, Any], addendum: str = "AA"
+    ):
         if not os.path.exists(filepath):
             return
 
@@ -257,6 +326,7 @@ class AscReferenceData:
                 "rate": rate,
                 "indicator": ind,
                 "subject_to_discount": sub_discount.upper() == "Y",
+                "addendum": addendum,
             }
 
     def _load_device_offsets(self, filepath: str, offsets_dict: Dict[str, Any]):

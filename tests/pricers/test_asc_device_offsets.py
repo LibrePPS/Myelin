@@ -41,9 +41,10 @@ class TestAscDeviceOffsets(unittest.TestCase):
     Setup:
       - HCPCS 10001: payment rate $100, device offset $20, subject to discount.
       - Wage index for CBSA 10000 = 1.5
-      - Adjusted rate = (100 * 0.5 * 1.5) + (100 * 0.5) = 75 + 50 = 125.0
-      - FB reduction = $20.00 → adjusted_rate = 125.0 - 20.0 = 105.0
-      - FC reduction = $10.00 → adjusted_rate = 125.0 - 10.0 = 115.0
+      - NEW: Device offset is subtracted from base rate BEFORE wage adjustment.
+      - FB: reduced_base = 100 - 20 = 80  → adj = (80×0.5×1.5)+(80×0.5) = 100.0
+      - FC: reduced_base = 100 - 10 = 90  → adj = (90×0.5×1.5)+(90×0.5) = 112.5
+      - No modifier: adj = (100×0.5×1.5)+(100×0.5) = 125.0
     """
 
     def setUp(self):
@@ -102,8 +103,9 @@ class TestAscDeviceOffsets(unittest.TestCase):
         line = result.lines[0]
         self.assertTrue(line.device_credit)
         self.assertAlmostEqual(line.device_offset_amount, 20.0)
-        # 125.0 - 20.0 = 105.0
-        self.assertAlmostEqual(line.adjusted_rate, 105.0)
+        # reduced_base = 100 - 20 = 80
+        # adj = (80 * 0.5 * 1.5) + (80 * 0.5) = 60 + 40 = 100.0
+        self.assertAlmostEqual(line.adjusted_rate, 100.0)
         self.assertIn("Mod FB", line.details)
 
     def test_fb_sets_device_credit_true(self):
@@ -113,11 +115,12 @@ class TestAscDeviceOffsets(unittest.TestCase):
         self.assertTrue(result.lines[0].device_credit)
 
     def test_fb_total_payment_reflects_full_offset(self):
-        """Total payment with FB reflects the full device offset reduction."""
+        """Total allowed amount with FB reflects the full device offset reduction."""
         claim = _make_claim("10001", ["FB"])
         result = self.client.process(claim, self.opsf)
         # Single line, subject to discount, first procedure → 100% of adjusted_rate
-        self.assertAlmostEqual(result.total_payment, 105.0)
+        # total is the 100% allowed amount; total_payment is the 80% Medicare portion
+        self.assertAlmostEqual(result.total, 100.0)
 
     # -------------------------------------------------------------------------
     # Modifier FC — partial device offset (50%)
@@ -131,8 +134,9 @@ class TestAscDeviceOffsets(unittest.TestCase):
         line = result.lines[0]
         self.assertTrue(line.device_credit)
         self.assertAlmostEqual(line.device_offset_amount, 10.0)  # 50% of $20
-        # 125.0 - 10.0 = 115.0
-        self.assertAlmostEqual(line.adjusted_rate, 115.0)
+        # reduced_base = 100 - 10 = 90
+        # adj = (90 * 0.5 * 1.5) + (90 * 0.5) = 67.5 + 45 = 112.5
+        self.assertAlmostEqual(line.adjusted_rate, 112.5)
         self.assertIn("Mod FC", line.details)
 
     def test_fc_sets_device_credit_true(self):
@@ -142,10 +146,11 @@ class TestAscDeviceOffsets(unittest.TestCase):
         self.assertTrue(result.lines[0].device_credit)
 
     def test_fc_total_payment_reflects_half_offset(self):
-        """Total payment with FC reflects the 50% device offset reduction."""
+        """Total allowed amount with FC reflects the 50% device offset reduction."""
         claim = _make_claim("10001", ["FC"])
         result = self.client.process(claim, self.opsf)
-        self.assertAlmostEqual(result.total_payment, 115.0)
+        # total is the 100% allowed amount; total_payment is the 80% Medicare portion
+        self.assertAlmostEqual(result.total, 112.5)
 
     # -------------------------------------------------------------------------
     # FB vs FC produce different results
@@ -159,7 +164,9 @@ class TestAscDeviceOffsets(unittest.TestCase):
         fb_result = self.client.process(fb_claim, self.opsf)
         fc_result = self.client.process(fc_claim, self.opsf)
 
-        self.assertLess(fb_result.lines[0].adjusted_rate, fc_result.lines[0].adjusted_rate)
+        self.assertLess(
+            fb_result.lines[0].adjusted_rate, fc_result.lines[0].adjusted_rate
+        )
         self.assertGreater(
             fb_result.lines[0].device_offset_amount,
             fc_result.lines[0].device_offset_amount,
@@ -176,7 +183,9 @@ class TestAscDeviceOffsets(unittest.TestCase):
 
         line = result.lines[0]
         self.assertFalse(line.device_credit)
-        self.assertEqual(line.device_offset_amount, 0.0)
+        # Mod 73 removes the full device offset from base_rate (per §40.10),
+        # so device_offset_amount reflects the amount removed, but device_credit stays False.
+        self.assertAlmostEqual(line.device_offset_amount, 20.0)
         self.assertIn("Mod 73 present, FB/FC Ignored", line.details)
 
     def test_mod73_overrides_fc(self):
@@ -186,7 +195,9 @@ class TestAscDeviceOffsets(unittest.TestCase):
 
         line = result.lines[0]
         self.assertFalse(line.device_credit)
-        self.assertEqual(line.device_offset_amount, 0.0)
+        # Mod 73 removes the full device offset from base_rate (per §40.10),
+        # so device_offset_amount reflects the amount removed, but device_credit stays False.
+        self.assertAlmostEqual(line.device_offset_amount, 20.0)
         self.assertIn("Mod 73 present, FB/FC Ignored", line.details)
 
     # -------------------------------------------------------------------------

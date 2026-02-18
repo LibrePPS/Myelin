@@ -1,3 +1,5 @@
+from collections import defaultdict
+from decimal import Decimal
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
@@ -12,15 +14,24 @@ from myelin.helpers.utils import ReturnCode
 
 # Payment indicator denial/rejection rules per CMS §60.3
 # Indicators that result in denial (no payment)
-DENY_INDICATORS = frozenset({"C5", "M6", "U5", "X5", "E5", "Y5"})
+DENY_INDICATORS = frozenset({"C5", "M6", "U5", "X5", "E5", "Y5", "K5"})
 # Indicators that result in denial as packaged (no separate payment)
-DENY_PACKAGED_INDICATORS = frozenset({"L1", "NI", "S1"})
+DENY_PACKAGED_INDICATORS = frozenset({"L1", "NI", "S1", "D1"})
 # Indicators returned as unprocessable
 UNPROCESSABLE_INDICATORS = frozenset({"D5", "B5"})
 # Combined set for quick lookup
 NO_PAYMENT_INDICATORS = (
     DENY_INDICATORS | DENY_PACKAGED_INDICATORS | UNPROCESSABLE_INDICATORS
 )
+
+# Payment indicators exempt from geographic wage adjustment per CMS §40.2:
+#   H2  - Brachytherapy sources
+#   J7  - OPPS pass-through devices (contractor-priced)
+#   K2  - Separately payable drugs and biologicals (OPPS rate)
+#   K7  - Unclassified drugs and biologicals (contractor-priced)
+#   F4  - Corneal tissue acquisition / hepatitis B vaccine (reasonable cost)
+#   L6  - NTIOL / qualifying non-opioid devices
+WAGE_EXEMPT_INDICATORS = frozenset({"H2", "J7", "K2", "K7", "F4", "L6"})
 
 # Modifier constants
 MOD_TERMINATED_PRE_ANESTHESIA = "73"  # Terminated before anesthesia (50% pay)
@@ -30,13 +41,20 @@ MOD_DEVICE_NO_COST = "FB"  # Device furnished without cost / full credit
 MOD_DEVICE_PARTIAL_CREDIT = "FC"  # Device with partial credit (≥50%)
 
 
+class AscMueLimit(BaseModel):
+    code: str = ""
+    mue_limit: int = 0
+    up_to_limit: bool = False
+
+
 class AscLineOutput(BaseModel):
     line_number: int = 0
     hcpcs: str = ""
     payment_indicator: str = ""
     payment_rate: float = 0.0
     wage_index: float = 0.0
-    adjusted_rate: float = 0.0
+    adjusted_rate: float = 0.0  # Wage-adjusted rate per unit (before MPR)
+    units: int = 1  # Effective units billed
     device_offset_amount: float = 0.0
     device_credit: bool = False
     # Code pair (pass-through device) fields
@@ -46,14 +64,19 @@ class AscLineOutput(BaseModel):
     status: str = ""  # "payable", "denied", "unprocessable", or "packaged"
     status_reason: str = ""  # Reason for denial/rejection
     subject_to_discount: bool = False
-    discount_applied: bool = False  # True if 50% discount was applied
+    discount_applied: bool = False  # True if 50% MPR discount was applied
+    line_payment: float = 0.0  # Medicare 80% payment for this line
+    line_copayment: float = 0.0  # Beneficiary 20% copayment for this line
+    line_total: float = 0.0  # Total allowed amount (100% = payment + copayment)
 
 
 class AscOutput(BaseModel):
     cbsa: str = ""
     wage_index: float = 0.0
     lines: List[AscLineOutput] = Field(default_factory=list)
-    total_payment: float = 0.0
+    total_payment: float = 0.0  # Medicare 80% total
+    total_copayment: float = 0.0  # Beneficiary 20% total
+    total: float = 0.0  # Total allowed amount (100%)
     error: Optional[ReturnCode] = None
     message: Optional[str] = None
 
@@ -62,9 +85,11 @@ class AscOutput(BaseModel):
 
 
 class AscClient:
-    def __init__(self, data_dir: str, logger=None):
+    def __init__(self, data_dir: str, logger=None, preload_data: bool = False):
         self.data_loader = AscReferenceData(data_dir)
         self.logger = logger
+        if preload_data:
+            self.data_loader.preload_all_data()
 
     def _get_code_pair_offset(
         self,
@@ -147,8 +172,115 @@ class AscClient:
 
         return device_lines
 
+    def _mue_check(
+        self,
+        claim: Claim,
+        calculated_lines: List[AscLineOutput],
+        mues: dict[str, AscMueLimit] | None = None,
+    ) -> None:
+        """
+        Apply Medically Unlikely Edit (MUE) limits to calculated output lines.
+
+        MUEs cap the number of units that can be billed for a given HCPCS code
+        on a single claim date. Two enforcement modes exist:
+
+        - up_to_limit=False (line edit): If total billed units for a HCPCS
+          exceed the MUE limit, ALL lines for that code are denied. The
+          adjudicator cannot split the claim; the entire service is rejected.
+
+        - up_to_limit=True (date-of-service edit): Units up to the MUE limit
+          are payable; excess units are denied. Lines are filled greedily in
+          claim order — each line's units are consumed until the allowed
+          budget is exhausted, then remaining lines are zeroed out.
+
+        Only lines with status="payable" are considered; denied/packaged lines
+        are left untouched.
+
+        Args:
+            claim: The original claim (used to read billed units per line).
+            calculated_lines: The list of AscLineOutput objects to mutate in place.
+            mues: Optional dict mapping HCPCS code → AscMueLimit. If None or
+                  empty, this method is a no-op.
+        """
+        if not mues:
+            return
+
+        # Build a map from line_number → original claim line for unit lookup.
+        line_map: Dict[int, LineItem] = {
+            idx + 1: line for idx, line in enumerate(claim.lines)
+        }
+
+        # Group payable output lines by (HCPCS, service_date).
+        # MUE limits are applied per code per date of service — lines for the
+        # same HCPCS on different dates are evaluated independently.
+        hcpcs_to_lines: Dict[Tuple[str, object], List[AscLineOutput]] = defaultdict(list)
+        for out_line in calculated_lines:
+            if out_line.status == "payable" and out_line.hcpcs in mues:
+                svc_date = line_map[out_line.line_number].service_date
+                hcpcs_to_lines[(out_line.hcpcs, svc_date)].append(out_line)
+
+        for (hcpcs, _svc_date), lines_for_code in hcpcs_to_lines.items():
+            mue = mues[hcpcs]
+            # Sum billed units across all payable lines for this HCPCS.
+            total_units = sum(
+                max(1, int(line_map[g.line_number].units or 1)) for g in lines_for_code
+            )
+
+            if total_units <= mue.mue_limit:
+                # Within limit — nothing to do.
+                continue
+
+            if not mue.up_to_limit:
+                # Line edit: deny ALL lines for this HCPCS.
+                for g in lines_for_code:
+                    g.status = "denied"
+                    g.status_reason = (
+                        f"MUE exceeded: {total_units} units billed, "
+                        f"limit is {mue.mue_limit} (all units denied)"
+                    )
+                    g.adjusted_rate = 0.0
+                    g.units = 0
+                    g.line_payment = 0.0
+                    g.line_copayment = 0.0
+                    g.line_total = 0.0
+            else:
+                # Date-of-service edit: allow up to the limit, deny the rest.
+                remaining_allowed = mue.mue_limit
+                for g in lines_for_code:
+                    billed = max(1, int(line_map[g.line_number].units or 1))
+                    if remaining_allowed <= 0:
+                        # Budget exhausted — deny this line entirely.
+                        g.status = "denied"
+                        g.status_reason = (
+                            f"MUE exceeded: {total_units} units billed, "
+                            f"limit is {mue.mue_limit} (excess denied)"
+                        )
+                        g.adjusted_rate = 0.0
+                        g.units = 0
+                        g.line_payment = 0.0
+                        g.line_copayment = 0.0
+                        g.line_total = 0.0
+                    elif billed > remaining_allowed:
+                        # Partial: cap this line's units at the remaining budget.
+                        g.units = remaining_allowed
+                        g.status_reason = (
+                            f"MUE partial: {billed} units billed, "
+                            f"{remaining_allowed} allowed (limit {mue.mue_limit})"
+                        )
+                        remaining_allowed = 0
+                        # adjusted_rate is per-unit; line_payment/copayment/total
+                        # will be recalculated during final summation, so we only
+                        # update the unit count here.
+                    else:
+                        # This line fits entirely within the remaining budget.
+                        remaining_allowed -= billed
+
     def process(
-        self, claim: Claim, opsf_provider: Optional[OPSFProvider] = None, **kwargs
+        self,
+        claim: Claim,
+        opsf_provider: Optional[OPSFProvider] = None,
+        mues: dict[str, AscMueLimit] | None = None,
+        **kwargs,
     ) -> AscOutput:
         output = AscOutput()
         # 1. Validation
@@ -254,7 +386,33 @@ class AscClient:
             )
             calculated_lines.append(line_out)
 
-        # 5. Final Summation
+        # 5. MUE Check: enforce Medically Unlikely Edit limits.
+        # We run before ancillary check so that if a surgical procedure is denied due to MUE, 
+        # the ancillary services are also denied.
+        self._mue_check(claim, calculated_lines, mues)
+
+        # 5b. CMS §60.2: Ancillary services require a related surgical procedure on the same claim.
+        # Addendum AA = surgical procedures; Addendum BB = covered ancillary services.
+        # If no payable AA line exists, all payable BB lines are returned as unprocessable.
+        rates_lookup = ref_data.get("rates", {})
+        has_payable_surgical = any(
+            g.status == "payable"
+            and rates_lookup.get(g.hcpcs, {}).get("addendum", "AA") == "AA"
+            for g in calculated_lines
+        )
+        if not has_payable_surgical:
+            for g in calculated_lines:
+                if (
+                    rates_lookup.get(g.hcpcs, {}).get("addendum") == "BB"
+                    and g.status == "payable"
+                ):
+                    g.status = "unprocessable"
+                    g.status_reason = (
+                        "No related surgical procedure on claim (CMS §60.2)"
+                    )
+                    g.adjusted_rate = 0.0
+
+        # 6. Final Summation
         # Calculate total payment applying discount logic to units > 1
         total = 0.0
 
@@ -267,13 +425,28 @@ class AscClient:
 
         line_map = {idx: line for idx, line in enumerate(claim.lines)}
 
-        # Helper: effective rate is the lower of adjusted_rate vs billed charges (per unit)
-        def _effective_rate(line_out: AscLineOutput) -> float:
+        # Helper: effective rate is the lower of adjusted_rate vs billed charges (per unit).
+        # Uses Decimal arithmetic to avoid floating-point drift.
+        # NOTE: unit_count comes from line_out.units, which may have been capped by
+        # _mue_check. Fall back to the claim line's billed units if line_out.units
+        # is 0 (fully denied lines are excluded from the discount pools below).
+        def _effective_rate(line_out: AscLineOutput) -> Decimal:
             line_item = line_map[line_out.line_number - 1]
-            charges = line_item.charges if line_item.charges > 0 else float("inf")
-            unit_count = line_item.units if line_item.units >= 1 else 1
-            charge_per_unit = charges / unit_count
-            return min(line_out.adjusted_rate, charge_per_unit)
+            charges = (
+                Decimal(str(line_item.charges))
+                if line_item.charges and line_item.charges > 0
+                else None
+            )
+            unit_count = line_out.units if line_out.units > 0 else (
+                max(1, int(line_item.units))
+                if line_item.units and line_item.units >= 1
+                else 1
+            )
+            rate = Decimal(str(line_out.adjusted_rate))
+            if charges is not None:
+                charge_per_unit = charges / Decimal(unit_count)
+                return min(rate, charge_per_unit)
+            return rate
 
         # Separate lines into "Subject to Discount" and "Not Subject"
         discount_lines = [
@@ -289,35 +462,62 @@ class AscClient:
         discount_lines.sort(key=lambda x: _effective_rate(x), reverse=True)
 
         # Apply discount: first unit of first procedure = 100%, all others = 50%
+        _HALF = Decimal("0.5")
+        _COPAY_RATE = Decimal("0.20")
+        _PAYMENT_RATE = Decimal("1") - _COPAY_RATE
+        _CENTS = Decimal("0.01")  # quantize target: round to 2 decimal places
+        total = Decimal("0")
+
         for mpr_idx, mpr_line in enumerate(discount_lines):
-            units = line_map[mpr_line.line_number - 1].units
-            if units < 1:
-                units = 1
+            # Use line_out.units — may have been capped by _mue_check.
+            # Fall back to the billed units on the claim if not yet set.
+            units = mpr_line.units if mpr_line.units > 0 else max(
+                1, int(line_map[mpr_line.line_number - 1].units or 1)
+            )
             eff_rate = _effective_rate(mpr_line)
 
             if mpr_idx == 0:
                 payment = eff_rate
                 if units > 1:
-                    payment += eff_rate * 0.50 * (units - 1)
+                    payment += eff_rate * _HALF * Decimal(units - 1)
                 mpr_line.discount_applied = False
             else:
-                payment = (eff_rate * 0.50) * units
+                payment = eff_rate * _HALF * Decimal(units)
                 mpr_line.discount_applied = True
 
+            # Round to cents before accumulating so sum(line_payment) == total_payment
+            payment = payment.quantize(_CENTS)
+            mpr_line.units = units
+            mpr_line.line_payment = float((payment * _PAYMENT_RATE).quantize(_CENTS))
+            mpr_line.line_copayment = float((payment * _COPAY_RATE).quantize(_CENTS))
+            mpr_line.line_total = float(payment)
             total += payment
 
         # Add non-discountable lines (also subject to lower-of-charge rule)
         for nd_line in no_discount_lines:
-            units = line_map[nd_line.line_number - 1].units
-            if units < 1:
-                units = 1
+            # Skip lines that are not payable (denied, packaged, unprocessable).
+            # Their payment fields were already zeroed during line processing or
+            # by _mue_check; overwriting units here would undo that.
+            if nd_line.status != "payable":
+                continue
+            # Use line_out.units — may have been capped by _mue_check.
+            units = nd_line.units if nd_line.units > 0 else max(
+                1, int(line_map[nd_line.line_number - 1].units or 1)
+            )
             eff_rate = _effective_rate(nd_line)
-            total += eff_rate * units
+            payment = (eff_rate * Decimal(units)).quantize(_CENTS)
+            nd_line.units = units
+            nd_line.line_payment = float((payment * _PAYMENT_RATE).quantize(_CENTS))
+            nd_line.line_copayment = float((payment * _COPAY_RATE).quantize(_CENTS))
+            nd_line.line_total = float(payment)
+            total += payment
 
         output.lines = sorted(
             discount_lines + no_discount_lines, key=lambda x: x.line_number
         )
-        output.total_payment = total
+        output.total_payment = float((total * _PAYMENT_RATE).quantize(_CENTS))
+        output.total_copayment = float((total * _COPAY_RATE).quantize(_CENTS))
+        output.total = float(total)
 
         return output
 
@@ -352,7 +552,7 @@ class AscClient:
         Returns:
             A fully populated AscLineOutput for this line.
         """
-        line_out = AscLineOutput(line_number=idx + 1, hcpcs=line.hcpcs)
+        line_out = AscLineOutput(line_number=idx + 1, hcpcs=line.hcpcs, units=line.units)
 
         # --- Rate Lookup ---
         info = ref_data["rates"].get(line.hcpcs)
@@ -400,12 +600,66 @@ class AscClient:
 
         line_out.status = "payable"
 
+        # --- Modifier flags (needed before wage adjustment) ---
+        modifiers = line.modifiers or []
+        is_terminated_pre = MOD_TERMINATED_PRE_ANESTHESIA in modifiers
+        is_terminated_post = MOD_TERMINATED_POST_ANESTHESIA in modifiers
+        is_reduced = MOD_REDUCED_PROCEDURE in modifiers
+        has_fb = MOD_DEVICE_NO_COST in modifiers
+        has_fc = MOD_DEVICE_PARTIAL_CREDIT in modifiers
+
+        # --- Device Offset: subtract from base rate BEFORE wage adjustment (CMS §40.8) ---
+        # Removing the device portion from the base rate ensures we never wage-index
+        # a zero-cost device component (avoids over/under-payment in high/low wage areas).
+        device_credit = False
+        offset_amount = 0.0
+        reduced_base_rate = base_rate
+
+        if is_terminated_pre:
+            # §40.10: For device-intensive procedures terminated pre-anesthesia,
+            # remove the full device offset from the base rate before the 50% cut.
+            dev_offset_val = ref_data["device_offsets"].get(line.hcpcs, 0.0)
+            if dev_offset_val > 0:
+                reduced_base_rate = max(0.0, base_rate - dev_offset_val)
+                offset_amount = dev_offset_val
+                line_out.details += (
+                    f" (Mod 73: Device Offset {dev_offset_val:.2f} Removed from Base)"
+                )
+            if has_fb or has_fc:
+                line_out.details += " (Mod 73 present, FB/FC Ignored)"
+
+        elif has_fb or has_fc:
+            # §40.8: FB = full credit (100% offset), FC = partial credit (50% offset)
+            dev_offset = ref_data["device_offsets"].get(line.hcpcs)
+            if dev_offset:
+                device_credit = True
+                if has_fb:
+                    offset_amount = dev_offset
+                    line_out.details += (
+                        f" (Mod FB: Full Device Offset -{offset_amount:.2f})"
+                    )
+                else:  # has_fc
+                    offset_amount = dev_offset * 0.50
+                    line_out.details += (
+                        f" (Mod FC: Partial Device Offset -{offset_amount:.2f})"
+                    )
+                reduced_base_rate = max(0.0, base_rate - offset_amount)
+
         # --- Geographic Adjustment (CMS §40.2) ---
-        # Formula: (Rate * 0.50 * WI) + (Rate * 0.50)
-        # 50% Labor Share hardcoded for ASC
-        labor_portion = base_rate * 0.50
-        non_labor_portion = base_rate * 0.50
-        adjusted_rate = (labor_portion * wage_index) + non_labor_portion
+        # Certain payment indicators are exempt from wage adjustment and paid at the flat rate.
+        _D = Decimal  # shorthand for readability
+        d_reduced_base = _D(str(reduced_base_rate))
+        d_wage = _D(str(wage_index))
+
+        if payment_ind in WAGE_EXEMPT_INDICATORS:
+            adjusted_rate = d_reduced_base
+            line_out.details += f" (No Wage Adj: Indicator {payment_ind})"
+        else:
+            # Apply 50/50 split to the REDUCED base rate so the device portion is not wage-indexed.
+            half = _D("0.5")
+            labor_portion = d_reduced_base * half
+            non_labor_portion = d_reduced_base * half
+            adjusted_rate = (labor_portion * d_wage) + non_labor_portion
 
         # --- Code Pair / Pass-Through Device Logic (CMS §40.7) ---
         line_hcpcs = line.hcpcs.upper().strip() if line.hcpcs else ""
@@ -419,65 +673,51 @@ class AscClient:
                     line.hcpcs, device_code, code_pairs, claim_date
                 )
                 if multiplier > 0:
-                    offset = adjusted_rate * multiplier
-                    adjusted_rate = max(0.0, adjusted_rate - offset)
-                    line_out.code_pair_offset = offset
+                    d_mult = Decimal(str(multiplier))
+                    offset = adjusted_rate * d_mult
+                    adjusted_rate = max(Decimal("0"), adjusted_rate - offset)
+                    line_out.code_pair_offset = float(offset)
                     line_out.code_pair_device = matched_device
-                    line_out.details += f" (CodePair:{matched_device} -{offset:.2f})"
+                    line_out.details += (
+                        f" (CodePair:{matched_device} -{float(offset):.2f})"
+                    )
                     device_available_units[device_code] -= 1
                     break
 
-        # --- Modifier Handling (CMS §40.4, §40.8, §40.10) ---
-        modifiers = line.modifiers or []
-        is_terminated_pre = MOD_TERMINATED_PRE_ANESTHESIA in modifiers
-        is_reduced = MOD_REDUCED_PROCEDURE in modifiers
-        is_terminated_post = MOD_TERMINATED_POST_ANESTHESIA in modifiers
-        has_fb = MOD_DEVICE_NO_COST in modifiers
-        has_fc = MOD_DEVICE_PARTIAL_CREDIT in modifiers
-
-        device_credit = False
-        offset_amount = 0.0
-
-        # Modifier 73 takes precedence over FB/FC per CMS §40.10
+        # --- Modifier Payment Reductions (CMS §40.4, §40.10) ---
+        # Device offset already applied to base rate above; only percentage cuts remain.
         if is_terminated_pre:
-            dev_offset_val = ref_data["device_offsets"].get(line.hcpcs, 0.0)
-            if dev_offset_val > 0:
-                adjusted_rate = max(0.0, adjusted_rate - dev_offset_val)
-                line_out.details += f" (Mod 73: Device Offset {dev_offset_val} Removed)"
-            adjusted_rate = adjusted_rate * 0.50
+            adjusted_rate = adjusted_rate * Decimal("0.5")
             line_out.subject_to_discount = False
             line_out.details += " (Mod 73: 50% Reduct)"
-            if has_fb or has_fc:
-                line_out.details += " (Mod 73 present, FB/FC Ignored)"
-            line_out.adjusted_rate = adjusted_rate
+            # Lower-of: cap at submitted charges (CMS §40)
+            if line.charges and line.charges > 0:
+                charge_limit = Decimal(str(line.charges))
+                if charge_limit < adjusted_rate:
+                    adjusted_rate = charge_limit
+                    line_out.details += (
+                        f" (Lower-of: Charges {float(charge_limit):.2f})"
+                    )
+            line_out.adjusted_rate = float(adjusted_rate)
             line_out.device_credit = False
-            line_out.device_offset_amount = 0.0
+            line_out.device_offset_amount = offset_amount
             return line_out
 
-        # FB/FC only processed if Modifier 73 is NOT present
-        # Per CMS §40.8:
-        #   FB = device furnished at no cost OR full credit received → remove 100% of offset
-        #   FC = partial credit ≥50% of device cost received       → remove 50% of offset
-        if has_fb or has_fc:
-            dev_offset = ref_data["device_offsets"].get(line.hcpcs)
-            if dev_offset:
-                device_credit = True
-                if has_fb:
-                    offset_amount = dev_offset  # 100% reduction
-                    line_out.details += f" (Mod FB: Full Device Offset -{offset_amount:.2f})"
-                else:  # has_fc
-                    offset_amount = dev_offset * 0.50  # 50% reduction
-                    line_out.details += f" (Mod FC: Partial Device Offset -{offset_amount:.2f})"
-                adjusted_rate = max(0.0, adjusted_rate - offset_amount)
-
         if is_reduced:
-            adjusted_rate = adjusted_rate * 0.50
+            adjusted_rate = adjusted_rate * Decimal("0.5")
             line_out.subject_to_discount = False
             line_out.details += " (Mod 52: 50% Reduct)"
         elif is_terminated_post:
             line_out.details += " (Mod 74: Full Pay)"
 
-        line_out.adjusted_rate = adjusted_rate
+        # --- Lower-of: submitted charges vs adjusted rate (CMS §40) ---
+        if line.charges and line.charges > 0:
+            charge_limit = Decimal(str(line.charges))
+            if charge_limit < adjusted_rate:
+                adjusted_rate = charge_limit
+                line_out.details += f" (Lower-of: Charges {float(charge_limit):.2f})"
+
+        line_out.adjusted_rate = float(adjusted_rate)
         line_out.device_credit = device_credit
         line_out.device_offset_amount = offset_amount
         return line_out

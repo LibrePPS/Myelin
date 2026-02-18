@@ -114,16 +114,16 @@ class TestAscIntegration(unittest.TestCase):
         self.assertIsNone(result.error)
 
         # Verify Payment
-        # Line 1: Rate 100. WI 1.5. 50% Labor Share.
-        # Adjusted = (100 * 0.5 * 1.5) + (100 * 0.5) = 75 + 50 = 125.
-        # Device Offset: "FB" modifier present. Offset in FF is $20.
-        # Final Line 1 = 125 - 20 = 105.
+        # Line 1: Rate 100. WI 1.5. FB modifier. Offset in FF is $20.
+        # NEW: Device offset subtracted from base rate BEFORE wage adjustment.
+        # Reduced base = 100 - 20 = 80.
+        # Adjusted = (80 * 0.5 * 1.5) + (80 * 0.5) = 60 + 40 = 100.0
 
-        # Line 2: Rate 50. WI 1.5.
+        # Line 2: Rate 50. WI 1.5. No device offset.
         # Adjusted = (50 * 0.5 * 1.5) + (50 * 0.5) = 37.5 + 25 = 62.5.
         # Not subject to discount (N in AA).
 
-        # Total = 105 + 62.5 = 167.5
+        # Total = 100.0 + 62.5 = 162.5
 
         self.assertEqual(len(result.asc.lines), 2)
 
@@ -131,15 +131,16 @@ class TestAscIntegration(unittest.TestCase):
         l1 = next(h for h in result.asc.lines if h.hcpcs == "10001")
         l2 = next(g for g in result.asc.lines if g.hcpcs == "10002")
 
-        self.assertAlmostEqual(l1.adjusted_rate, 105.0)
+        self.assertAlmostEqual(l1.adjusted_rate, 100.0)
         self.assertTrue(l1.device_credit)
         self.assertEqual(l1.device_offset_amount, 20.0)
 
         self.assertAlmostEqual(l2.adjusted_rate, 62.5)
 
-        self.assertAlmostEqual(result.asc.total_payment, 167.5)
+        # total is the 100% allowed amount; total_payment is the 80% Medicare portion
+        self.assertAlmostEqual(result.asc.total, 162.5)
 
-        self.assertAlmostEqual(result.asc.total_payment, 167.5)
+        self.assertAlmostEqual(result.asc.total, 162.5)
 
     @patch("myelin.core.DatabaseManager")
     @patch("myelin.core.OPSFProvider")
@@ -200,6 +201,21 @@ class TestAscIntegration(unittest.TestCase):
                 ),
             ],
         )
+        # Rate 10003 = $100. WI=1.5. Labor=50%. Device Offset in FF = $30.
+        #
+        # NEW: Device offset subtracted from base rate BEFORE wage adjustment.
+        #
+        # 1. Modifier 73 (Terminated Pre-Anesthesia) + device-intensive:
+        #    Reduced base = 100 - 30 = 70.
+        #    Wage adj = (70 * 0.5 * 1.5) + (70 * 0.5) = 52.5 + 35 = 87.5
+        #    Then 50% cut: 87.5 * 0.5 = 43.75
+        #
+        # 2. Modifier 52 (Reduced), no device offset:
+        #    Wage adj = (100 * 0.5 * 1.5) + (100 * 0.5) = 125.0
+        #    Then 50% cut: 62.5
+        #
+        # 3. Modifier 74 (Terminated Post-Anesthesia), no device offset:
+        #    Full payment: 125.0
 
         result = myelin.process(claim)
 
@@ -208,7 +224,7 @@ class TestAscIntegration(unittest.TestCase):
         l2 = result.asc.lines[1]  # 52
         l3 = result.asc.lines[2]  # 74
 
-        self.assertAlmostEqual(l1.adjusted_rate, 47.5)
+        self.assertAlmostEqual(l1.adjusted_rate, 43.75)
         self.assertFalse(l1.subject_to_discount, "Mod 73 should be exempt from MPR")
 
         self.assertAlmostEqual(l2.adjusted_rate, 62.5)
@@ -218,7 +234,8 @@ class TestAscIntegration(unittest.TestCase):
         # 74 is subject to discount? 10003 has "Y" ind.
         # But it's the only one left in the discount pool (others are exempt).
         # So it pays 100%.
-        self.assertAlmostEqual(result.asc.total_payment, 47.5 + 62.5 + 125.0)
+        # total is the 100% allowed amount; total_payment is the 80% Medicare portion
+        self.assertAlmostEqual(result.asc.total, 43.75 + 62.5 + 125.0)
 
 
 if __name__ == "__main__":

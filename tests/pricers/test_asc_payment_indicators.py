@@ -174,8 +174,8 @@ class TestAscPaymentIndicators:
         assert unprocessable.status == "unprocessable"
         assert unprocessable.adjusted_rate == 0.0
 
-        # Total should only include the payable line
-        assert result.total_payment == payable.adjusted_rate
+        # total_payment is the 80% Medicare portion; total is the 100% allowed amount
+        assert result.total == payable.adjusted_rate
 
     # --- Real data: L1 indicator ---
 
@@ -193,4 +193,87 @@ class TestAscPaymentIndicators:
         assert line.payment_indicator == "L1"
         assert line.status == "packaged"
         assert line.adjusted_rate == 0.0
+        assert result.total_payment == 0.0
+
+
+class TestAscAncillaryValidation:
+    """
+    Tests for CMS §60.2: Ancillary services (Addendum BB) require a related
+    surgical procedure (Addendum AA) on the same claim. If no approved surgical
+    procedure is present, ancillary lines are returned as unprocessable.
+    """
+
+    @pytest.fixture
+    def data_dir(self, tmp_path):
+        """Create a temp data directory with AA (surgical) and BB (ancillary) codes."""
+        q_dir = tmp_path / "2025" / "20250101"
+        q_dir.mkdir(parents=True)
+
+        # Addendum AA: surgical procedures
+        aa_lines = [
+            "HCPCS Code,Short Descriptor,Subject to Multiple Procedure Discounting,January 2025 Payment Indicator,January 2025 Payment Rate",
+            "10001,Surgical Proc,Y,A2,$200.00",
+            "10002,Denied Surg,N,C5,$0.00",  # Denied surgical — does NOT count
+        ]
+        (q_dir / "AA.csv").write_text("\n".join(aa_lines))
+
+        # Addendum BB: covered ancillary services
+        bb_lines = [
+            "HCPCS Code,Short Descriptor,Subject to Multiple Procedure Discounting,January 2025 Payment Indicator,January 2025 Payment Rate",
+            "C1234,Pass-Through Device,N,J7,$500.00",
+            "90999,Drug Ancillary,N,K2,$75.00",
+        ]
+        (q_dir / "BB.csv").write_text("\n".join(bb_lines))
+
+        (q_dir / "wage_index.csv").write_text("CBSA,Wage Index\n10000,1.0\n")
+        return str(tmp_path)
+
+    @pytest.fixture
+    def client(self, data_dir):
+        return AscClient(data_dir)
+
+    def _make_claim(self, *hcpcs_codes) -> Claim:
+        return Claim(
+            thru_date=datetime(2025, 1, 15),
+            additional_data={"cbsa": "10000"},
+            lines=[LineItem(hcpcs=h, units=1) for h in hcpcs_codes],
+        )
+
+    def test_ancillary_only_claim_is_unprocessable(self, client):
+        """BB-only claim: ancillary lines should be unprocessable (no surgical procedure)."""
+        result = client.process(self._make_claim("C1234"))
+        line = result.lines[0]
+        assert line.status == "unprocessable"
+        assert "CMS §60.2" in line.status_reason
+        assert line.adjusted_rate == 0.0
+        assert result.total_payment == 0.0
+
+    def test_ancillary_with_payable_surgical_is_paid(self, client):
+        """BB + payable AA: ancillary line should be payable."""
+        result = client.process(self._make_claim("10001", "C1234"))
+        surgical = result.lines[0]
+        ancillary = result.lines[1]
+
+        assert surgical.status == "payable"
+        assert ancillary.status == "payable"
+        assert ancillary.adjusted_rate > 0
+        assert result.total_payment > 0
+
+    def test_denied_surgical_does_not_unlock_ancillary(self, client):
+        """BB + denied AA: denied surgical does not count — ancillary should be unprocessable."""
+        result = client.process(self._make_claim("10002", "C1234"))
+        surgical = result.lines[0]
+        ancillary = result.lines[1]
+
+        assert surgical.status == "denied"
+        assert ancillary.status == "unprocessable"
+        assert "CMS §60.2" in ancillary.status_reason
+        assert result.total_payment == 0.0
+
+    def test_multiple_ancillary_all_unprocessable_without_surgical(self, client):
+        """Multiple BB lines with no AA: all should be unprocessable."""
+        result = client.process(self._make_claim("C1234", "90999"))
+        for line in result.lines:
+            assert line.status == "unprocessable"
+            assert "CMS §60.2" in line.status_reason
         assert result.total_payment == 0.0
