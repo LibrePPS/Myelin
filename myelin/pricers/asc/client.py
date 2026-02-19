@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from myelin.helpers.utils import ReturnCode
 from myelin.input.claim import Claim, LineItem
+from myelin.plugins import apply_client_methods
 from myelin.pricers.asc.data_loader import AscRefData, AscReferenceData, CodePairEntry
 from myelin.pricers.opsf import OPSFProvider
 
@@ -88,10 +89,18 @@ class AscClient:
         self.logger = logger
         if preload_data:
             self.data_loader.preload_all_data()
+        try:
+            apply_client_methods(self)
+        except Exception as e:
+            if self.logger:
+                self.logger.error(f"Error applying client methods: {e}")
 
     def _get_cbsa(self, claim: Claim, **kwargs: object) -> None:
+        """
+        Get the CBSA from an external source and add it to claim.additional_data
+        """
         # Dummy method meant to be overriden by a plugin
-        # Get the CBSA from an external source and add it to claim.additional_data
+        # Get the CBSA from an external source and add it to claim.additional_datas
         return None
 
     def _get_mues(

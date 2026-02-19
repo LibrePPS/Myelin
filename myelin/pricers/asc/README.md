@@ -62,6 +62,16 @@ The `process` method accepts several optional parameters:
     ```
 -   **`claim.additional_data["cbsa"]`**: A string CBSA code (e.g., `"35660"`) used for geographic adjustment if provider data is unavailable.
 
+## Plugin System
+
+The ASC Pricer supports plugin extensions via the `myelin` plugin hook system. Plugins can override the following methods to provide automated data lookups:
+
+- **`_get_mues(claim, **kwargs)`**: Called when the `mues` parameter is not explicitly provided. Should return a `dict[str, AscMueLimit]` or `None`.
+
+- **`_get_cbsa(claim, **kwargs)`**: Called when no `OPSFProvider` is provided. Should set `claim.additional_data["cbsa"]` with the CBSA code.
+
+When no plugin overrides these methods, the pricer functions normally using manually provided values (CBSA in `claim.additional_data`, explicit `mues` dict, or `OPSFProvider`).
+
 ## Data Structure
 
 Data is stored in `myelin/pricers/asc/data/{Year}/{Quarter}/`:
