@@ -1,16 +1,14 @@
 from collections import defaultdict
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 from typing import Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
-from myelin.input.claim import Claim
-from myelin.input.claim import LineItem
-from myelin.pricers.asc.data_loader import AscReferenceData, AscRefData, CodePairEntry
-from myelin.pricers.opsf import OPSFProvider
 from myelin.helpers.utils import ReturnCode
-
+from myelin.input.claim import Claim, LineItem
+from myelin.pricers.asc.data_loader import AscRefData, AscReferenceData, CodePairEntry
+from myelin.pricers.opsf import OPSFProvider
 
 # Payment indicator denial/rejection rules per CMS §60.3
 # Indicators that result in denial (no payment)
@@ -90,6 +88,17 @@ class AscClient:
         self.logger = logger
         if preload_data:
             self.data_loader.preload_all_data()
+
+    def _get_cbsa(self, claim: Claim, **kwargs: object) -> None:
+        # Dummy method meant to be overriden by a plugin
+        # Get the CBSA from an external source and add it to claim.additional_data
+        return None
+
+    def _get_mues(
+        self, claim: Claim, **kwargs: object
+    ) -> dict[str, AscMueLimit] | None:
+        # Dummy method meant to be overriden by a plugin
+        return None
 
     def _get_code_pair_offset(
         self,
@@ -213,7 +222,9 @@ class AscClient:
         # Group payable output lines by (HCPCS, service_date).
         # MUE limits are applied per code per date of service — lines for the
         # same HCPCS on different dates are evaluated independently.
-        hcpcs_to_lines: Dict[Tuple[str, object], List[AscLineOutput]] = defaultdict(list)
+        hcpcs_to_lines: Dict[Tuple[str, object], List[AscLineOutput]] = defaultdict(
+            list
+        )
         for out_line in calculated_lines:
             if out_line.status == "payable" and out_line.hcpcs in mues:
                 svc_date = line_map[out_line.line_number].service_date
@@ -287,6 +298,11 @@ class AscClient:
         # Adjusted logic: We need either OPSF Provider OR a direct CBSA in additional_data.
         # Fail if BOTH are missing.
         has_provider = opsf_provider is not None
+        if not has_provider:
+            # We'll call get_cbsa to see if a plugin was registered to fetch it
+            # from an external source. It should add it to claim.additional_data
+            # This is the most likely path as an ASC providers are not in the OPSF
+            self._get_cbsa(claim, **kwargs)
         has_cbsa_override = "cbsa" in claim.additional_data
 
         if not has_provider and not has_cbsa_override:
@@ -331,6 +347,19 @@ class AscClient:
         provider_geo = (
             opsf_provider.cbsa_actual_geographic_location if opsf_provider else None
         )
+
+        # Applying Mues is default, but can be disabled
+        # Denying Mue lines when they exceed limit is default but can be overridden
+        if mues is None and not claim.additional_data.get("asc_no_mue", False):
+            mues = self._get_mues(claim, **kwargs)
+            if (
+                claim.additional_data.get("asc_mue_to_limit", False)
+                and mues is not None
+            ):
+                # Set up_to_limit to True on all MUEs
+                # Allows lines to price up to their MUE limit rather than denying
+                for mue in mues.values():
+                    mue.up_to_limit = True
 
         cbsa = (
             claim.additional_data.get(
@@ -387,7 +416,7 @@ class AscClient:
             calculated_lines.append(line_out)
 
         # 5. MUE Check: enforce Medically Unlikely Edit limits.
-        # We run before ancillary check so that if a surgical procedure is denied due to MUE, 
+        # We run before ancillary check so that if a surgical procedure is denied due to MUE,
         # the ancillary services are also denied.
         self._mue_check(claim, calculated_lines, mues)
 
@@ -437,10 +466,14 @@ class AscClient:
                 if line_item.charges and line_item.charges > 0
                 else None
             )
-            unit_count = line_out.units if line_out.units > 0 else (
-                max(1, int(line_item.units))
-                if line_item.units and line_item.units >= 1
-                else 1
+            unit_count = (
+                line_out.units
+                if line_out.units > 0
+                else (
+                    max(1, int(line_item.units))
+                    if line_item.units and line_item.units >= 1
+                    else 1
+                )
             )
             rate = Decimal(str(line_out.adjusted_rate))
             if charges is not None:
@@ -471,8 +504,10 @@ class AscClient:
         for mpr_idx, mpr_line in enumerate(discount_lines):
             # Use line_out.units — may have been capped by _mue_check.
             # Fall back to the billed units on the claim if not yet set.
-            units = mpr_line.units if mpr_line.units > 0 else max(
-                1, int(line_map[mpr_line.line_number - 1].units or 1)
+            units = (
+                mpr_line.units
+                if mpr_line.units > 0
+                else max(1, int(line_map[mpr_line.line_number - 1].units or 1))
             )
             eff_rate = _effective_rate(mpr_line)
 
@@ -501,8 +536,10 @@ class AscClient:
             if nd_line.status != "payable":
                 continue
             # Use line_out.units — may have been capped by _mue_check.
-            units = nd_line.units if nd_line.units > 0 else max(
-                1, int(line_map[nd_line.line_number - 1].units or 1)
+            units = (
+                nd_line.units
+                if nd_line.units > 0
+                else max(1, int(line_map[nd_line.line_number - 1].units or 1))
             )
             eff_rate = _effective_rate(nd_line)
             payment = (eff_rate * Decimal(units)).quantize(_CENTS)
@@ -552,7 +589,9 @@ class AscClient:
         Returns:
             A fully populated AscLineOutput for this line.
         """
-        line_out = AscLineOutput(line_number=idx + 1, hcpcs=line.hcpcs, units=line.units)
+        line_out = AscLineOutput(
+            line_number=idx + 1, hcpcs=line.hcpcs, units=line.units
+        )
 
         # --- Rate Lookup ---
         info = ref_data["rates"].get(line.hcpcs)

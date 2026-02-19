@@ -3,34 +3,34 @@ import os
 from contextlib import ExitStack
 from threading import RLock
 from types import TracebackType
-from typing import Literal, Annotated
+from typing import Annotated, Literal
 
 import jpype
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from myelin.converter import ICDConverter
 from myelin.database.manager import DatabaseManager
 from myelin.helpers.cms_downloader import CMSDownloader
-from myelin.helpers.utils import JavaRuntimeError, ProviderDataError, PROVIDER_TYPES
+from myelin.helpers.utils import PROVIDER_TYPES, JavaRuntimeError, ProviderDataError
 from myelin.hhag import HhagClient, HhagOutput
 from myelin.input.claim import Claim, Modules
 from myelin.ioce import IoceClient, IoceOutput
 from myelin.irfg import IrfgClient, IrfgOutput
 from myelin.mce import MceClient, MceOutput
 from myelin.msdrg import DrgClient, MsdrgOutput
+from myelin.pricers.asc.client import AscClient, AscOutput
 from myelin.pricers.esrd import EsrdClient, EsrdOutput
 from myelin.pricers.fqhc import FqhcClient, FqhcOutput
 from myelin.pricers.hha import HhaClient, HhaOutput
 from myelin.pricers.hospice import HospiceClient, HospiceOutput
 from myelin.pricers.ipf import IpfClient, IpfOutput
 from myelin.pricers.ipps import IppsClient, IppsOutput
+from myelin.pricers.ipsf import IPSFProvider
 from myelin.pricers.irf import IrfClient, IrfOutput
 from myelin.pricers.ltch import LtchClient, LtchOutput
 from myelin.pricers.opps import OppsClient, OppsOutput
-from myelin.pricers.snf import SnfClient, SnfOutput
-from myelin.pricers.ipsf import IPSFProvider
 from myelin.pricers.opsf import OPSFProvider
-from myelin.pricers.asc.client import AscClient, AscOutput
+from myelin.pricers.snf import SnfClient, SnfOutput
 
 PRICERS: dict[str, str] = {
     "Esrd": "esrd-pricer",
@@ -53,11 +53,7 @@ IPSF_PRICERS: set[Modules] = {
     Modules.SNF,
     Modules.HHA,
 }
-OPSF_PRICERS: set[Modules] = {
-    Modules.OPPS,
-    Modules.ESRD,
-    Modules.ASC,
-}
+OPSF_PRICERS: set[Modules] = {Modules.OPPS, Modules.ESRD}
 
 
 class MyelinOutput(BaseModel):

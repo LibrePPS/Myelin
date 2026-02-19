@@ -105,7 +105,7 @@ class TestAscIntegration(unittest.TestCase):
                 LineItem(line_number=2, hcpcs="10002", units=1, revenue_code="0490"),
             ],
         )
-
+        claim.additional_data["cbsa"] = "10000"
         # Run Process
         result = myelin.process(claim)
 
@@ -201,6 +201,7 @@ class TestAscIntegration(unittest.TestCase):
                 ),
             ],
         )
+        claim.additional_data["cbsa"] = "10000"
         # Rate 10003 = $100. WI=1.5. Labor=50%. Device Offset in FF = $30.
         #
         # NEW: Device offset subtracted from base rate BEFORE wage adjustment.
