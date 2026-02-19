@@ -264,9 +264,6 @@ class Myelin:
         self.hhag_client = HhagClient()
         self.irfg_client = IrfgClient()
         self.irfg_client = IrfgClient()
-        self.asc_client = AscClient(
-            "./pricers/asc/data", self.logger, preload_data=True
-        )
 
         # Initialize Custom Pricers
         try:
