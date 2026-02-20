@@ -52,6 +52,9 @@ build-backend = "setuptools.build_meta"
 where = ["."]
 include = ["myelin*"]
 
+[tool.setuptools.package-data]
+myelin = ["pricers/asc/data/**/*"]
+
 [project.urls]
 Homepage = "https://github.com/LibrePPS/myelin"
 Repository = "https://github.com/LibrePPS/myelin.git"

@@ -622,6 +622,7 @@ def _get_fqhc_summary(output: Any) -> str:
         parts.append(f"Coinsurance: ${output.coinsurance_amount:,.2f}")
     return ", ".join(parts) if parts else "Processed"
 
+
 def _get_asc_summary(output: Any) -> str:
     """Get summary info for ASC output."""
     if not output:

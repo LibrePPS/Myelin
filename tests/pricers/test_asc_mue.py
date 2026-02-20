@@ -184,8 +184,8 @@ class TestMueLineEdit:
         mues = {"10001": AscMueLimit(code="10001", mue_limit=2, up_to_limit=False)}
         result = client.process(claim, mues=mues)
         reason = result.lines[0].status_reason
-        assert "5" in reason   # billed units
-        assert "2" in reason   # limit
+        assert "5" in reason  # billed units
+        assert "2" in reason  # limit
 
 
 # ---------------------------------------------------------------------------
