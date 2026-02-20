@@ -362,20 +362,19 @@ def run_pricers(myelin: Myelin):
         asc_claim.lines.clear()
         asc_claim.lines.append(
             LineItem(
-                hcpcs="70460",
+                hcpcs="31020",
                 service_date=datetime(2026, 7, 15),
                 units=1,
-                charges=10000.0,
+                charges=5000.0,
                 revenue_code="0490",
-                modifiers=["50"],
             )
         )
         asc_claim.lines.append(
             LineItem(
-                hcpcs="31020",
+                hcpcs="66984",  # Cataract surgery (typically subject to discount)
                 service_date=datetime(2026, 7, 15),
-                units=2,
-                charges=10000.0,
+                units=1,
+                charges=8000.0,
                 revenue_code="0490",
             )
         )
@@ -388,7 +387,8 @@ def run_pricers(myelin: Myelin):
         from myelin.pricers import AscMueLimit
 
         mues = dict()
-        mues["31020"] = AscMueLimit(hcpcs="31020", mue_limit=1.0, up_to_limit=True)
+        mues["31020"] = AscMueLimit(code="31020", mue_limit=1, up_to_limit=True)
+        mues["66984"] = AscMueLimit(code="66984", mue_limit=1, up_to_limit=True)
         asc_output = myelin.asc_client.process(asc_claim, provider, mues=mues)
         assert asc_output is not None
         print(asc_output.model_dump_json(indent=2))

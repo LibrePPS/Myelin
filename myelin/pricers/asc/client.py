@@ -64,6 +64,7 @@ class AscLineOutput(BaseModel):
     status_reason: str = ""  # Reason for denial/rejection
     subject_to_discount: bool = False
     discount_applied: bool = False  # True if 50% MPR discount was applied
+    discount_percent: float = 1.0  # Multiplier applied to the expected payment due to MPR (e.g., 1.0 = 100%, 0.5 = 50%)
     line_payment: float = 0.0  # Medicare 80% payment for this line
     line_copayment: float = 0.0  # Beneficiary 20% copayment for this line
     line_total: float = 0.0  # Total allowed amount (100% = payment + copayment)
@@ -528,6 +529,14 @@ class AscClient:
             else:
                 payment = eff_rate * _HALF * Decimal(units)
                 mpr_line.discount_applied = True
+
+            expected_payment = eff_rate * Decimal(units)
+            if expected_payment > 0:
+                # Calculate the percentage of the line's expected payment that was paid after MPR
+                discount_fraction = payment / expected_payment
+                mpr_line.discount_percent = float(discount_fraction.quantize(Decimal("0.0001")))
+            else:
+                mpr_line.discount_percent = 1.0
 
             # Round to cents before accumulating so sum(line_payment) == total_payment
             payment = payment.quantize(_CENTS)
