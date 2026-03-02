@@ -11,6 +11,7 @@ The exporter handles:
 - A summary sheet with key metrics from all modules
 """
 
+import re
 from datetime import datetime
 from enum import Enum
 from io import BytesIO
@@ -25,7 +26,13 @@ if TYPE_CHECKING:
 
 try:
     import openpyxl  # type: ignore[import-not-found]
-    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side  # type: ignore[import-not-found]
+    from openpyxl.styles import (  # type: ignore[import-not-found]
+        Alignment,
+        Border,
+        Font,
+        PatternFill,
+        Side,
+    )
     from openpyxl.utils import get_column_letter  # type: ignore[import-not-found]
     from openpyxl.worksheet.worksheet import Worksheet  # type: ignore[import-not-found]
 
@@ -401,7 +408,13 @@ def _write_list_to_sheet(
 def _humanize_key(key: str) -> str:
     """Convert a snake_case key to a human-readable title."""
     # Replace underscores with spaces and title case
-    return key.replace("_", " ").title()
+    key = key.replace("_", " ").title()
+    # Replace prefixes from nested data structure
+    return re.sub(
+        r"^Additional Calculation Variables (?:Additional \w+ (?:Variables|Information) )?",
+        "",
+        key,
+    )
 
 
 def _create_summary_sheet(
